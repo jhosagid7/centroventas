@@ -1,0 +1,23 @@
+INSERT INTO `permissions` (`id`, `name`, `slug`, `description`, `created_at`, `updated_at`) VALUES (NULL, 'Ver Datos Ventas', 'cajadatosventas.show', 'A user see report caja Datos Ventas', NOW(), NOW());
+INSERT INTO `permissions` (`id`, `name`, `slug`, `description`, `created_at`, `updated_at`) VALUES (NULL, 'Ver Datos Articulos', 'cajadatosarticulos.show', 'A user see report caja Datos Articulos', NOW(), NOW());
+INSERT INTO `permissions` (`id`, `name`, `slug`, `description`, `created_at`, `updated_at`) VALUES (NULL, 'Ver Total de las ventas', 'cajatotalventa.show', 'A user see report caja Total Venta', NOW(), NOW());
+INSERT INTO `permissions` (`id`, `name`, `slug`, `description`, `created_at`, `updated_at`) VALUES (NULL, 'Ver Precio costo', 'cajapreciocosto.show', 'A user see report caja Precio Costo', NOW(), NOW());
+INSERT INTO `permissions` (`id`, `name`, `slug`, `description`, `created_at`, `updated_at`) VALUES (NULL, 'Ver Utilidad', 'cajautilidad.show', 'A user see report caja Utilidad', NOW(), NOW());
+INSERT INTO `permissions` (`id`, `name`, `slug`, `description`, `created_at`, `updated_at`) VALUES (NULL, 'Ver Totales', 'cajatotales.show', 'A user see report caja Totales', NOW(), NOW());
+
+INSERT INTO `permissions` (`id`, `name`, `slug`, `description`, `created_at`, `updated_at`) VALUES (NULL, 'Ver Datos Cargos', 'cargos.index', 'A user see transaction cargos', NOW(), NOW());
+INSERT INTO `permissions` (`id`, `name`, `slug`, `description`, `created_at`, `updated_at`) VALUES (NULL, 'Ver Datos Cargos detallados', 'cargos.show', 'A user see transaction cargos show', NOW(), NOW());
+INSERT INTO `permissions` (`id`, `name`, `slug`, `description`, `created_at`, `updated_at`) VALUES (NULL, 'Eliminar Datos Cargos detallados', 'cargos.destroy', 'A user see transaction cargos destroy', NOW(), NOW());
+INSERT INTO `permissions` (`id`, `name`, `slug`, `description`, `created_at`, `updated_at`) VALUES (NULL, 'Crear Cargos', 'cargos.create', 'A user create cargos', NOW(), NOW());
+
+
+INSERT INTO `permissions` (`id`, `name`, `slug`, `description`, `created_at`, `updated_at`) VALUES (NULL, 'Ver Datos Descargos','descargos.index', 'A user see transaction descargos', NOW(), NOW());
+INSERT INTO `permissions` (`id`, `name`, `slug`, `description`, `created_at`, `updated_at`) VALUES (NULL, 'Ver Datos Descargos detallados', 'descargos.show', 'A user see transaction descargos show', NOW(), NOW());
+INSERT INTO `permissions` (`id`, `name`, `slug`, `description`, `created_at`, `updated_at`) VALUES (NULL, 'Eliminar Datos Descargos detallados', 'descargos.destroy', 'A user see transaction descargos destroy', NOW(), NOW());
+INSERT INTO `permissions` (`id`, `name`, `slug`, `description`, `created_at`, `updated_at`) VALUES (NULL, 'Crear Descargos', 'descargos.create', 'A user create descargos', NOW(), NOW());
+
+INSERT INTO `permissions` (`id`, `name`, `slug`, `description`, `created_at`, `updated_at`) VALUES (NULL, 'Menu Transacciones', 'menu.transactions', 'A user see menu transactions', NOW(), NOW());
+
+INSERT INTO `permissions` (`id`, `name`, `slug`, `description`, `created_at`, `updated_at`) VALUES (NULL, 'Ver registro de Efectivo Venta en tasa', 'tasacampoefectivoventa.ver', 'A user see campo EfectivoVenta de tasa', NOW(), NOW());
+
+
