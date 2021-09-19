@@ -414,7 +414,7 @@
                 <div class="tab-pane" id="ventas">
                     <!-- Ventas -->
                     <div class="container-small text-sm">
-                        <form id="form1" action="{{ route('venta.store') }}" method="POST" autocomplete="off">
+                        <form id="form1" action="{{ route('venta.store') }}" method="POST" autocomplete="off" class="submit-prevent-form">
                             @csrf
                             <input id="modo" name="modo" type="hidden" value="">
                             <input id="precio_costo_unidad" name="precio_costo_unidad" type="hidden" value="">
@@ -602,7 +602,7 @@
                                                     </div>
                                                     <div class="col-lg-2 col-sm-2 col-md-2 col-xs-12">
                                                         <div class="form group">
-                                                            <button id="bt_add" type="button" "
+                                                            <button id="bt_add" type="button"
                                                                 class="btn btn-primary btn-md btn-block">Agregar</button>
                                                         </div>
                                                     </div>
@@ -863,7 +863,7 @@
                                                         <div class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12"
                                                             id="guardar">
                                                             <input name="_token" value="{{ csrf_token() }}" type="hidden">
-                                                            <button id="enviar" class="btn btn-primary btn-block"
+                                                            <button id="enviar" class="btn btn-primary btn-block submit-prevent-button"
                                                                 type="button">Guardar</button>
                                                         </div>
                                                         <div class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12"
@@ -1641,7 +1641,7 @@
                 $("#jstock").val(datosArticulo[1]);
 
 
-                stock           = datosArticulo[1]
+                stock           = datosArticulo[1];
                 porEspecial     = datosArticulo[4];
                 isDolar         = datosArticulo[5];
                 isPeso          = datosArticulo[6];

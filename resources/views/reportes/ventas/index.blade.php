@@ -127,6 +127,7 @@
                     </tr>
                 </tfoot>
             </table>
+            {{ $articulos->appends(request()->query())->links() }}
         </div>
         {{-- {{$categorias->render()}} --}}
     </div>

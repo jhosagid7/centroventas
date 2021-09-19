@@ -29,7 +29,7 @@
         @include('custom.message')
     </div>
 </div>
-<form action="{{ route('caja.store')}}" method="POST">
+<form action="{{ route('caja.store')}}" method="POST" class="submit-prevent-form">
 @csrf
 
 <div class="row">
@@ -45,7 +45,7 @@
     <input name="url" type="hidden" value="{{URL::previous()}}">
     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
         <div class="form-group col-md-3">
-            <h3><button class="btn btn-primary" type="submit"><span class='glyphicon glyphicon-save'></span> Abrir caja</button></h3>
+            <h3><button class="btn btn-primary submit-prevent-button" type="submit"><span class='glyphicon glyphicon-save'></span> Abrir caja</button></h3>
         </div>
         <div class="form-group col-md-3">
             <h3><a class="btn btn-danger" href="{{ url()->previous() }}"><span class='glyphicon glyphicon-step-backward'></span> Regresar</a></h3>

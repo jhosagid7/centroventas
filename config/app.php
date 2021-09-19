@@ -180,6 +180,7 @@ return [
         // App\Providers\SessionCajaProvider::class,
 
         Barryvdh\DomPDF\ServiceProvider::class,
+        Yajra\DataTables\DataTablesServiceProvider::class,
 
 
     ],
@@ -238,6 +239,7 @@ return [
         'DNS2D' => Milon\Barcode\Facades\DNS2DFacade::class,
 
         'PDF' => Barryvdh\DomPDF\Facade::class,
+        'DataTables' => Yajra\DataTables\Facades\DataTables::class,
 
 
     ],

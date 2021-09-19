@@ -13,6 +13,9 @@
                                 <i class="fa fa-clock-o"></i>
                             </div>
                         <input name="fecha" type="text" class="form-control pull-right" id="daterange-btn">
+                        <input name="fecha2" type="text" class="form-control pull-right hidden" id="fecha2" placeholder="fecha2">
+                        <input name="fechaInicio" type="text" class="form-control pull-right hidden" id="fechaInicio" value="{{ $fechaInicio }}" placeholder="fechaInicio">
+                        <input name="fechaFin" type="text" class="form-control pull-right hidden" id="fechaFin" value="{{ $fechaFin }}" placeholder="fechaFin">
                     </div>
                     <div class="form-group">
                         <div class="input-group">

@@ -32,6 +32,10 @@ class ReporteController extends Controller
         $tipo = $request->get('tipo');
         // $description = $request->get('descripcion');
         $fecha = $request->get('fecha');
+        $fechaInicio = $request->get('fechaInicio');
+        $fechaFin = $request->get('fechaFin');
+
+        $fecha2 = $request->get('fecha2');
 
         // if($request){
 
@@ -52,14 +56,13 @@ class ReporteController extends Controller
         ->tipo($tipo)
         // ->description($description)
         ->select('articulo_ventas.id','articulos.codigo','articulos.vender_al','articulos.nombre', 'articulos.porEspecial', 'articulos.isDolar', 'articulos.isPeso', 'articulos.isTransPunto', 'articulos.isMixto', 'articulos.isEfectivo','articulo_ventas.cantidad','articulo_ventas.precio_costo_unidad','articulo_ventas.precio_venta_unidad','articulo_ventas.descuento','articulo_ventas.created_at',DB::raw('sum(articulo_ventas.cantidad*articulo_ventas.precio_costo_unidad) as precio_costo_total'),DB::raw('sum(articulo_ventas.cantidad*articulo_ventas.precio_venta_unidad) as precio_venta_total'))
-        ->fecha($fecha)
+        ->fecha($fecha2)
         ->groupBy('articulo_ventas.id','articulos.codigo','articulos.vender_al','articulos.nombre', 'articulos.porEspecial', 'articulos.isDolar', 'articulos.isPeso', 'articulos.isTransPunto', 'articulos.isMixto', 'articulos.isEfectivo','articulo_ventas.cantidad','articulo_ventas.precio_costo_unidad','articulo_ventas.precio_venta_unidad','articulo_ventas.descuento','articulo_ventas.created_at')
-        ->get();
-
+        ->paginate(100);
 
         // return $articulos;
 
-        return view('reportes.ventas.index', ["title" => $title,"articulos" => $articulos]);
+        return view('reportes.ventas.index', ["title" => $title,"articulos" => $articulos,"fechaInicio" => $fechaInicio,"fechaFin" => $fechaFin]);
     }
 
     public function listadoInventario(){

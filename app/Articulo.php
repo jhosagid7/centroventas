@@ -42,15 +42,15 @@ class Articulo extends Model
     protected $guarded = [];
 
     public function articulo_ventas(){
-        return hasMany(Articulo_venta::class);
+        return $this->hasMany(Articulo_venta::class);
     }
 
     public function articulo_ingresos(){
-        return hasMany(Articulo_Ingreso::class);
+        return $this->hasMany(Articulo_Ingreso::class);
     }
 
     public function categoria(){
-        return belongsTo(Categoria::class);
+        return $this->belongsTo(Categoria::class);
     }
 
     public function scopeName($query, $name){
@@ -60,7 +60,7 @@ class Articulo extends Model
 
     public function scopeCodigo($query, $codigo){
         if($codigo)
-        return $query->where('articulos.codigo', 'LIKE', "$codigo");
+        return $query->where('articulos.codigo', 'LIKE', "%$codigo%");
     }
 
     public function scopeVenderaL($query, $venderal){
@@ -70,6 +70,10 @@ class Articulo extends Model
     public function scopeMayor($query){
 
         return $query->where('vender_al', '=', "Mayor");
+    }
+    public function scopeCategoria_id($query,$cat_id){
+
+        return $query->where('categoria_id', '=', "$cat_id");
     }
     public function scopeDetal($query){
 

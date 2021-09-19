@@ -147,7 +147,7 @@
 
                 </tfoot>
             </table>
-
+{{ $articulos->appends(request()->query())->links() }}
         </div>
         {{-- {{$articulos->render()}} --}}
     </div>
@@ -186,14 +186,16 @@
 
         }
         $( document ).ready( function() {
-    $("#print_button1").click(function(){
-        alert('entro');
-                var mode = 'iframe'; // popup
-                var close = mode == "popup";
-                var options = { mode : mode, popClose : close};
-                $("div.contePrint").printArea( options );
-            });
-    });
+
+
+        $("#print_button1").click(function(){
+            alert('entro');
+                    var mode = 'iframe'; // popup
+                    var close = mode == "popup";
+                    var options = { mode : mode, popClose : close};
+                    $("div.contePrint").printArea( options );
+                });
+        });
     </script>
     <script>
 

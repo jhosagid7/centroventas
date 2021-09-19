@@ -7,6 +7,7 @@ use App\Articulo;
 use App\Articulo_Ingreso;
 use App\Permission\Models\Role;
 // use Facade\FlareClient\Http;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Http;
 use App\Permission\Models\Permission;
@@ -138,7 +139,7 @@ Route::get('/origen', 'TransferenciaController@getProductoOrigenes')->name('orig
 Route::get('/destino', 'TransferenciaController@getProductoDestinos')->name('destino');
 
 Route::resource('reportes/ventas', 'ReporteController');
-Route::resource('reportes/ventas', 'ReporteController');
+// Route::resource('reportes/ventas', 'ReporteController');
 
 Route::get('/inventario', 'ReporteController@listadoInventario')->name('inventario');
 Route::get('/precios', 'ReporteController@listadoPrecio')->name('precios');

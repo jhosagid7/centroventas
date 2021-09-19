@@ -2,16 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
+use App\Articulo;
+use App\Categoria;
 use App\Http\Requests;
 
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Input;
-use App\Http\Requests\ArticuloFormRequest;
-use App\Articulo;
 use Illuminate\support;
-use DB;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Redirect;
+use App\Http\Requests\ArticuloFormRequest;
+
 
 class ArticuloController extends Controller
 {
@@ -30,6 +31,12 @@ class ArticuloController extends Controller
             $codigo = $request->get('codigo');
             $venderal = $request->get('venderal');
             $fecha = $request->get('fecha');
+            $fechaInicio = $request->get('fechaInicio');
+            $fechaFin = $request->get('fechaFin');
+
+            $fecha2 = $request->get('fecha2');
+            $categorias_id = $request->get('categorias_id');
+
 
 
             $tasaDolar = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Dolar')->first();
@@ -37,7 +44,7 @@ class ArticuloController extends Controller
             $tasaTransferenciaPunto = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Transferencia_Punto')->first();
             $tasaMixto = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Mixto')->first();
             $tasaEfectivo = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Efectivo')->first();
-
+            $categorias = Categoria::where('condicion', 'Activa')->get();
 
             $articulos = Articulo::select('articulos.id', 'articulos.codigo', 'articulos.nombre', 'articulos.stock', 'articulos.precio_costo', 'articulos.unidades', 'articulos.descripcion', 'articulos.imagen', 'articulos.estado', 'articulos.porEspecial', 'articulos.isDolar', 'articulos.isPeso', 'articulos.isTransPunto', 'articulos.isMixto', 'articulos.isEfectivo', 'categorias.nombre as categoria')
             ->join('categorias', 'articulos.categoria_id', '=', 'categorias.id')
@@ -46,13 +53,15 @@ class ArticuloController extends Controller
             ->name($name)
             ->codigo($codigo)
             ->venderal($venderal)
-            ->fecha($fecha)
+            ->Categoria_id($categorias_id)
+            ->fecha($fecha2)
             ->where('articulos.estado', 'Activo')
             // ->select('a.id', 'a.codigo', 'a.nombre', 'a.stock', 'a.precio_costo', 'a.unidades', 'a.descripcion', 'a.imagen', 'a.estado', 'c.nombre as categoria')
             ->orderBy('id', 'desc')
-            ->get();
+            ->paginate(100);
 // return $articulos;
-            return view('almacen.articulo.index', ["tasaDolar" => $tasaDolar,"tasaPeso" => $tasaPeso,"tasaTransferenciaPunto" => $tasaTransferenciaPunto,"tasaMixto" => $tasaMixto,"tasaEfectivo" => $tasaEfectivo,"articulos" => $articulos]);
+            // return redirect()->back()->withInput();
+            return view('almacen.articulo.index', ["categorias" => $categorias,"tasaDolar" => $tasaDolar,"tasaPeso" => $tasaPeso,"tasaTransferenciaPunto" => $tasaTransferenciaPunto,"tasaMixto" => $tasaMixto,"tasaEfectivo" => $tasaEfectivo,"articulos" => $articulos,"oldCat" => $categorias_id,"name" => $name,"codigo" => $codigo,"venderal" => $venderal,"fechaInicio" => $fechaInicio,"fechaFin" => $fechaFin]);
         }
     }
     public function create()

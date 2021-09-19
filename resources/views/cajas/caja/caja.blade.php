@@ -39,7 +39,7 @@
 </div>
 
 
-        <form action="{{ route('caja.update', $caja->id ?? '' )}}" enctype="multipart/form-data" method="POST" autocomplete="off">
+        <form action="{{ route('caja.update', $caja->id ?? '' )}}" enctype="multipart/form-data" method="POST" autocomplete="off" class="submit-prevent-form">
             @csrf
             @method('PUT')
             <div class="row">
@@ -55,7 +55,7 @@
                 <input name="url" type="hidden" value="{{URL::previous()}}">
                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                     <div class="form-group col-md-3">
-                        <h3><button class="btn btn-danger" type="submit"><span class='glyphicon glyphicon-save'></span> Cerrar</button></h3>
+                        <h3><button class="btn btn-danger submit-prevent-button" type="submit"><span class='glyphicon glyphicon-save'></span> Cerrar</button></h3>
                     </div>
                     <div class="form-group col-md-3">
                         <h3><a  id="cerrarModal" class="btn btn-success" href="#"><span class='glyphicon glyphicon-step-backward'></span> <span class="button" data-dismiss="modal" aria-label="Close">cancel</span></a></h3>

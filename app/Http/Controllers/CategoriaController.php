@@ -24,6 +24,10 @@ class CategoriaController extends Controller
         $condition = $request->get('condition');
         $description = $request->get('descripcion');
         $fecha = $request->get('fecha');
+        $fechaInicio = $request->get('fechaInicio');
+        $fechaFin = $request->get('fechaFin');
+
+        $fecha2 = $request->get('fecha2');
 
         if($request){
 
@@ -31,9 +35,9 @@ class CategoriaController extends Controller
             ->nombre($nombre)
             ->condition($condition)
             ->description($description)
-            ->fecha($fecha)
+            ->fecha($fecha2)
             ->get();
-            return view("almacen.categoria.index",["categorias"=>$categorias]);
+            return view("almacen.categoria.index",["categorias"=>$categorias,"fechaInicio"=>$fechaInicio,"fechaFin"=>$fechaFin]);
         }
 
     }

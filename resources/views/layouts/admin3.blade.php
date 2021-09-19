@@ -45,7 +45,7 @@
   <link rel="stylesheet" href="{{asset('bower_components/jvectormap/jquery-jvectormap.css')}}">
 
 
-
+<link rel="stylesheet" href="{{asset('css/submit.css')}}">
 
   <!-- Google Font -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
@@ -669,7 +669,7 @@
 <!-- AdminLTE App -->
 <script src="{{asset('dist/js/adminlte.min.js')}}"></script>
 <!-- AdminLTE for demo purposes -->
-<script src="{{asset('dist/js/demo.js')}}"></script>
+
 <!-- Bootstrap 3.3.7 -->
 <script src="{{asset('Datatables/datatables.min.js')}}"></script>
 {{-- <!-- Bootstrap 3.3.7 -->
@@ -692,7 +692,8 @@
 <script type="text/javascript" src="{{asset('Buttons-1.6.2/js/buttons.colVis.min.js')}}"></script>
 <script type="text/javascript" src="{{asset('Buttons-1.6.2/js/buttons.html5.min.js')}}"></script>
 <script type="text/javascript" src="{{asset('Buttons-1.6.2/js/buttons.print.min.js')}}"></script> --}}
-
+<script src="{{asset('dist/js/demo.js')}}"></script>
+<script src="{{asset('js/submit.js')}}"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
 {{-- <script src="{{asset('bower_components/jquery-sparkline/dist/jquery.sparkline.min.js')}}"></script>
 <script src="{{asset('plugins/jvectormap/jquery-jvectormap-1.2.2.min.js')}}"></script>
@@ -705,164 +706,186 @@
 <script>
     $(document).ready(function() {
 
-$('form').keypress(function(e){
-  if(e == 13){
-    return false;
-  }
-});
+        $('form').keypress(function(e){
+        if(e == 13){
+            return false;
+        }
+        });
 
-$('input').keypress(function(e){
-  if(e.which == 13){
-    return false;
-  }
-});
-
-});
-  </script>
-<script>
+        $('input').keypress(function(e){
+        if(e.which == 13){
+            return false;
+        }
+        });
 
 
-    $(document).ready(function() {
-    // Funcion JavaScript para la conversion a mayusculas
-    $(function() {
-                $('.mayuscula').on('input', function() {
-                    this.value = this.value.toUpperCase();
+
+
+
+        // Funcion JavaScript para la conversion a mayusculas
+        $(function() {
+                    $('.mayuscula').on('input', function() {
+                        this.value = this.value.toUpperCase();
+                    });
+                });
+
+        $(function() {
+            $('.titulo').on('input', function() {
+                this.value = this.value.replace(/^([a-z\u00E0-\u00FC])|\s+([a-z\u00E0-\u00FC])/g, function($1){
+                    return $1.toUpperCase();
                 });
             });
-
-    $(function() {
-        $('.titulo').on('input', function() {
-            this.value = this.value.replace(/^([a-z\u00E0-\u00FC])|\s+([a-z\u00E0-\u00FC])/g, function($1){
-                return $1.toUpperCase();
-            });
         });
-    });
-
-    });
 
 
 
-    </script>
-<script type="text/javascript">
-$('.titulo').css('textTransform', 'capitalize');
-function imprimir() {
-	window.print();
-}
-    // jQuery(document).ready(function() {
-    // jQuery('#arti').DataTable({
-    // rowReorder: {
-    // selector: 'td:nth-child(2)'
-    // },
-    // responsive: true,
-    // "language": {
-    // "url": "//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json"
-    // },
-    // "paging": true,
-    // "processing": true,
 
-    // dom: 'lBfrtip',
-    // buttons: [
-    // 'excel', 'pdf', 'print',
-    // ],
-    // "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]]
-    // } );
-    // } );
 
-    </script>
-<script>
-    $(function () {
-      //Initialize Select2 Elements
-      $('.select2').select2()
 
-      //Datemask dd/mm/yyyy
-      $('#datemask').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' })
-      //Datemask2 mm/dd/yyyy
-      $('#datemask2').inputmask('mm/dd/yyyy', { 'placeholder': 'mm/dd/yyyy' })
-      //Money Euro
-      $('[data-mask]').inputmask()
-
-      //Date range picker
-      $('#reservation').daterangepicker()
-      //Date range picker with time picker
-      $('#reservationtime').daterangepicker({ timePicker: true, timePickerIncrement: 30, locale: { format: 'MM/DD/YYYY hh:mm A' }})
-      //Date range as a button
-      $('#daterange-btn').daterangepicker(
-        {
-            locale: {
-            applyLabel: "Aplicar",
-            cancelLabel: "Cancelar",
-            customRangeLabel: 'Rango Personalizado',
-            daysOfWeek: [
-                "Do",
-                "Lu",
-                "Ma",
-                "Mi",
-                "Ju",
-                "Vi",
-                "Sa"
-            ],
-            monthNames: [
-                "Enero",
-                "Febrero",
-                "Marzo",
-                "Abril",
-                "Mayo",
-                "Junio",
-                "Julio",
-                "Agosto",
-                "Setiembre",
-                "Octubre",
-                "Noviembre",
-                "Diciembre"
-            ]},
-            ranges   : {
-                'Hoy'       : [moment(), moment()],
-                'Ayer'   : [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                'Ultimos 7 Días' : [moment().subtract(6, 'days'), moment()],
-                'Ultimos 30 Días': [moment().subtract(29, 'days'), moment()],
-                'Este Mes'  : [moment().startOf('month'), moment().endOf('month')],
-                'Mes Pasado'  : [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-            },
-            startDate: moment().subtract(29, 'days'),
-            endDate  : moment()
-        },
-        function (start, end) {
-          $('#daterange-btn span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'))
+        $('.titulo').css('textTransform', 'capitalize');
+        function imprimir() {
+            window.print();
         }
-      )
+        // jQuery(document).ready(function() {
+        // jQuery('#arti').DataTable({
+        // rowReorder: {
+        // selector: 'td:nth-child(2)'
+        // },
+        // responsive: true,
+        // "language": {
+        // "url": "//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json"
+        // },
+        // "paging": true,
+        // "processing": true,
+
+        // dom: 'lBfrtip',
+        // buttons: [
+        // 'excel', 'pdf', 'print',
+        // ],
+        // "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]]
+        // } );
+        // } );
 
 
-      //Date picker
-      $('#datepicker').datepicker({
-        autoclose: true
-      })
 
-      //iCheck for checkbox and radio inputs
-      $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
-        checkboxClass: 'icheckbox_minimal-blue',
-        radioClass   : 'iradio_minimal-blue'
-      })
-      //Red color scheme for iCheck
-      $('input[type="checkbox"].minimal-red, input[type="radio"].minimal-red').iCheck({
-        checkboxClass: 'icheckbox_minimal-red',
-        radioClass   : 'iradio_minimal-red'
-      })
-      //Flat red color scheme for iCheck
-      $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
-        checkboxClass: 'icheckbox_flat-green',
-        radioClass   : 'iradio_flat-green'
-      })
+        $(function () {
+        //Initialize Select2 Elements
+        //   $('.select2').select2()
 
-      //Colorpicker
-      $('.my-colorpicker1').colorpicker()
-      //color picker with addon
-      $('.my-colorpicker2').colorpicker()
+        //   //Datemask dd/mm/yyyy
+        //   $('#datemask').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' })
+        //   //Datemask2 mm/dd/yyyy
+        //   $('#datemask2').inputmask('mm/dd/yyyy', { 'placeholder': 'mm/dd/yyyy' })
+        //   //Money Euro
+        //   $('[data-mask]').inputmask()
 
-      //Timepicker
-      $('.timepicker').timepicker({
-        showInputs: false
-      })
-    })
-  </script>
+        //Date range picker
+        //   $('#reservation').daterangepicker()
+        //   //Date range picker with time picker
+        //   $('#reservationtime').daterangepicker({ timePicker: true, timePickerIncrement: 30, locale: { format: 'MM/DD/YYYY hh:mm A' }})
+        //Date range as a button
+
+            var fi = $('#fechaInicio').val();
+            var ff = $('#fechaFin').val();
+
+            if (fi == '' && ff == '') {
+                fi = moment().subtract('days', 29);
+                ff = moment();
+            }
+
+            $('#daterange-btn').daterangepicker(
+                {
+                    startDate: fi,
+                    endDate: ff,
+                    locale: {
+                    applyLabel: "Aplicar",
+                    cancelLabel: "Cancelar",
+                    customRangeLabel: 'Rango Personalizado',
+                    format: 'DD/MM/YYYY',
+                    daysOfWeek: [
+                        "Do",
+                        "Lu",
+                        "Ma",
+                        "Mi",
+                        "Ju",
+                        "Vi",
+                        "Sa"
+                    ],
+                    monthNames: [
+                        "Enero",
+                        "Febrero",
+                        "Marzo",
+                        "Abril",
+                        "Mayo",
+                        "Junio",
+                        "Julio",
+                        "Agosto",
+                        "Setiembre",
+                        "Octubre",
+                        "Noviembre",
+                        "Diciembre"
+                    ]},
+                    ranges   : {
+                        'Hoy'       : [moment(), moment()],
+                        'Ayer'   : [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                        'Ultimos 7 Días' : [moment().subtract(6, 'days'), moment()],
+                        'Ultimos 30 Días': [moment().subtract(29, 'days'), moment()],
+                        'Este Mes'  : [moment().startOf('month'), moment().endOf('month')],
+                        'Mes Pasado'  : [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                    },
+                    // startDate: moment().subtract(29, 'days'),
+                    // endDate  : moment()
+                    // startDate = start;
+                    // endDate = end;
+                },
+                function(start, end) {
+                console.log("Callback has been called!");
+                $('#daterange-btn span').html(start.format('DD MM YYYY') + ' - ' + end.format('DD MM YYYY'));
+                $('#fechaInicio').val(start.format('DD MM YYYY'));
+                $('#fechaFin').val(end.format('DD MM YYYY'));
+                startDate = start;
+                endDate = end;
+                $('#fecha2').val(startDate.format('YYYY/MM/DD') + ' - ' + endDate.format('YYYY/MM/DD'))
+
+            }
+                // function (start, end) {
+                //     $('#daterange-btn span').html(start.format('DD MMMM YYYY') + ' - ' + end.format('D MMMM YYYY'))
+                // }
+            )
+
+
+            //Date picker
+            //   $('#datepicker').datepicker({
+            //     autoclose: true
+            //   })
+
+            //   //iCheck for checkbox and radio inputs
+            //   $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
+            //     checkboxClass: 'icheckbox_minimal-blue',
+            //     radioClass   : 'iradio_minimal-blue'
+            //   })
+            //   //Red color scheme for iCheck
+            //   $('input[type="checkbox"].minimal-red, input[type="radio"].minimal-red').iCheck({
+            //     checkboxClass: 'icheckbox_minimal-red',
+            //     radioClass   : 'iradio_minimal-red'
+            //   })
+            //   //Flat red color scheme for iCheck
+            //   $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
+            //     checkboxClass: 'icheckbox_flat-green',
+            //     radioClass   : 'iradio_flat-green'
+            //   })
+
+            //Colorpicker
+            //   $('.my-colorpicker1').colorpicker()
+            //   //color picker with addon
+            //   $('.my-colorpicker2').colorpicker()
+
+            //Timepicker
+            //   $('.timepicker').timepicker({
+            //     showInputs: false
+            //   })
+            })
+    });
+</script>
 </body>
 </html>
