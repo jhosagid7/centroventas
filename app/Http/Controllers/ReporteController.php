@@ -144,23 +144,37 @@ class ReporteController extends Controller
     }
 
     public function reportIngresosShow(Request $request){
+        // return $request;
         $fecha = $request->get('fecha');
         $estado = $request->get('estado');
         $proveedor = $request->get('proveedor');
         $operador = $request->get('operador');
         $title = 'Reporte General de Compras';
-        $ingresos = Ingreso::fecha($fecha)
+        $fechaInicio = $request->get('fechaInicio');
+            $fechaFin = $request->get('fechaFin');
+
+            $fecha2 = $request->get('fecha2');
+
+            if($fecha2 == null){
+                $fechaData = $fecha;
+
+            }else{
+                $fechaData = $fecha2;
+            }
+
+
+        $ingresos = Ingreso::fecha($fechaData)
         ->estado($estado)
         ->proveedor($proveedor)
         ->operador($operador)
         ->get();
 
-        if($fecha){
-            list($fecha_inicio, $fecha_fin) = explode(" - ", $fecha);
+        if($fechaData){
+            list($fecha_inicio, $fecha_fin) = explode(" - ", $fechaData);
                 $fecha_inicio = Carbon::parse($fecha_inicio)->format('d-m-Y');
                 $fecha_fin = Carbon::parse($fecha_fin)->format('d-m-Y');
 
-            }
+        }
 
 
             $detallado = ($request->get('detallado') == 'on' ? '' : 'hidden');

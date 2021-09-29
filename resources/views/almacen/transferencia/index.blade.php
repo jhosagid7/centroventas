@@ -92,6 +92,7 @@
                     @endforeach
                 </tbody>
             </table>
+            {{ $transferencias->appends(request()->query())->links() }}
         </div>
         {{-- {{$ingresos->render()}} --}}
     </div>

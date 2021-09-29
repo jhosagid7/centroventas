@@ -98,7 +98,7 @@
 
                 </tbody>
             </table>
-
+            {{-- {{ $cargos->appends(request()->query())->links() }} --}}
 
         </div>
 

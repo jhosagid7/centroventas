@@ -243,7 +243,7 @@
                                                                     </tr>
                                                                 </thead>
                                                                 <tbody>
-                                                                    @foreach ($ventas as $venta)
+                                                                    @foreach ($cajas->ventas as $venta)
                                                                         <tr>
                                                                             <td>{{ $venta->num_comprobante }}</td>
                                                                             <td>{{ $venta->nombre }}</td>

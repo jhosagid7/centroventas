@@ -74,6 +74,7 @@
                     @endforeach
                 </tbody>
             </table>
+            {{ $ventas->appends(request()->query())->links() }}
         </div>
 
     </div>

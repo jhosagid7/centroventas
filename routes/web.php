@@ -150,8 +150,10 @@ Route::get('/reporte-compras', 'ReporteController@reportIngresosShow')->name('re
 
 Route::resource('/cargos', 'CargoController', ['except'=>[
     'edit', 'update'
-]])->names('cargo');
+    ]])->names('cargo');
 
 Route::resource('/descargos', 'DescargoController', ['except'=>[
-    'edit', 'update'
-]])->names('descargo');
+        'edit', 'update'
+        ]])->names('descargo');
+
+Route::get('/ventas/consulta', 'ConsultaController@precioVenta')->name('consulta');

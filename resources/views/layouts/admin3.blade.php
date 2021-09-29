@@ -766,7 +766,16 @@
         // } );
         // } );
 
+        var fi = $('#fechaInicio').val();
+        var ff = $('#fechaFin').val();
+        if (fi == '' || fi == null && ff == '' || ff == null) {
 
+                fi = moment().subtract('days', 29);
+                ff = moment();
+                $('#fecha2').val(fi.format('YYYY/MM/DD') + ' - ' + ff.format('YYYY/MM/DD'))
+                $('#fechaInicio').val(fi.format('DD/MM/YYYY'));
+                $('#fechaFin').val(ff.format('DD/MM/YYYY'));
+            }
 
         $(function () {
         //Initialize Select2 Elements
@@ -785,13 +794,9 @@
         //   $('#reservationtime').daterangepicker({ timePicker: true, timePickerIncrement: 30, locale: { format: 'MM/DD/YYYY hh:mm A' }})
         //Date range as a button
 
-            var fi = $('#fechaInicio').val();
-            var ff = $('#fechaFin').val();
 
-            if (fi == '' && ff == '') {
-                fi = moment().subtract('days', 29);
-                ff = moment();
-            }
+
+
 
             $('#daterange-btn').daterangepicker(
                 {

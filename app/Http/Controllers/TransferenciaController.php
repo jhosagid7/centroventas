@@ -29,14 +29,18 @@ class TransferenciaController extends Controller
         $accion = $request->get('accion');
         $fecha = $request->get('fecha');
 
+        $fechaInicio = $request->get('fechaInicio');
+        $fechaFin = $request->get('fechaFin');
+        $fecha2 = $request->get('fecha2');
+
         $title = 'Transferencias Realizadas';
         $transferencias = Transferencia::orderBy('id','DESC')
         ->nombre($nombre)
         ->accion($accion)
-        ->fecha($fecha)
-        ->get();
+        ->fecha($fecha2)
+        ->paginate(10000);
 
-        return view('almacen.transferencia.index', compact('transferencias', 'title'));
+        return view('almacen.transferencia.index', compact('transferencias', 'title', 'fechaInicio', 'fechaFin', 'fecha2'));
     }
 
     public function getProductoOrigenes(Request $request){

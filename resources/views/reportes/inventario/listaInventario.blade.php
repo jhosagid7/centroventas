@@ -39,6 +39,7 @@
                 <thead>
                     <th>Id</th>
                     <th>Nombre</th>
+                    <th>Categoría</th>
                     <th>Código</th>
                     <th>Stock</th>
                     <th class="hidden">Cant</th>
@@ -65,6 +66,7 @@
                         <td>{{ $art->id }}</td>
 
                         <td>{{ $art->nombre }}</td>
+                        <td>{{ $art->categoria }}</td>
                         <td>
                             {{ $art->codigo }}
                         </td>
@@ -102,6 +104,9 @@
     </a>
 </div> --}}
 <!-- /.box-footer-->
+@php
+    $pdftitle = 'Planilla de Inventario';
+@endphp
 </div>
 <!-- /.box -->
 
@@ -184,7 +189,7 @@ var table = jQuery(document).ready(function() {
                     },
                     alignment: "center",
 
-                    exportOptions: { columns: [0,1,2,3,4,5] } ,
+                    exportOptions: { columns: [0,1,2,3,4,5,6] } ,
                     // pageSize : 'A0',
                     orientation : 'portrait',
                     pageSize : 'LEGAL',
@@ -196,20 +201,21 @@ var table = jQuery(document).ready(function() {
                     extend:'pdfHtml5',
                     text: '<i class="fa fa-file-pdf-o fa-inverse"></i>',
                     title : function() {
-                    return "Planilla de Inventario";
+                        let plan = '<?php echo "$pdftitle" ?>'
+                    return plan;
                     },
                     alignment: "center",
                     customize : function(doc){
                     doc.styles.tableHeader.alignment = 'left'; //giustifica a sinistra titoli colonne
-                    doc.content[1].table.widths = [20,170,80,40,40,150]; //costringe le colonne ad occupare un dato spazio per gestire il baco del 100% width che non si concretizza mai
+                    doc.content[1].table.widths = [30,350,180,90,40,40,150]; //costringe le colonne ad occupare un dato spazio per gestire il baco del 100% width che non si concretizza mai
                     },
                     exportOptions: {
-                        columns: [0,1,2,3,4,5],
+                        columns: [0,1,2,3,4,5,6],
                         stripHtml: true,
 
                     } ,
                     // pageSize : 'A3',
-                    orientation : 'portrait',//portrait landscape
+                    orientation : 'landscape',//portrait landscape
                     pageSize : 'LEGAL',
                     titleAttr:'Exportar a PDF',
                     className:'btn btn-danger',
@@ -223,7 +229,7 @@ var table = jQuery(document).ready(function() {
                     },
                     alignment: "center",
 
-                    exportOptions: { columns: [0,1,2,3,4,5] } ,
+                    exportOptions: { columns: [0,1,2,3,4,5,6] } ,
                     // pageSize : 'A0',
                     orientation : 'portrait',
                     pageSize : 'LEGAL',

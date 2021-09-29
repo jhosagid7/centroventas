@@ -57,7 +57,7 @@
                             </div>
                             <input type="text" class='form-control' id="name" name="name" placeholder="Nombre..." value="{{ $name ?? '' }}">
                             <span class="input-group-btn">
-                                <button class="btn btn-primary" type="submit"><i class='glyphicon glyphicon-search'></i> Buscar</button>
+                                <button id="saveBtn" class="btn btn-primary" type="submit"><i class='glyphicon glyphicon-search'></i> Buscar</button>
                             </span>
                         </div>
                     </div>

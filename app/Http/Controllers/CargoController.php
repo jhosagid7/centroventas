@@ -25,14 +25,19 @@ class CargoController extends Controller
      */
     public function index(Request $request)
     {
+        // return $request;
         $fecha = $request->get('fecha');
         $operador = $request->get('operador');
         $estado = $request->get('estado');
 
-        $users = User::where('id','<>', '1')->where('id','<>', '2')->get();
+        $fechaInicio = $request->get('fechaInicio');
+        $fechaFin = $request->get('fechaFin');
+        $fecha2 = $request->get('fecha2');
 
+        $users = User::where('id','<>', '1')->where('id','<>', '2')->get();
+// return $request;
         $cargos = Transaction::where('tipo_operacion', '=', 'Cargo')
-        ->fecha($fecha)
+        ->fecha($fecha2)
         ->operador($operador)
         ->estado($estado)
         ->get();

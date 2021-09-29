@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
 use App\Persona;
+
 use App\Http\Requests;
-use App\Http\Requests\PersonaFormRequest;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
-use DB;
+use App\Http\Requests\PersonaFormRequest;
 
 class ProveedorController extends Controller
 {
@@ -26,7 +26,7 @@ class ProveedorController extends Controller
                 ->orwhere('num_documento', 'LIKE', '%' . $query . '%')
                 ->where('tipo_persona', '=', 'Proveedor')
                 ->orderBy('id', 'desc')
-                ->paginate(7);
+                ->paginate(200);
 
             return view('compras.proveedor.index', ["personas" => $personas, "buscarTexto" => $query]);
         }

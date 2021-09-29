@@ -65,23 +65,30 @@
     </head>
     <body>
         <div class="flex-center position-ref full-height">
+
             @if (Route::has('login'))
                 <div class="top-right links">
+
                     @auth
                         <a href="{{ url('/home') }}">Home</a>
+
                     @else
+                    <a href="{{ route('consulta') }}">consulta</a>
                         <a href="{{ route('login') }}">{{__('Login')}}</a>
 
                         @if (Route::has('register'))
                             <a href="{{ route('register') }}">Registrarce</a>
                         @endif
+
                     @endauth
                 </div>
+            @else
+
             @endif
 
             <div class="content">
                 <div class="title m-b-md">
-                    {{ config('app.name', 'VillaSoft') }}
+                    <a style="text-decoration:none; color: black;" href="{{ route('consulta') }}"> {{ config('app.name', 'VillaSoft') }}</a>
                 </div>
 
                 {{-- <div class="links">
