@@ -25,7 +25,7 @@ class ArticuloController extends Controller
     public function index(Request $request)
     {
 
-        // return $request;
+        // return $request; p
         if ($request) {
             $name = $request->get('name');
             $codigo = $request->get('codigo');
