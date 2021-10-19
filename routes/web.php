@@ -157,3 +157,4 @@ Route::resource('/descargos', 'DescargoController', ['except'=>[
         ]])->names('descargo');
 
 Route::get('/ventas/consulta', 'ConsultaController@precioVenta')->name('consulta');
+Route::resource('/bancos/banco', 'BancoController');

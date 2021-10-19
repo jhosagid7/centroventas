@@ -77,11 +77,11 @@
                         <td>{{ $caja->caja }}</td>
                         <td>
                         <a href="{{URL::action('CajaController@show', $caja->id)}}"><button class='btn btn-info btn-sm'><span class='glyphicon glyphicon-edit'></span></button></a>
-                        @if ($caja->estado === 'Cerrada')
+                        {{-- @if ($caja->estado === 'Cerrada')
                         <button class='btn btn-danger btn-sm disabled'><i class='glyphicon glyphicon-trash'></i></button>
                         @else
                         <a href="" data-target="#modal-delete-{{$caja->id}}" data-toggle="modal"><button class='btn btn-danger btn-sm'><i class='glyphicon glyphicon-trash'></i></button></a>
-                        @endif
+                        @endif --}}
 
                         </td>
                     </tr>
@@ -90,7 +90,7 @@
                     {{-- @include('almacen.categoria.nuevo_modal') --}}
                 </tbody>
             </table>
-            @include('cajas.caja.caja')
+            {{-- @include('cajas.caja.caja') --}}
         </div>
         {{-- {{$categorias->render()}} --}}
     </div>

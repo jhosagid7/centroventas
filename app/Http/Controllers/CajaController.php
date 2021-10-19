@@ -9,7 +9,10 @@ use App\Articulo;
 use Carbon\Carbon;
 use App\Sessioncaja;
 use App\Contabilidad;
+use App\ControlStock;
 use App\Denominacion;
+use App\SaldosMovimiento;
+use App\Transaccion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
@@ -45,6 +48,8 @@ class CajaController extends Controller
         }
 
 
+
+
     // return $cajas;
     return view('cajas.caja.index', compact('mostrarNuvaVenta','cajas', 'denominacion_dolar', 'denominacion_peso', 'denominacion_bolivar'));
     }
@@ -78,14 +83,14 @@ class CajaController extends Controller
         // return $request;
         try{
             DB::beginTransaction();
-            $date   = Carbon::now('America/Caracas');
-            $fecha  = $date->format('d-m-Y');
-            $year   = $date->format('Y');
-            $mes    = $date->format('m');
-            $hora   = $date->format('h:i:s A');
-            $idUsuario = $request->get('idusuario');
-            $session_id = $request->get('session_id');
-            $estatus_caja = 'Apertura';
+            $date              = Carbon::now('America/Caracas');
+            $fecha             = $date->format('d-m-Y');
+            $year              = $date->format('Y');
+            $mes               = $date->format('m');
+            $hora              = $date->format('h:i:s A');
+            $idUsuario         = $request->get('idusuario');
+            $session_id        = $request->get('session_id');
+            $estatus_caja      = 'Apertura';
 
             $tasaVentaEfectivo = Tasa::where('nombre', 'efectivoVenta')->first();
 
@@ -93,7 +98,7 @@ class CajaController extends Controller
                 $Caja = new Caja;
                 $Caja->codigo               = '';
                 $Caja->fecha                = $fecha;
-                $Caja->hora_cierre          = 'Sin cerrrar';
+                $Caja->hora_cierre          = 'Sin cerrar';
                 $Caja->hora                 = $hora;
                 $Caja->mes                  = $mes;
                 $Caja->year                 = $year;
@@ -122,132 +127,29 @@ class CajaController extends Controller
 
 
 
-//////////////////////////////////////////////////////////////////////////////////////////////////// BsubTotald
-            $bcantidadR = $request->get('bcantidad');
-            $BsubTotaldR = $request->get('BsubTotald');
-            $bvalorR = $request->get('bvalor');
-            $btipoR = $request->get('btipo');
-            $bdenominacionR = $request->get('bdenominacion');
 
-            $BsubTotaldR = array_filter($BsubTotaldR);
-
-
-            if ($BsubTotaldR) {
-                foreach($BsubTotaldR as $key => $val) {
-
-                    $bcantidad[]=$bcantidadR[$key];
-                    $BsubTotald[]=$BsubTotaldR[$key];
-                    $bvalor[]=$bvalorR[$key];
-                    $btipo[]=$btipoR[$key];
-                    $bdenominacion[]=$bdenominacionR[$key];
-                }
-
-                // dd($bcantidadR, $BsubTotaldR,$bvalorR,$btipoR,$bdenominacionR);
-                //creamos un contador
-                $cont = 0;
-
-                //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
-                while ($cont < count($BsubTotald)) {
-
-                    $detalleBolso = new Contabilidad();
-                    $detalleBolso->denominacion = $bdenominacion[$cont];//este idingreso se autogenera cuando se crea el objeto en la parte superior (*)
-                    $detalleBolso->valor = $bvalor[$cont];
-                    $detalleBolso->cantidad = $bcantidad[$cont];
-                    $detalleBolso->subtotal = $BsubTotald[$cont];
-                    $detalleBolso->tipo = $btipo[$cont];
-                    $detalleBolso->modo = $estatus_caja;
-                    $detalleBolso->caja_id = $Caja->id;
-                    $detalleBolso->save();
-
-                    $cont = $cont+1;
-                }
-            }
-
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            $pcantidadR = $request->get('pcantidad');
-            $PsubTotaldR = $request->get('PsubTotald');
-            $pvalorR = $request->get('pvalor');
-            $ptipoR = $request->get('ptipo');
-            $pdenominacionR = $request->get('pdenominacion');
-
-            $PsubTotaldR = array_filter($PsubTotaldR);
-
-            if ($PsubTotaldR) {
-                foreach($PsubTotaldR as $key => $val) {
-
-                    $pcantidad[]=$pcantidadR[$key];
-                    $PsubTotald[]=$PsubTotaldR[$key];
-                    $pvalor[]=$pvalorR[$key];
-                    $ptipo[]=$ptipoR[$key];
-                    $pdenominacion[]=$pdenominacionR[$key];
-                }
-                // dd($divisa, $MontoDivisa,$TasaTike,$MontoDolar,$Veltos);
-                //creamos un contador
-                $cont = 0;
-
-                //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
-                while ($cont < count($PsubTotald)) {
-
-                    $detalleBolsoP = new Contabilidad();
-                    $detalleBolsoP->denominacion = $pdenominacion[$cont];//este idingreso se autogenera cuando se crea el objeto en la parte superior (*)
-                    $detalleBolsoP->valor = $pvalor[$cont];
-                    $detalleBolsoP->cantidad = $pcantidad[$cont];
-                    $detalleBolsoP->subtotal = $PsubTotald[$cont];
-                    $detalleBolsoP->tipo = $ptipo[$cont];
-                    $detalleBolsoP->modo = $estatus_caja;
-                    $detalleBolsoP->caja_id = $Caja->id;
-                    $detalleBolsoP->save();
-
-                    $cont = $cont+1;
-                }
-            }
-
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            $dcantidadR = $request->get('dcantidad');
-            $DsubTotaldR = $request->get('DsubTotald');
-            $dvalorR = $request->get('dvalor');
-            $dtipoR = $request->get('dtipo');
-            $ddenominacionR = $request->get('ddenominacion');
-
-            $DsubTotaldR = array_filter($DsubTotaldR);
-
-            if ($DsubTotaldR) {
-                foreach($DsubTotaldR as $key => $val) {
-
-                    $dcantidad[]=$dcantidadR[$key];
-                    $DsubTotald[]=$DsubTotaldR[$key];
-                    $dvalor[]=$dvalorR[$key];
-                    $dtipo[]=$dtipoR[$key];
-                    $ddenominacion[]=$ddenominacionR[$key];
-                }
-                // dd($divisa, $MontoDivisa,$TasaTike,$MontoDolar,$Veltos);
-                //creamos un contador
-                $cont = 0;
-
-                //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
-                while ($cont < count($DsubTotald)) {
-
-                    $detalleBolsoD = new Contabilidad();
-                    $detalleBolsoD->denominacion = $ddenominacion[$cont];//este idingreso se autogenera cuando se crea el objeto en la parte superior (*)
-                    $detalleBolsoD->valor = $dvalor[$cont];
-                    $detalleBolsoD->cantidad = $dcantidad[$cont];
-                    $detalleBolsoD->subtotal = $DsubTotald[$cont];
-                    $detalleBolsoD->tipo = $dtipo[$cont];
-                    $detalleBolsoD->modo = $estatus_caja;
-                    $detalleBolsoD->caja_id = $Caja->id;
-                    $detalleBolsoD->save();
-
-                    $cont = $cont+1;
-                }
-            }
 
             $UserName = $request->user();
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                //when we open the box we inital the stock
+
+                $stocks = self::get_product_stock(['id','stock','nombre']);
+
+                if($stocks){
+                    foreach ($stocks as $value) {
+                        $control_stock = new ControlStock();
+                        $control_stock->stock_inicio = $value->stock;
+                        $control_stock->user_id  = $idUsuario;
+                        $control_stock->articulo_id  = $value->id;
+                        $control_stock->caja_id  = $Caja->id;
+                        $control_stock->save();
+                    }
+
+                }
+                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
             DB::commit();
 
@@ -286,6 +188,12 @@ class CajaController extends Controller
         // $tasa_efectivoVenta = Tasa::where('nombre', 'efectivoVenta')->first();
         // return $cajas;
 
+        $tasaDolar = DB::table('tasas')->where('nombre', '=', 'Dolar')->first();
+        $tasaPeso = DB::table('tasas')->where('nombre', '=', 'Peso')->first();
+        $tasaTransferenciaPunto = DB::table('tasas')->where('nombre', '=', 'Transferencia_Punto')->first();
+        $tasaMixto = DB::table('tasas')->where('nombre', '=', 'Mixto')->first();
+        $tasaEfectivo = DB::table('tasas')->where('nombre', '=', 'Efectivo')->first();
+
         // $sumaDivisa = Venta::find(6);
         // $sumaDivisa->pago_ventas;
         // $sumaDivisa->caja->user;
@@ -313,17 +221,22 @@ class CajaController extends Controller
 
                 foreach ($cajas->pago_ventas as $pago ) {
 
-                     if ($pago->Divisa == 'Dolar') {
+                    if ($pago->Divisa == 'Dolar') {
                         $cajas->SumaTotalDolar = $cajas->SumaTotalDolar + $pago->MontoDivisa;
-                     }elseif ($pago->Divisa == 'Peso') {
+                        $cajas->SumaTotalDolarDolar = $cajas->SumaTotalDolarDolar + $pago->MontoDolar;
+                        }elseif ($pago->Divisa == 'Peso') {
                         $cajas->SumaTotalPeso = $cajas->SumaTotalPeso + $pago->MontoDivisa;
-                     }elseif ($pago->Divisa == 'Bolivar') {
+                        $cajas->SumaTotalPesoDolar = $cajas->SumaTotalPesoDolar + $pago->MontoDolar;
+                        }elseif ($pago->Divisa == 'Bolivar') {
                         $cajas->SumaTotalBolivar = $cajas->SumaTotalBolivar + $pago->MontoDivisa;
-                     }elseif ($pago->Divisa == 'Punto') {
+                        $cajas->SumaTotalBolivarDolar = $cajas->SumaTotalBolivarDolar + $pago->MontoDolar;
+                        }elseif ($pago->Divisa == 'Punto') {
                         $cajas->SumaTotalPunto = $cajas->SumaTotalPunto + $pago->MontoDivisa;
-                     }elseif ($pago->Divisa == 'Transferencia') {
+                        $cajas->SumaTotalPuntoDolar = $cajas->SumaTotalPuntoDolar + $pago->MontoDolar;
+                        }elseif ($pago->Divisa == 'Transferencia') {
                         $cajas->SumaTotalTransferencia = $cajas->SumaTotalTransferencia + $pago->MontoDivisa;
-                     }
+                        $cajas->SumaTotalTransferenciaDolar = $cajas->SumaTotalTransferenciaDolar + $pago->MontoDolar;
+                    }
 
                 }
 
@@ -335,9 +248,9 @@ class CajaController extends Controller
                     $cajas->SumaTotalUtilidadVentas = $cajas->SumaTotalUtilidadVentas + $vent->ganancia_neta;
                     $cajas->SumaTotalCantidadVentas = $cajas->SumaTotalCantidadVentas + 1;
                     }
-                 }
-                 $nombre = [];
-                 foreach ($cajas->articulo_ventas as $art_vent ) {
+                }
+                $nombre = [];
+                foreach ($cajas->articulo_ventas as $art_vent ) {
                     $nombre[] = Articulo::find($art_vent->articulo_id);
                     $cajas->nombreArticulos = $nombre;
                     if ($art_vent->venta->estado == 'Aceptada') {
@@ -346,8 +259,8 @@ class CajaController extends Controller
                 }
 
 
-                //  return $cajas;
-        return view('cajas.caja.show', compact('title','cajas', 'caja','denominacion_dolar', 'denominacion_peso' ,'denominacion_bolivar'))->with($mensaje);
+                //  return $cajas->SumaTotalDolar;
+        return view('cajas.caja.show', compact('title','cajas', 'caja','denominacion_dolar', 'denominacion_peso' ,'denominacion_bolivar','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo'))->with($mensaje);
     }
 
     /**
@@ -383,16 +296,45 @@ class CajaController extends Controller
             $session_id = $request->get('session_id');
             $caja_id = $request->get('caja_id');
 
+            $monto_dolar_cierre       = $request->get('total_dolar');
+            $monto_peso_cierre        = $request->get('total_peso');
+            $monto_bolivar_cierre     = $request->get('total_bolivar');
+            $monto_punto_cierre       = $request->get('total_punto');
+            $monto_trans_cierre       = $request->get('total_trans');
 
 
 
+
+
+                //TODO INSERTAR REGISTROS EN LA TABLA CAJA
 
                 $Caja = Caja::findOrFail($caja_id);
-                $Caja->hora_cierre          = $hora;
-                $Caja->monto_dolar_cierre = $request->get('total_dolar');
-                $Caja->monto_peso_cierre = $request->get('total_peso');
-                $Caja->monto_bolivar_cierre = $request->get('total_bolivar');
-                $Caja->estado = 'Cerrada';
+                $Caja->hora_cierre              = $hora;
+                $Caja->monto_dolar_cierre       = $monto_dolar_cierre;
+                $Caja->monto_peso_cierre        = $monto_peso_cierre;
+                $Caja->monto_bolivar_cierre     = $monto_bolivar_cierre;
+                $Caja->monto_punto_cierre       = $monto_punto_cierre;
+                $Caja->monto_trans_cierre       = $monto_trans_cierre;
+                $Caja->monto_dolar_cierre_dif   = $request->get('total_dolar_dif');
+                $Caja->monto_peso_cierre_dif    = $request->get('total_peso_dif');
+                $Caja->monto_bolivar_cierre_dif = $request->get('total_bolivar_dif');
+                $Caja->monto_punto_cierre_dif   = $request->get('total_punto_dif');
+                $Caja->monto_trans_cierre_dif   = $request->get('total_trans_dif');
+                $Caja->dolar_dolar_operador     = $request->get('dif_moneda_dolar_to_dolar_input');
+                $Caja->peso_dolar_operador      = $request->get('dif_moneda_peso_to_dolar_input');
+                $Caja->punto_dolar_operador     = $request->get('dif_moneda_punto_to_dolar_input');
+                $Caja->trans_dolar_operador     = $request->get('dif_moneda_trans_to_dolar_input');
+                $Caja->efectivo_dolar_operador  = $request->get('dif_moneda_efectivo_to_dolar_input');
+                $Caja->dolar_sistema            = $request->get('dolar_sistema');
+                $Caja->peso_sistema             = $request->get('peso_sistema');
+                $Caja->punto_sistema            = $request->get('punto_sistema');
+                $Caja->trans_sistema            = $request->get('trans_sistema');
+                $Caja->efectivo_sistema         = $request->get('efectivo_sistema');
+                $Caja->total_sistema_reg        = $request->get('total_sistema_reg_input');
+                $Caja->total_operador_reg       = $request->get('total_operador_reg_input');
+                $Caja->total_diferencia         = $request->get('total_dif_input');
+                $Caja->Observaciones            = $request->get('Observaciones');
+                $Caja->estado                   = 'Cerrada';
                 $Caja->update();
 
                 $session_id = Sessioncaja::findOrFail($session_id);
@@ -402,138 +344,184 @@ class CajaController extends Controller
 
 
 
+                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                $controlStock = ControlStock::where('caja_id', $caja_id)->get();
 
+                if($controlStock){
+                    $stocks = self::get_product_stock(['id','stock','nombre']);
+                    if($stocks){
+                    foreach ($stocks as $value) {
+                        $control_stock = ControlStock::where('articulo_id',$value->id)->where('caja_id',$caja_id)->first();
+                        if($control_stock){
+                            $control_stock->stock_cierre = $value->stock;
+                            $control_stock->stock_dif  = $control_stock->stock_cierre - $value->stock;
+                            $control_stock->stock_cierre_operador  = $request->get('stock_cierre_operador');
+                            $control_stock->observaciones  = $request->get('observacionesStock');
+                            $control_stock->update();
+                        }else{
+                            $control_stock = new ControlStock();
+                            $control_stock->stock_inicio = 0;
+                            $control_stock->stock_cierre = $value->stock;
+                            $control_stock->user_id  = $idUsuario;
+                            $control_stock->articulo_id  = $value->id;
+                            $control_stock->caja_id  = $Caja->id;
+                            $control_stock->save();
+                        }
 
+                    }
 
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////// BsubTotald
-            $bcantidadR = $request->get('bcantidad');
-            $BsubTotaldR = $request->get('BsubTotald');
-            $bvalorR = $request->get('bvalor');
-            $btipoR = $request->get('btipo');
-            $bdenominacionR = $request->get('bdenominacion');
-
-            $BsubTotaldR = array_filter($BsubTotaldR);
-
-
-            if ($BsubTotaldR) {
-                foreach($BsubTotaldR as $key => $val) {
-
-                    $bcantidad[]=$bcantidadR[$key];
-                    $BsubTotald[]=$BsubTotaldR[$key];
-                    $bvalor[]=$bvalorR[$key];
-                    $btipo[]=$btipoR[$key];
-                    $bdenominacion[]=$bdenominacionR[$key];
+                }
                 }
 
-                // dd($bcantidadR, $BsubTotaldR,$bvalorR,$btipoR,$bdenominacionR);
-                //creamos un contador
-                $cont = 0;
-
-                //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
-                while ($cont < count($BsubTotald)) {
-
-                    $detalleBolso = new Contabilidad();
-                    $detalleBolso->denominacion = $bdenominacion[$cont];//este idingreso se autogenera cuando se crea el objeto en la parte superior (*)
-                    $detalleBolso->valor = $bvalor[$cont];
-                    $detalleBolso->cantidad = $bcantidad[$cont];
-                    $detalleBolso->subtotal = $BsubTotald[$cont];
-                    $detalleBolso->tipo = $btipo[$cont];
-                    $detalleBolso->modo = $estatus_caja;
-                    $detalleBolso->caja_id = $Caja->id;
-                    $detalleBolso->save();
-
-                    $cont = $cont+1;
-                }
-            }
-
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            $pcantidadR = $request->get('pcantidad');
-            $PsubTotaldR = $request->get('PsubTotald');
-            $pvalorR = $request->get('pvalor');
-            $ptipoR = $request->get('ptipo');
-            $pdenominacionR = $request->get('pdenominacion');
-
-            $PsubTotaldR = array_filter($PsubTotaldR);
-
-            if ($PsubTotaldR) {
-                foreach($PsubTotaldR as $key => $val) {
-
-                    $pcantidad[]=$pcantidadR[$key];
-                    $PsubTotald[]=$PsubTotaldR[$key];
-                    $pvalor[]=$pvalorR[$key];
-                    $ptipo[]=$ptipoR[$key];
-                    $pdenominacion[]=$pdenominacionR[$key];
-                }
-                // dd($divisa, $MontoDivisa,$TasaTike,$MontoDolar,$Veltos);
-                //creamos un contador
-                $cont = 0;
-
-                //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
-                while ($cont < count($PsubTotald)) {
-
-                    $detalleBolsoP = new Contabilidad();
-                    $detalleBolsoP->denominacion = $pdenominacion[$cont];//este idingreso se autogenera cuando se crea el objeto en la parte superior (*)
-                    $detalleBolsoP->valor = $pvalor[$cont];
-                    $detalleBolsoP->cantidad = $pcantidad[$cont];
-                    $detalleBolsoP->subtotal = $PsubTotald[$cont];
-                    $detalleBolsoP->tipo = $ptipo[$cont];
-                    $detalleBolsoP->modo = $estatus_caja;
-                    $detalleBolsoP->caja_id = $Caja->id;
-                    $detalleBolsoP->save();
-
-                    $cont = $cont+1;
-                }
-            }
-
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            $dcantidadR = $request->get('dcantidad');
-            $DsubTotaldR = $request->get('DsubTotald');
-            $dvalorR = $request->get('dvalor');
-            $dtipoR = $request->get('dtipo');
-            $ddenominacionR = $request->get('ddenominacion');
-
-            $DsubTotaldR = array_filter($DsubTotaldR);
-
-            if ($DsubTotaldR) {
-                foreach($DsubTotaldR as $key => $val) {
-
-                    $dcantidad[]=$dcantidadR[$key];
-                    $DsubTotald[]=$DsubTotaldR[$key];
-                    $dvalor[]=$dvalorR[$key];
-                    $dtipo[]=$dtipoR[$key];
-                    $ddenominacion[]=$ddenominacionR[$key];
-                }
-                // dd($divisa, $MontoDivisa,$TasaTike,$MontoDolar,$Veltos);
-                //creamos un contador
-                $cont = 0;
-
-                //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
-                while ($cont < count($DsubTotald)) {
-
-                    $detalleBolsoD = new Contabilidad();
-                    $detalleBolsoD->denominacion = $ddenominacion[$cont];//este idingreso se autogenera cuando se crea el objeto en la parte superior (*)
-                    $detalleBolsoD->valor = $dvalor[$cont];
-                    $detalleBolsoD->cantidad = $dcantidad[$cont];
-                    $detalleBolsoD->subtotal = $DsubTotald[$cont];
-                    $detalleBolsoD->tipo = $dtipo[$cont];
-                    $detalleBolsoD->modo = $estatus_caja;
-                    $detalleBolsoD->caja_id = $Caja->id;
-                    $detalleBolsoD->save();
-
-                    $cont = $cont+1;
-                }
-            }
+                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // Sessioncaja::crearsession();
 
             $UserName = $request->user();
+            // return $UserName;
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//             if (!empty($monto_peso_cierre) && $monto_peso_cierre > 0) {
+//                 return 'no'.$monto_peso_cierre;
+//             }else{
+//                 return 'si';
+//             }
+// return $UserName;
+
+            if (!empty($monto_dolar_cierre) && $monto_dolar_cierre > 0 || !empty($monto_peso_cierre) && $monto_peso_cierre > 0 || !empty($monto_bolivar_cierre) && $monto_bolivar_cierre > 0 || !empty($monto_punto_cierre) && $monto_punto_cierre > 0 || !empty($monto_trans_cierre) && $monto_trans_cierre > 0) {
+
+
+
+
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            // Guardamos los montos recibidos en caja en banco
+            // Guardamos en la tabla transaccions
+
+            //Buscamos el correlativo
+            // return $monto_dolar_cierre.' '.$monto_peso_cierre.' '.$monto_bolivar_cierre.' '.$monto_punto_cierre.' '.$monto_trans_cierre;
+
+
+                $correlativo_transaccion = Transaccion::count();
+                $correlativo_transaccion = $correlativo_transaccion + 1;
+
+                $transaccion = new Transaccion();
+                $transaccion->correlativo    = $correlativo_transaccion;
+                $transaccion->descripcion_op = 'Por el cobro en caja';
+                $transaccion->codigo         = $caja_id;
+                $transaccion->denominacion   = 'Monto enviado por el operador de la caja';
+                $transaccion->operador       = $UserName->name;
+                $transaccion->save();
+
+                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                // Consultamos en que monedas nos estan pagado y las guardamos
+
+                if (!empty($monto_dolar_cierre) && $monto_dolar_cierre > 0) {
+                    $correlativo_dolar = SaldosMovimiento::where('cuenta_id', 1)->count();
+                    $correlativo_dolar = $correlativo_dolar + 1;
+                    $saldo_dolar = SaldosMovimiento::where('cuenta_id', 1)->latest('id')->first();
+                    if($saldo_dolar){
+                        $saldo_dolar = $saldo_dolar->saldo;
+                    }else{
+                        $saldo_dolar = 0;
+                    }
+                    // Guardamos los montos recibidos en caja en banco
+                    $saldos_movimientos = new SaldosMovimiento();
+                    $saldos_movimientos->correlativo    = $correlativo_dolar;
+                    $saldos_movimientos->debe           = $monto_dolar_cierre;
+                    $saldos_movimientos->haber          = 0;
+                    $saldos_movimientos->saldo          = $saldo_dolar + $monto_dolar_cierre;
+                    $saldos_movimientos->cuenta_id      = 1;
+                    $saldos_movimientos->transaccion_id = $transaccion->id;
+                    $saldos_movimientos->save();
+                }
+
+                if (!empty($monto_peso_cierre) && $monto_peso_cierre > 0) {
+                    $correlativo_peso = SaldosMovimiento::where('cuenta_id', 2)->count();
+                    $correlativo_peso = $correlativo_peso + 1;
+                    $saldo_peso = SaldosMovimiento::where('cuenta_id', 2)->latest('id')->first();
+                    if($saldo_peso){
+                        $saldo_peso = $saldo_peso->saldo;
+                    }else{
+                        $saldo_peso = 0;
+                    }
+
+                    // return $saldo_peso->saldo;
+                    // Guardamos los montos recibidos en caja en banco
+                    $saldos_movimientos = new SaldosMovimiento();
+                    $saldos_movimientos->correlativo    = $correlativo_peso;
+                    $saldos_movimientos->debe           = $monto_peso_cierre;
+                    $saldos_movimientos->haber          = 0;
+                    $saldos_movimientos->saldo          = $saldo_peso + $monto_peso_cierre;
+                    $saldos_movimientos->cuenta_id      = 2;
+                    $saldos_movimientos->transaccion_id = $transaccion->id;
+                    $saldos_movimientos->save();
+                }
+
+                if (!empty($monto_bolivar_cierre) && $monto_bolivar_cierre > 0) {
+                    $correlativo_bolivar = SaldosMovimiento::where('cuenta_id', 3)->count();
+                    $correlativo_bolivar = $correlativo_bolivar + 1;
+                    $saldo_bolivar = SaldosMovimiento::where('cuenta_id', 3)->latest('id')->first();
+                    if($saldo_bolivar){
+                        $saldo_bolivar = $saldo_bolivar->saldo;
+                    }else{
+                        $saldo_bolivar = 0;
+                    }
+                    // Guardamos los montos recibidos en caja en banco
+                    $saldos_movimientos = new SaldosMovimiento();
+                    $saldos_movimientos->correlativo    = $correlativo_bolivar;
+                    $saldos_movimientos->debe           = $monto_bolivar_cierre;
+                    $saldos_movimientos->haber          = 0;
+                    $saldos_movimientos->saldo          = $saldo_bolivar + $monto_bolivar_cierre;
+                    $saldos_movimientos->cuenta_id      = 3;
+                    $saldos_movimientos->transaccion_id = $transaccion->id;
+                    $saldos_movimientos->save();
+                }
+
+                if (!empty($monto_punto_cierre) && $monto_punto_cierre > 0) {
+                    $correlativo_punto = SaldosMovimiento::where('cuenta_id', 4)->count();
+                    $saldo_punto = SaldosMovimiento::where('cuenta_id', 4)->latest('id')->first();
+                    if($saldo_punto){
+                        $saldo_punto = $saldo_punto->saldo;
+                    }else{
+                        $saldo_punto = 0;
+                    }
+                    $correlativo_punto = $correlativo_punto + 1;
+                    // Guardamos los montos recibidos en caja en banco
+                    $saldos_movimientos = new SaldosMovimiento();
+                    $saldos_movimientos->correlativo    = $correlativo_punto;
+                    $saldos_movimientos->debe           = $monto_punto_cierre;
+                    $saldos_movimientos->haber          = 0;
+                    $saldos_movimientos->saldo          = $saldo_punto + $monto_punto_cierre;
+                    $saldos_movimientos->cuenta_id      = 4;
+                    $saldos_movimientos->transaccion_id = $transaccion->id;
+                    $saldos_movimientos->save();
+                }
+
+                if (!empty($monto_trans_cierre) && $monto_trans_cierre > 0) {
+                    $correlativo_trans = SaldosMovimiento::where('cuenta_id', 5)->count();
+                    $saldo_trans = SaldosMovimiento::where('cuenta_id', 5)->latest('id')->first();
+                    if($saldo_trans){
+                        $saldo_trans = $saldo_trans->saldo;
+                    }else{
+                        $saldo_trans = 0;
+                    }
+                    $correlativo_trans = $correlativo_trans + 1;
+                    // Guardamos los montos recibidos en caja en banco
+                    $saldos_movimientos = new SaldosMovimiento();
+                    $saldos_movimientos->correlativo    = $correlativo_trans;
+                    $saldos_movimientos->debe           = $monto_trans_cierre;
+                    $saldos_movimientos->haber          = 0;
+                    $saldos_movimientos->saldo          = $saldo_trans + $monto_trans_cierre;
+                    $saldos_movimientos->cuenta_id      = 5;
+                    $saldos_movimientos->transaccion_id = $transaccion->id;
+                    $saldos_movimientos->save();
+                }
+            }
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
             DB::commit();
 
@@ -558,5 +546,16 @@ class CajaController extends Controller
     public function destroy($id)
     {
         return 'Estoy en destroy';
+    }
+
+    public static function get_product_stock($arg = array()){
+        if(isset($arg)){
+            $stock = Articulo::select($arg)->get();
+            if($stock){
+                return $stock;
+            }else{
+                return false;
+            }
+        }
     }
 }

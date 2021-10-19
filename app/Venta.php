@@ -13,10 +13,10 @@ class Venta extends Model
     // public $timestamps = false;
 
     public function articulo_ventas(){
-        return $this->hasMany(Articulo_venta::Class);
+        return $this->hasMany(Articulo_venta::class);
     }
     public function pago_ventas(){
-        return $this->hasMany(Pago_Venta::Class);
+        return $this->hasMany(Pago_Venta::class);
     }
 
     public function caja(){

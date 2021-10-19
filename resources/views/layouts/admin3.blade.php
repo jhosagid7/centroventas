@@ -8,6 +8,7 @@
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
   <link rel="stylesheet" href="{{asset('bower_components/bootstrap/dist/css/bootstrap.min.css')}}">
+  <link rel="stylesheet" type="text/css" media="print" href="{{asset('bower_components/bootstrap/dist/css/bootstrap_imprimir.css')}}">
   <!-- bootstrap-select.min -->
   <link rel="stylesheet" href="{{asset('bower_components/bootstrap/dist/css/bootstrap-select.min.css')}}">
   <!-- daterange picker -->
@@ -408,7 +409,24 @@
                 @endcan
             </ul>
         </li>
-
+        @endcan
+        @can('haveaccess', 'boton.sistema')
+        <li class="treeview">
+            <a href="#">
+            <i class="fa fa-handshake-o"></i> <span>Bancos</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+            <ul class="treeview-menu">
+                @can('haveaccess', 'role.index')
+                <li><a href="{{asset('bancos/banco')}}"><i class="fa fa-user-plus"></i> Banco</a></li>
+                @endcan
+                {{-- @can('haveaccess', 'user.index')
+                <li><a href="{{route('user.index')}}"><i class="fa fa-desktop"></i> User</a></li>
+                @endcan --}}
+            </ul>
+        </li>
         </ul>
         @endcan
     </section>
