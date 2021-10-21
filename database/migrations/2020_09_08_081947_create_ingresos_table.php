@@ -18,6 +18,8 @@ class CreateIngresosTable extends Migration
             $table->string('tipo_comprobante', 20);
             $table->string('serie_comprobante', 20);
             $table->string('num_comprobante', 20);
+            $table->enum('tipo_pago', ['Contado', 'Credito']);
+            $table->enum('status', ['Pagado', 'Por pagar']);
             $table->decimal('precio_compra', 25, 9)->nullable();
             $table->datetime('fecha_hora');
             $table->enum('estado', ['Aceptado', 'Cancelado', 'Procesando']);

@@ -24,6 +24,8 @@ class Ingreso extends Model
         'tipo_comprobante',
         'serie_comprobante',
         'num_comprobante',
+        'tipo_pago',
+        'status',
         'precio_compra',
         'fecha_hora',
         'estado',
