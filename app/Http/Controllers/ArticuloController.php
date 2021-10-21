@@ -27,6 +27,7 @@ class ArticuloController extends Controller
 
         // return $request; p
         if ($request) {
+            // Recuperamos las variables
             $name = $request->get('name');
             $codigo = $request->get('codigo');
             $venderal = $request->get('venderal');
