@@ -47,6 +47,7 @@ class ArticuloController extends Controller
             $tasaEfectivo = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Efectivo')->first();
             $categorias = Categoria::where('condicion', 'Activa')->get();
 
+            // Traemos los datos
             $articulos = Articulo::select('articulos.id', 'articulos.codigo', 'articulos.nombre', 'articulos.stock', 'articulos.precio_costo', 'articulos.unidades', 'articulos.descripcion', 'articulos.imagen', 'articulos.estado', 'articulos.porEspecial', 'articulos.isDolar', 'articulos.isPeso', 'articulos.isTransPunto', 'articulos.isMixto', 'articulos.isEfectivo', 'categorias.nombre as categoria')
             ->join('categorias', 'articulos.categoria_id', '=', 'categorias.id')
             // $articulos = DB::table('articulos as a')
