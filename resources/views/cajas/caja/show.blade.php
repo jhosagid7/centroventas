@@ -166,7 +166,7 @@
                             <div class="panel panel-primary">
                                 <div class="panel-body">
                                     <h4><strong>Datos de Caja</strong></h4>
-                                    <table id="detalles" class="table table-striped table-borderd table-condensed table-hover">
+                                    {{-- <table id="detalles" class="table table-striped table-borderd table-condensed table-hover">
                                         <thead style="background-color: #A9D0F5">
                                             <tr>
                                                 <th>Codigo</th>
@@ -199,7 +199,7 @@
                                                 <td>{{ $caja->caja }}</td>
                                             </tr>
                                         </tbody>
-                                    </table>
+                                    </table> --}}
 
                                     @include('cajas.caja.caja')
                                     {{-- ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
@@ -283,7 +283,16 @@
                                     <h5 class="box-title text-bold text-red">- Regis. por Operador:</h5>
                                     <h5 class="description-header">______________</h5>
                                     <h5 class="box-title text-bold text-red">Diferencia:</h5><br><br>
-                                    <h5 class="box-title text-bold text-blue">Tasa:</h5>
+                                    @if ($cajas->estado == 'Abierta')
+                                    <h5 class="box-title text-bold text-blue">Tasa:</h5><br>
+                                    <h5 class="box-title text-bold text-blue">%/Ganancia:</h5>
+                                    @else
+                                    <h5 class="box-title text-bold text-blue">Tasa Apertura:</h5><br>
+                                    <h5 class="box-title text-bold text-green">Tasa Cierre:</h5><br>
+                                    <h5 class="box-title text-bold text-blue">%/Ganancia Apertura:</h5>
+                                    <h5 class="box-title text-bold text-green">%/Ganancia Cierre:</h5>
+                                    @endif
+
                                 </div>
                             </div>
                             <div class="col-sm-2 col-xs-6">
@@ -301,7 +310,16 @@
                                     <h5 class="box-title text-bold text-red">$. {{ number_format(floatval($cajas->monto_dolar_cierre_dif),2,',','.') ?? ' 0,00' }}</h5>
                                     <br>
                                     <span class="description-text">DOLAR</span><br>
-                                    <span class="description-text text-blue">{{$tasaDolar->tasa}}</span>
+                                    @if ($cajas->estado == 'Abierta')
+                                        <span class="description-text text-blue">{{$cajas->tasaDolarOpen ?? ''}}</span><br>
+                                        <span class="description-text text-blue">{{$cajas->tasaDolarOpenPorcentajeGanancia ?? ''}}</span>
+                                    @else
+                                    <span class="description-text text-blue">{{$cajas->tasaDolarOpen ?? ''}}</span><br>
+                                    <span class="description-text text-green">{{$cajas->tasaDolarClose ?? ''}}</span><br>
+                                    <span class="description-text text-blue">{{$cajas->tasaDolarOpenPorcentajeGanancia ?? ''}} </span><br>
+                                    <span class="description-text text-green">{{$cajas->tasaDolarClosePorcentajeGanancia ?? ''}}</span>
+                                    @endif
+
                                 </div>
                                 <!-- /.description-block -->
                             </div>
@@ -321,7 +339,15 @@
                                     <h5 class="box-title text-bold text-red">$. {{ number_format(floatval($cajas->monto_peso_cierre_dif),2,',','.') ?? ' 0,00' }}</h5>
                                     <br>
                                     <span class="description-text">PESO</span><br>
-                                    <span class="description-text text-blue">{{$tasaPeso->tasa}}</span>
+                                    @if ($cajas->estado == 'Abierta')
+                                        <span class="description-text text-blue">{{$cajas->tasaPesoOpen ?? ''}}</span><br>
+                                        <span class="description-text text-blue">{{$cajas->tasaPesoOpenPorcentajeGanancia ?? ''}}</span>
+                                    @else
+                                    <span class="description-text text-blue">{{$cajas->tasaPesoOpen ?? ''}}</span><br>
+                                    <span class="description-text text-green">{{$cajas->tasaPesoClose ?? ''}}</span><br>
+                                    <span class="description-text text-blue">{{$cajas->tasaPesoOpenPorcentajeGanancia ?? ''}} </span><br>
+                                    <span class="description-text text-green">{{$cajas->tasaPesoClosePorcentajeGanancia ?? ''}}</span>
+                                    @endif
                                 </div>
                                 <!-- /.description-block -->
                             </div>
@@ -341,7 +367,15 @@
                                     <h5 class="box-title text-bold text-red">Bs. {{ number_format(floatval($cajas->monto_punto_cierre_dif),2,',','.') ?? ' 0,00' }}</h5>
                                     <br>
                                     <span class="description-text">PUNTO</span><br>
-                                    <span class="description-text text-blue">{{$tasaTransferenciaPunto->tasa}}</span>
+                                    @if ($cajas->estado == 'Abierta')
+                                        <span class="description-text text-blue">{{$cajas->tasaTransferenciaPuntoOpen ?? ''}}</span><br>
+                                        <span class="description-text text-blue">{{$cajas->tasaTransferenciaPuntoOpenPorcentajeGanancia ?? ''}}</span>
+                                    @else
+                                    <span class="description-text text-blue">{{$cajas->tasaTransferenciaPuntoOpen ?? ''}}</span><br>
+                                    <span class="description-text text-green">{{$cajas->tasaTransferenciaPuntoClose ?? ''}}</span><br>
+                                    <span class="description-text text-blue">{{$cajas->tasaTransferenciaPuntoOpenPorcentajeGanancia ?? ''}} </span><br>
+                                    <span class="description-text text-green">{{$cajas->tasaTransferenciaPuntoClosePorcentajeGanancia ?? ''}}</span>
+                                    @endif
                                 </div>
                                 <!-- /.description-block -->
                             </div>
@@ -361,7 +395,15 @@
                                     <h5 class="box-title text-bold text-red">Bs. {{ number_format(floatval($cajas->monto_trans_cierre_dif),2,',','.') ?? ' 0,00' }}</h5>
                                     <br>
                                     <span class="description-text">TRANS</span><br>
-                                    <span class="description-text text-blue">{{$tasaTransferenciaPunto->tasa}}</span>
+                                    @if ($cajas->estado == 'Abierta')
+                                        <span class="description-text text-blue">{{$cajas->tasaTransferenciaPuntoOpen ?? ''}}</span><br>
+                                        <span class="description-text text-blue">{{$cajas->tasaTransferenciaPuntoOpenPorcentajeGanancia ?? ''}}</span>
+                                    @else
+                                    <span class="description-text text-blue">{{$cajas->tasaTransferenciaPuntoOpen ?? ''}}</span><br>
+                                    <span class="description-text text-green">{{$cajas->tasaTransferenciaPuntoClose ?? ''}}</span><br>
+                                    <span class="description-text text-blue">{{$cajas->tasaTransferenciaPuntoOpenPorcentajeGanancia ?? ''}} </span><br>
+                                    <span class="description-text text-green">{{$cajas->tasaTransferenciaPuntoClosePorcentajeGanancia ?? ''}}</span>
+                                    @endif
                                 </div>
                                 <!-- /.description-block -->
                             </div>
@@ -381,7 +423,15 @@
                                     <h5 class="box-title text-bold text-red">Bs. {{ number_format(floatval($cajas->monto_bolivar_cierre_dif),2,',','.') ?? ' 0,00' }}</h5>
                                     <br>
                                     <span class="description-text">EFECTIVO</span><br>
-                                    <span class="description-text text-blue">{{$tasaEfectivo->tasa}}</span>
+                                    @if ($cajas->estado == 'Abierta')
+                                        <span class="description-text text-blue">{{$cajas->tasaEfectivoOpen ?? ''}}</span><br>
+                                        <span class="description-text text-blue">{{$cajas->tasaEfectivoOpenPorcentajeGanancia ?? ''}}</span>
+                                    @else
+                                    <span class="description-text text-blue">{{$cajas->tasaEfectivoOpen ?? ''}}</span><br>
+                                    <span class="description-text text-green">{{$cajas->tasaEfectivoClose ?? ''}}</span><br>
+                                    <span class="description-text text-blue">{{$cajas->tasaEfectivoOpenPorcentajeGanancia ?? ''}} </span><br>
+                                    <span class="description-text text-green">{{$cajas->tasaEfectivoClosePorcentajeGanancia ?? ''}}</span>
+                                    @endif
                                 </div>
                                 <!-- /.description-block -->
                             </div>

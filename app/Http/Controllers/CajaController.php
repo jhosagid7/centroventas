@@ -93,28 +93,42 @@ class CajaController extends Controller
             $estatus_caja      = 'Apertura';
 
             $tasaVentaEfectivo = Tasa::where('nombre', 'efectivoVenta')->first();
+            $tasaDolarOpen = Tasa::where('nombre', 'Dolar')->first();
+            $tasaPesoOpen = Tasa::where('nombre', 'Peso')->first();
+            $tasaTransferenciaPuntoOpen = Tasa::where('nombre', 'Transferencia_Punto')->first();
+            $tasaEfectivoOpen = Tasa::where('nombre', 'Efectivo')->first();
+
+
 
 
                 $Caja = new Caja;
-                $Caja->codigo               = '';
-                $Caja->fecha                = $fecha;
-                $Caja->hora_cierre          = 'Sin cerrar';
-                $Caja->hora                 = $hora;
-                $Caja->mes                  = $mes;
-                $Caja->year                 = $year;
-                $Caja->monto_dolar          = $request->get('total_dolar');
-                $Caja->monto_peso           = $request->get('total_peso');
-                $Caja->monto_bolivar        = $request->get('total_bolivar');
-                $Caja->monto_dolar_cierre   = 0.00;
-                $Caja->monto_peso_cierre    = 0.00;
-                $Caja->monto_bolivar_cierre = 0.00;
-                $Caja->estado               = 'Abierta';
-                $Caja->caja                 = $request->get('caja');
-                $Caja->tasaActualVenta      = $tasaVentaEfectivo->tasa;
-                $Caja->margenActualVenta    = $tasaVentaEfectivo->porcentaje_ganancia;
-                $Caja->user_id              =  $idUsuario;
-                $Caja->sucursal_id          = 1;
-                $Caja->sessioncaja_id       = $request->get('session_id');
+                $Caja->codigo                                               = '';
+                $Caja->fecha                                                = $fecha;
+                $Caja->hora_cierre                                          = 'Sin cerrar';
+                $Caja->hora                                                 = $hora;
+                $Caja->mes                                                  = $mes;
+                $Caja->year                                                 = $year;
+                $Caja->monto_dolar                                          = $request->get('total_dolar');
+                $Caja->monto_peso                                           = $request->get('total_peso');
+                $Caja->monto_bolivar                                        = $request->get('total_bolivar');
+                $Caja->monto_dolar_cierre                                   = 0.00;
+                $Caja->monto_peso_cierre                                    = 0.00;
+                $Caja->monto_bolivar_cierre                                 = 0.00;
+                $Caja->estado                                               = 'Abierta';
+                $Caja->caja                                                 = $request->get('caja');
+                $Caja->tasaDolarOpen                                        = $tasaDolarOpen->tasa;
+                $Caja->tasaDolarOpenPorcentajeGanancia                      = $tasaDolarOpen->porcentaje_ganancia;
+                $Caja->tasaPesoOpen                                         = $tasaPesoOpen->tasa;
+                $Caja->tasaPesoOpenPorcentajeGanancia                       = $tasaPesoOpen->porcentaje_ganancia;
+                $Caja->tasaTransferenciaPuntoOpen                           = $tasaTransferenciaPuntoOpen->tasa;
+                $Caja->tasaTransferenciaPuntoOpenPorcentajeGanancia         = $tasaTransferenciaPuntoOpen->porcentaje_ganancia;
+                $Caja->tasaEfectivoOpen                                     = $tasaEfectivoOpen->tasa;
+                $Caja->tasaEfectivoOpenPorcentajeGanancia                   = $tasaEfectivoOpen->porcentaje_ganancia;
+                $Caja->tasaActualVenta                                      = $tasaVentaEfectivo->tasa;
+                $Caja->margenActualVenta                                    = $tasaVentaEfectivo->porcentaje_ganancia;
+                $Caja->user_id                                              =  $idUsuario;
+                $Caja->sucursal_id                                          = 1;
+                $Caja->sessioncaja_id                                       = $request->get('session_id');
                 $Caja->save();
 
                 $codigo = Sessioncaja::numCodigo('CA', $idUsuario, $Caja->id);
@@ -302,6 +316,11 @@ class CajaController extends Controller
             $monto_punto_cierre       = $request->get('total_punto');
             $monto_trans_cierre       = $request->get('total_trans');
 
+            $tasaDolarClose = Tasa::where('nombre', 'Dolar')->first();
+            $tasaPesoClose = Tasa::where('nombre', 'Peso')->first();
+            $tasaTransferenciaPuntoClose = Tasa::where('nombre', 'Transferencia_Punto')->first();
+            $tasaEfectivoClose = Tasa::where('nombre', 'Efectivo')->first();
+
 
 
 
@@ -315,6 +334,14 @@ class CajaController extends Controller
                 $Caja->monto_bolivar_cierre     = $monto_bolivar_cierre;
                 $Caja->monto_punto_cierre       = $monto_punto_cierre;
                 $Caja->monto_trans_cierre       = $monto_trans_cierre;
+                $Caja->tasaDolarClose                                    = $tasaDolarClose->tasa;
+                $Caja->tasaDolarClosePorcentajeGanancia                  = $tasaDolarClose->porcentaje_ganancia;
+                $Caja->tasaPesoClose                                     = $tasaPesoClose->tasa;
+                $Caja->tasaPesoClosePorcentajeGanancia                   = $tasaPesoClose->porcentaje_ganancia;
+                $Caja->tasaTransferenciaPuntoClose                       = $tasaTransferenciaPuntoClose->tasa;
+                $Caja->tasaTransferenciaPuntoClosePorcentajeGanancia     = $tasaTransferenciaPuntoClose->porcentaje_ganancia;
+                $Caja->tasaEfectivoClose                                 = $tasaEfectivoClose->tasa;
+                $Caja->tasaEfectivoClosePorcentajeGanancia               = $tasaEfectivoClose->porcentaje_ganancia;
                 $Caja->monto_dolar_cierre_dif   = $request->get('total_dolar_dif');
                 $Caja->monto_peso_cierre_dif    = $request->get('total_peso_dif');
                 $Caja->monto_bolivar_cierre_dif = $request->get('total_bolivar_dif');
