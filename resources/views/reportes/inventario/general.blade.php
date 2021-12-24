@@ -66,11 +66,11 @@
                               </tr>
                               <tr>
                                 <th>
-                                    Fecha:
+                                    Fecha ultima caja:
 
 
                                 </th>
-                                <td> {{date('d-m-y')}}</td>
+                                <td> {{$fecha_ultima_caja->updated_at ?? ''}}</td>
                               </tr>
                               <tr>
                                 <th>Consulta:</th>

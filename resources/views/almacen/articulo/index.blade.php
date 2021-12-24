@@ -51,7 +51,7 @@
                     <th>Precio Mixto</th>
                     <th>Precio Efectivo</th>
                     <th class="hidden">Descripción</th>
-                    <th>imagen</th>
+                    {{-- <th>imagen</th> --}}
                     <th>Estado</th>
                     <th>Opciones</th>
                 </thead>
@@ -113,7 +113,7 @@
                         </td>
                         <td>
                             {{ $art->codigo }}
-                            {!! DNS1D :: getBarcodeHTML ( $art->codigo , 'UPCE' ) !!}
+                            {{-- {!! DNS1D :: getBarcodeHTML ( $art->codigo , 'UPCE' ) !!} --}}
                             {{-- {!! DNS1D::getBarcodeHTML($art->codigo, 'PHARMA2T')!!} --}}
 
                         </td>
@@ -126,9 +126,9 @@
                         <td>{{ number_format($precio_venta_mixto * $tasaMixto->tasa, 2, ',', '.') }} </td>
                         <td>{{ number_format($precio_venta_efectvo * $tasaEfectivo->tasa, 2, ',', '.') }} </td>
                         <td class="hidden">{{ $art->descripcion }}</td>
-                        <td>
+                        {{-- <td>
                             <img src="{{asset('imagenes/articulos/'.$art->imagen)}}" alt="{{ $art->nombre }}" height="50px" width="50px" class="img-circle">
-                        </td>
+                        </td> --}}
                         <td>{{ $art->estado }}</td>
                         <td>
                         <a href="{{URL::action('ArticuloController@edit', $art->id)}}"><button class='btn btn-info btn-sm'><span class='glyphicon glyphicon-edit'></span></button></a>

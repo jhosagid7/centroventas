@@ -36,7 +36,7 @@ class Articulo_venta extends Model
     }
 
 
-    public function scopeFecha($query, $fecha){
+    public function scopefecha($query, $fecha){
 
         if($fecha){
         list($fecha_inicio, $fecha_fin) = explode(" - ", $fecha);

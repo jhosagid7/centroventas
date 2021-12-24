@@ -68,16 +68,16 @@
             </div>
             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                 <div class="form-group">
-                    <label for="proveedor">Fecha</label>
-                    <p>{{ $ingreso[0]->fecha_hora ?? '' }}</p>
+                    <label for="num_comprobante">N° Factura/ID</label>
+                    <p>{{ $ingreso[0]->id ?? ''}}</p>
                 </div>
             </div>
         </div>
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                 <div class="form-group">
-                    <label for="tipo_comprobante">Tipo Comprobante</label>
-                    <p>{{ $ingreso[0]->tipo_comprobante ?? ''}}</p>
+                    <label for="tipo_comprobante">Número Comprobante</label>
+                    <p>{{ $ingreso[0]->num_comprobante ?? ''}}</p>
                 </div>
             </div>
 
@@ -90,8 +90,8 @@
 
             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                 <div class="form-group">
-                    <label for="num_comprobante">Número Comprobante</label>
-                    <p>{{ $ingreso[0]->num_comprobante ?? ''}}</p>
+                    <label for="proveedor">Fecha</label>
+                    <p>{{ $ingreso[0]->fecha_hora ?? '' }}</p>
                 </div>
             </div>
         </div>

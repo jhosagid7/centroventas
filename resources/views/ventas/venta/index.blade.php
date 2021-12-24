@@ -60,7 +60,7 @@
                     <tr>
                         <td>{{ $venta->id }}</td>
                         <td>{{ $venta->fecha_hora }}</td>
-                        <td>{{ $venta->nombre }}</td>
+                        <td>{{ $venta->persona->nombre }}</td>
                         <td>{{ $venta->tipo_comprobante . ': ' . $venta->serie_comprobante . '-' . $venta->num_comprobante }}</td>
                         {{-- <td>{{ $venta->impuesto }}</td> --}}
                         <td>{{ $venta->total_venta }}</td>
@@ -127,6 +127,7 @@
 
         var table = jQuery(document).ready(function() {
     jQuery('#ven').DataTable({
+    order: [[ 0, 'desc' ]],
     rowReorder: {
     selector: 'td:nth-child(2)'
     },
@@ -153,6 +154,7 @@
     iDisplayLength : 5,
     paging: true,
     processing: true,
+
     columnDefs: [{
     targets: 'no-sort',
     // orderable: true

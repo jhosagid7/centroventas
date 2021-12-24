@@ -282,7 +282,8 @@
                                     <h5 class="box-title text-bold">Regis. por Sistema:</h5>
                                     <h5 class="box-title text-bold text-red">- Regis. por Operador:</h5>
                                     <h5 class="description-header">______________</h5>
-                                    <h5 class="box-title text-bold text-red">Diferencia:</h5>
+                                    <h5 class="box-title text-bold text-red">Diferencia:</h5><br><br>
+                                    <h5 class="box-title text-bold text-blue">Tasa:</h5>
                                 </div>
                             </div>
                             <div class="col-sm-2 col-xs-6">
@@ -299,7 +300,8 @@
                                     <h5 class="description-header">______________</h5>
                                     <h5 class="box-title text-bold text-red">$. {{ number_format(floatval($cajas->monto_dolar_cierre_dif),2,',','.') ?? ' 0,00' }}</h5>
                                     <br>
-                                    <span class="description-text">DOLAR</span>
+                                    <span class="description-text">DOLAR</span><br>
+                                    <span class="description-text text-blue">{{$tasaDolar->tasa}}</span>
                                 </div>
                                 <!-- /.description-block -->
                             </div>
@@ -318,7 +320,8 @@
                                     <h5 class="description-header">______________</h5>
                                     <h5 class="box-title text-bold text-red">$. {{ number_format(floatval($cajas->monto_peso_cierre_dif),2,',','.') ?? ' 0,00' }}</h5>
                                     <br>
-                                    <span class="description-text">PESO</span>
+                                    <span class="description-text">PESO</span><br>
+                                    <span class="description-text text-blue">{{$tasaPeso->tasa}}</span>
                                 </div>
                                 <!-- /.description-block -->
                             </div>
@@ -337,7 +340,8 @@
                                     <h5 class="description-header">______________</h5>
                                     <h5 class="box-title text-bold text-red">Bs. {{ number_format(floatval($cajas->monto_punto_cierre_dif),2,',','.') ?? ' 0,00' }}</h5>
                                     <br>
-                                    <span class="description-text">PUNTO</span>
+                                    <span class="description-text">PUNTO</span><br>
+                                    <span class="description-text text-blue">{{$tasaTransferenciaPunto->tasa}}</span>
                                 </div>
                                 <!-- /.description-block -->
                             </div>
@@ -356,7 +360,8 @@
                                     <h5 class="description-header">______________</h5>
                                     <h5 class="box-title text-bold text-red">Bs. {{ number_format(floatval($cajas->monto_trans_cierre_dif),2,',','.') ?? ' 0,00' }}</h5>
                                     <br>
-                                    <span class="description-text">TRANS</span>
+                                    <span class="description-text">TRANS</span><br>
+                                    <span class="description-text text-blue">{{$tasaTransferenciaPunto->tasa}}</span>
                                 </div>
                                 <!-- /.description-block -->
                             </div>
@@ -375,7 +380,8 @@
                                     <h5 class="description-header">______________</h5>
                                     <h5 class="box-title text-bold text-red">Bs. {{ number_format(floatval($cajas->monto_bolivar_cierre_dif),2,',','.') ?? ' 0,00' }}</h5>
                                     <br>
-                                    <span class="description-text">EFECTIVO</span>
+                                    <span class="description-text">EFECTIVO</span><br>
+                                    <span class="description-text text-blue">{{$tasaEfectivo->tasa}}</span>
                                 </div>
                                 <!-- /.description-block -->
                             </div>

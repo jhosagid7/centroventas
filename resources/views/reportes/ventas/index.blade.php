@@ -65,21 +65,41 @@
                         $num = 0;
                     @endphp
                     @foreach ($articulos as $art)
+                     {{-- {{$art}} --}}
 
                     @php
-                    $por = ($art->precio_venta_total - $art->precio_costo_total)/$art->precio_venta_total*100;
+                    $por = @(($art->precio_venta_total - $art->precio_costo_total)/$art->precio_costo_total*100);
                     if($por > 0){
-                        $margen+=($art->precio_venta_total - $art->precio_costo_total)/$art->precio_venta_total*100;
+                        // $margen+=@(($art->precio_venta_total - $art->precio_costo_total)/$art->precio_costo_total*100);
 
                         $num++;
                     }
                     $costo += $art->precio_costo_total;
                     $venta += $art->precio_venta_total;
                     $utilidad += $art->precio_venta_total - $art->precio_costo_total;
+                    $utilidad_unit = $art->precio_venta_total - $art->precio_costo_total;
                     $productos += $art->cantidad;
                     $descuentos += $art->descuento;
+                    $margen_unit = number_format(@(($art->precio_venta_total - $art->precio_costo_total)/$art->precio_costo_total*100),2,'.',',');
 
+                    if($utilidad_unit == $art->precio_venta_total){
 
+                        $margen_unit = 100;
+                    }
+                    $margen+=$margen_unit;
+
+                    // if($utilidad_unit != '0.000' || $utilidad_unit != '0.00'){
+                    //     if($art->precio_costo_unidad != '0.000' || $art->precio_costo_unidad != '0.00' || $art->precio_costo_unidad != '0.0'){
+
+                    //         $margen_unit = number_format(@(($art->precio_venta_total - $art->precio_costo_total)/$art->precio_costo_total*100),2,'.',',');
+                    //     }else{
+                    //         $fer = 'soy mayor' . ' ' . $pcost;
+                    //     }
+
+                    // }else{
+                    //     $pcost = 'preciocosto en 0';
+                    //     $fer = 'soy menor';
+                    // }
 
                     @endphp
                     <tr>
@@ -90,7 +110,7 @@
                         <td>{{ floatval($art->precio_venta_unidad) ?? '' }}</td>
                         <td>{{ $art->cantidad ?? '' }}</td>
                         <td>{{ number_format($art->precio_costo_total,3,'.',',') ?? '' }}</td>
-                        <td>{{ number_format(($art->precio_venta_total - $art->precio_costo_total)/$art->precio_venta_total*100,2,'.',',') }} %</td>
+                        <td>{{ $margen_unit ?? '0.00' }} %</td>
                         <td>{{ number_format($art->precio_venta_total,3,'.',',')  ?? '' }}</td>
                         <td>{{ number_format($art->precio_venta_total - $art->precio_costo_total,3,'.',',') ?? '' }}</td>
                         <td>{{ floatval($art->descuento) ?? '' }}</td>

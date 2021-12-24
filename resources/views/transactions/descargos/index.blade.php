@@ -63,6 +63,7 @@
                         <th>Responsable</th>
                         <th>Total/Op</th>
                         <th>Tipo Estado</th>
+                        <th>Fecha</th>
 
                         <th>opciones</th>
                     </tr>
@@ -78,6 +79,7 @@
                         <td>{{ $cargo->user->name }}</td>
                         <td>{{ $cargo->total_operacion }}</td>
                         <td>{{ $cargo->estado }}</td>
+                        <td>{{ $cargo->created_at }}</td>
 
                         <td>
                         <a href="{{URL::action('DescargoController@show', $cargo->id)}}"><button class='btn btn-info btn-sm'><span class='glyphicon glyphicon-edit'></span></button></a>
@@ -168,7 +170,7 @@
                     },
                     alignment: "center",
 
-                    exportOptions: { columns: [0,1,2,3,4,5,6] } ,
+                    exportOptions: { columns: [0,1,2,3,4,5,6,7] } ,
                     // pageSize : 'A0',
                     orientation : 'portrait',
                     pageSize : 'LEGAL',
@@ -185,10 +187,10 @@
                     alignment: "center",
                     customize : function(doc){
                     doc.styles.tableHeader.alignment = 'left'; //giustifica a sinistra titoli colonne
-                    doc.content[1].table.widths = [40,100,50,150,150,60,80]; //costringe le colonne ad occupare un dato spazio per gestire il baco del 100% width che non si concretizza mai
+                    doc.content[1].table.widths = [40,100,50,150,150,60,80,20]; //costringe le colonne ad occupare un dato spazio per gestire il baco del 100% width che non si concretizza mai
                     },
                     exportOptions: {
-                        columns: [0,1,2,3,4,5,6],
+                        columns: [0,1,2,3,4,5,6,7],
                         stripHtml: true,
 
                     } ,
@@ -207,7 +209,7 @@
                     },
                     alignment: "center",
 
-                    exportOptions: { columns: [0,1,2,3,4,5,6] } ,
+                    exportOptions: { columns: [0,1,2,3,4,5,6,7] } ,
                     // pageSize : 'A0',
                     orientation : 'portrait',
                     pageSize : 'LEGAL',

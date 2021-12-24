@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Caja;
 use App\User;
 use App\Venta;
 use App\Ingreso;
@@ -48,6 +49,8 @@ class ReporteController extends Controller
         //     return view("almacen.categoria.index",["categorias"=>$categorias]);
         // }
 
+        $articulos = Articulo_venta::tipo($tipo)->fecha($fecha2)->paginate(1000);
+
         $title = 'Reporte de Productos Vendidos';
         $articulos = Articulo_venta::join('articulos', 'articulo_ventas.articulo_id', '=', 'articulos.id')
         ->join('ventas', 'articulo_ventas.venta_id', '=', 'ventas.id')
@@ -58,7 +61,7 @@ class ReporteController extends Controller
         ->select('articulo_ventas.id','articulos.codigo','articulos.vender_al','articulos.nombre', 'articulos.porEspecial', 'articulos.isDolar', 'articulos.isPeso', 'articulos.isTransPunto', 'articulos.isMixto', 'articulos.isEfectivo','articulo_ventas.cantidad','articulo_ventas.precio_costo_unidad','articulo_ventas.precio_venta_unidad','articulo_ventas.descuento','articulo_ventas.created_at',DB::raw('sum(articulo_ventas.cantidad*articulo_ventas.precio_costo_unidad) as precio_costo_total'),DB::raw('sum(articulo_ventas.cantidad*articulo_ventas.precio_venta_unidad) as precio_venta_total'))
         ->fecha($fecha2)
         ->groupBy('articulo_ventas.id','articulos.codigo','articulos.vender_al','articulos.nombre', 'articulos.porEspecial', 'articulos.isDolar', 'articulos.isPeso', 'articulos.isTransPunto', 'articulos.isMixto', 'articulos.isEfectivo','articulo_ventas.cantidad','articulo_ventas.precio_costo_unidad','articulo_ventas.precio_venta_unidad','articulo_ventas.descuento','articulo_ventas.created_at')
-        ->paginate(100);
+        ->paginate(10000);
 
         // return $articulos;
 
@@ -106,6 +109,8 @@ class ReporteController extends Controller
         ->select(DB::raw('sum(precio_costo*stock) as precio_costo_total'))
         ->get();
 
+        $fecha_ultima_caja = Caja::where('estado','Cerrada')->orderBy('id', 'DESC')->first();
+        // return $fecha_ultima_caja;
         $mayor = Articulo::where("estado","=",'Activo')
         ->where("vender_al","=",'Mayor')
         ->select(DB::raw('sum(precio_costo*stock) as totalMayor'),DB::raw('sum(unidades*stock) as totalUnidadesMayor'),DB::raw('sum(stock) as totalStockMayor'))
@@ -117,7 +122,7 @@ class ReporteController extends Controller
         ->get();
             $user = Auth::user();
         // return $totalInversion.$mayor.$detal;
-        return view('reportes.inventario.general', compact('title', 'user','totalInversion','mayor','detal'));
+        return view('reportes.inventario.general', compact('title', 'user','totalInversion','mayor','detal','fecha_ultima_caja'));
     }
 
     public function reportIngresosIndex(){

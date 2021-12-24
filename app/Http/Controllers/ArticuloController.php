@@ -25,8 +25,8 @@ class ArticuloController extends Controller
     public function index(Request $request)
     {
 
-        // return $request; p
-        if ($request) {
+
+            // return $request;
             // Recuperamos las variables
             $name = $request->get('name');
             $codigo = $request->get('codigo');
@@ -35,8 +35,11 @@ class ArticuloController extends Controller
             $fechaInicio = $request->get('fechaInicio');
             $fechaFin = $request->get('fechaFin');
 
-            $fecha2 = $request->get('fecha2');
             $categorias_id = $request->get('categorias_id');
+            $fecha2 = $request->get('fecha2');
+            // if (empty($request)){
+
+            // }
 
 
 
@@ -47,12 +50,13 @@ class ArticuloController extends Controller
             $tasaEfectivo = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Efectivo')->first();
             $categorias = Categoria::where('condicion', 'Activa')->get();
 
+
+            if (empty($name) and empty($codigo) and empty($venderal) and empty($categorias_id)){
+                $articulos = Articulo::paginate(1000);
+            }else{
+
             // Traemos los datos
-            $articulos = Articulo::select('articulos.id', 'articulos.codigo', 'articulos.nombre', 'articulos.stock', 'articulos.precio_costo', 'articulos.unidades', 'articulos.descripcion', 'articulos.imagen', 'articulos.estado', 'articulos.porEspecial', 'articulos.isDolar', 'articulos.isPeso', 'articulos.isTransPunto', 'articulos.isMixto', 'articulos.isEfectivo', 'categorias.nombre as categoria')
-            ->join('categorias', 'articulos.categoria_id', '=', 'categorias.id')
-            // $articulos = DB::table('articulos as a')
-            // ->join('categorias as c', 'a.categoria_id', '=', 'c.id')
-            ->name($name)
+            $articulos = Articulo::name($name)
             ->codigo($codigo)
             ->venderal($venderal)
             ->Categoria_id($categorias_id)
@@ -60,11 +64,13 @@ class ArticuloController extends Controller
             ->where('articulos.estado', 'Activo')
             // ->select('a.id', 'a.codigo', 'a.nombre', 'a.stock', 'a.precio_costo', 'a.unidades', 'a.descripcion', 'a.imagen', 'a.estado', 'c.nombre as categoria')
             ->orderBy('id', 'desc')
-            ->paginate(100);
+            ->paginate(1000);
+            }
+            // return $articulos;
 // return $articulos;
             // return redirect()->back()->withInput();
             return view('almacen.articulo.index', ["categorias" => $categorias,"tasaDolar" => $tasaDolar,"tasaPeso" => $tasaPeso,"tasaTransferenciaPunto" => $tasaTransferenciaPunto,"tasaMixto" => $tasaMixto,"tasaEfectivo" => $tasaEfectivo,"articulos" => $articulos,"oldCat" => $categorias_id,"name" => $name,"codigo" => $codigo,"venderal" => $venderal,"fechaInicio" => $fechaInicio,"fechaFin" => $fechaFin]);
-        }
+
     }
     public function create()
     {

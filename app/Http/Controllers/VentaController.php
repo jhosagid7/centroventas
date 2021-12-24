@@ -53,19 +53,20 @@ class VentaController extends Controller
             //     ->orderBy('v.id', 'desc')
             //     ->groupBy('u.name','c.user_id','v.id', 'v.fecha_hora', 'p.nombre', 'v.tipo_comprobante', 'v.serie_comprobante', 'v.num_comprobante', 'v.total_venta', 'v.estado')
             //     ->get();
+                $ventas = Venta::paginate(1000);
 
-                $ventas = DB::table('ventas as v')
-                ->join('personas as p', 'v.persona_id', '=', 'p.id')
-                ->join('articulo_ventas as av', 'v.id', '=', 'av.venta_id')
-                ->join('cajas as c', 'c.sessioncaja_id', '=', 'v.caja_id')
-                ->join('users as u', 'u.id', '=', 'c.user_id')
-                ->select('u.name','c.user_id','v.id', 'v.fecha_hora', 'p.nombre', 'v.tipo_comprobante', 'v.serie_comprobante', 'v.num_trans', 'v.num_punto', 'v.num_comprobante', 'v.total_venta', 'v.estado')
-                ->where('v.num_comprobante', 'LIKE', '%'. $query  .'%')
-                ->where("v.created_at",">=",$restaMes)
-                ->where("v.created_at","<=",$mesActual)
-                ->orderBy('v.id', 'desc')
-                ->groupBy('u.name','c.user_id','v.id', 'v.fecha_hora', 'p.nombre', 'v.tipo_comprobante', 'v.serie_comprobante', 'v.num_trans', 'v.num_punto', 'v.num_comprobante', 'v.total_venta', 'v.estado')
-                ->paginate(100);
+                // $ventas = DB::table('ventas as v')
+                // ->join('personas as p', 'v.persona_id', '=', 'p.id')
+                // ->join('articulo_ventas as av', 'v.id', '=', 'av.venta_id')
+                // ->join('cajas as c', 'c.sessioncaja_id', '=', 'v.caja_id')
+                // ->join('users as u', 'u.id', '=', 'c.user_id')
+                // ->select('u.name','c.user_id','v.id', 'v.fecha_hora', 'p.nombre', 'v.tipo_comprobante', 'v.serie_comprobante', 'v.num_trans', 'v.num_punto', 'v.num_comprobante', 'v.total_venta', 'v.estado')
+                // ->where('v.num_comprobante', 'LIKE', '%'. $query  .'%')
+                // ->where("v.created_at",">=",$restaMes)
+                // ->where("v.created_at","<=",$mesActual)
+                // ->orderBy('v.id', 'desc')
+                // ->groupBy('u.name','c.user_id','v.id', 'v.fecha_hora', 'p.nombre', 'v.tipo_comprobante', 'v.serie_comprobante', 'v.num_trans', 'v.num_punto', 'v.num_comprobante', 'v.total_venta', 'v.estado')
+                // ->paginate(100);
              //dd($ventas);
 
              //$ventas = Venta::where('created_at', ">=", $restaMes)->where('created_at', "<=", $mesActual)->get();
