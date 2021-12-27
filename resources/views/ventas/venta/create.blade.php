@@ -489,13 +489,13 @@
                                                         <div id="cantidadj" class="form group">
                                                             <label for="cantidad">Cantidad</label>
                                                             <input type="text" name="jcantidad" id="jcantidad"
-                                                                class="form-control enteros" placeholder="Cantidad...">
+                                                                class="form-control enteros Can_Produc" placeholder="Cantidad...">
                                                         </div>
                                                     </div>
                                                     <div class="col-lg-3 col-sm-3 col-md-3 col-xs-12">
                                                         <div class="form group">
                                                             <label for="stock">Stock</label>
-                                                            <input type="text" readonly name="jstock" id="jstock"
+                                                            <input type="text" readonly name="jstock" id="jstock" data-id="" data-limit=""
                                                                 class="form-control" placeholder="Stock...">
                                                         </div>
                                                     </div>
@@ -1633,13 +1633,27 @@
                 return result;
             }
 
+            var entrada = {}
+            var stock_temp = []
             function showValues() {
                 // alert('show');
                 datosArticulo = document.getElementById('jidarticulo').value.split('_');
                 // $("#jprecio_venta").val(datosArticulo[2]);
                 $("#jprecio_compra").val(datosArticulo[2]);
                 $("#jstock").val(datosArticulo[1]);
+                $("#jstock").data("limit", datosArticulo[1]);
+                $("#jstock").data("id", datosArticulo[0]);
 
+                entrada = {'id':datosArticulo[0],'stock':datosArticulo[1],'cantidad_venta':0};
+
+
+                $('.Can_Produc').keyup();
+
+
+                console.log(entrada)
+                // console.log(stock_temp[0].cantidad_venta)
+                // console.log(stock_temp)
+                console.log('>>>>>>>>>>>>>>>>>>>>>>>>>')
 
                 stock           = datosArticulo[1];
                 porEspecial     = datosArticulo[4];
@@ -1669,6 +1683,7 @@
 
 
             }
+
 
             $(document).ready(function() {
                 // var kilo = 0;
@@ -2023,10 +2038,40 @@
                         $("#total_ventam").val(numDecimal(total_m));
                         $("#total_ventae").val(numDecimal(total_e));
 
+                        console.log('>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<');
+                        console.log(entrada.id)
+                        console.log('>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<');
+
+                        entrada_dos = {'id':idarticulo, 'cantidad_venta': cantidad};
+                        if(stock_temp.length > 0) {
+                            var found_id = stock_temp.find(element => element.id == idarticulo);
+                            console.log('fonud',found_id)
+                            if(found_id){
+                                stock_temp.forEach(element => {
+                                    if (element.id == found_id.id){
+                                        element.cantidad_venta += cantidad
+                                    }
+                                });
+                            }else{
+                                        console.log('entre a else')
+                                        // console.log(element.id)
+                                        console.log(entrada.id)
+                                        stock_temp.push({'id':idarticulo,'stock':entrada.stock, 'cantidad_venta': cantidad})
+                                    }
+
+                        }else{
+                            stock_temp.push({'id':idarticulo,'stock':entrada.stock, 'cantidad_venta': cantidad})
+                        }
+
+
+
+
+                        console.log(stock_temp);
+
                         var fila = '<tr class="selected" id="fila' + cont +
                             '"><td><button type="button" class="btn btn-warning btn-xs" onclick="eliminar(' + cont +
-                            ');">X</button></td><td><input type="hidden" name="idarticulo[]" value="' + idarticulo + '">' +
-                            articulo + '</td><td><input type="hidden" name="cantidad[]" value="' + cantidad + '">' + cantidadVer
+                            ',' + cantidad + ',' + idarticulo + ');">X</button></td><td><input type="hidden" name="idarticulo[]" value="' + idarticulo + '">' +
+                            articulo + '</td><td><input id="cant_venta_art" data-cant="' + cantidad + '" data-id="' + idarticulo + '" type="hidden" name="cantidad[]" value="' + cantidad + '">' + cantidadVer
                              +
                             '</td><td class="success"><input type="hidden" name="precio_venta[]" value="' + precio_venta +
                             '">' + verPreciod + '</td><td class="success">' + numDecimal(subtotal[cont]) +
@@ -2083,6 +2128,10 @@
                     } else {
                         alert('La cantidad a vender supera el stock...!');
                         $("#jcantidad").val('');
+                        // $("#jstock").val('');
+                        $('.Can_Produc').keyup();
+                        // focusMethod();
+                        // $("#jstock").val('');
                     }
 
                 } else {
@@ -2090,9 +2139,44 @@
                 }
             };
 
+            $('.Can_Produc').keyup(function() {
+                let inv = $('#jstock');
+
+                console.log('limit' +inv.data('limit'))
+                // let cant_venta_art = $('#cant_venta_art');
+
+                // Obtener todos los inputs con la clase Can_Produc
+                // utilizar get() para obtener el arreglo de los objectos input
+                // y luego map para recorrer este arreglo y retornar solamente el valor del input
+                let val = $('.Can_Produc').get().map(
+                    // Evaluar si el valor del input no es un numero (isNaN)
+                    // o si el input no tiene nada (length == 0)
+                    function(el){ return isNaN(el.value) || el.value.length == 0 ? 0 : parseInt(el.value)
+                }).reduce(
+                    // Recorre el arreglo y va acumulando el valor del arreglo.
+                    function(anterior, actual) { return anterior + actual;
+                })
+
+                // entrada = {'id':cant_venta_art.data('id'),'stock': inv.data('limit'), 'cantidad_venta': val};
+                console.log('---------------------------------------------');
+                console.log(stock_temp);
+                console.log('---------------------------------------------');
+
+                let found_id_stock = stock_temp.find(element => element.id == inv.data('id'));
+                if (found_id_stock){
+                    inv.val( inv.data('limit') - (found_id_stock.cantidad_venta + val) )
+                }else{
+                    inv.val( inv.data('limit') - val )
+                }
+                // Asignar el valor
+
+                // cant_venta_art.val( cant_venta_art.data('id'))
+            });
+
             function clear() {
                 $("#jcantidad").val("");
                 $("#jstock").val("");
+                $("#jstock").data("limit", '');
                 $("#jdescuento").val("");
                 $("#jprecio_venta").val("");
 
@@ -2142,7 +2226,20 @@
                 }
             }
 
-            function eliminar(index) {
+            function eliminar(index,cant,id) {
+
+                if(stock_temp.length > 0) {
+                    let found_id = stock_temp.find(element => element.id == id);
+                    // console.log('fonud',found_id)
+                    if(found_id){
+                        stock_temp.forEach(element => {
+                            if (element.id == found_id.id){
+                                element.cantidad_venta -= cant
+                            }
+                        });
+                    }
+                }
+
 
                 // $("#gestionpago").hide("linear");
                 total_costo = total_costo - subtotalPC[index];
@@ -2197,7 +2294,11 @@
                 // verify();
                 resta();
                 $('#gestionpago').hide("linear");
-
+                // $('.Can_Produc').keyup();
+                $("#jcantidad").val('');
+                $("#jstock").val('');
+                // $('.Can_Produc').keyup();
+                focusMethod();
 
             };
 

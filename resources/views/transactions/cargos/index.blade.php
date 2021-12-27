@@ -38,7 +38,7 @@
     </div>
     <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
         {{-- <h3>Listado de Categorias <a href="" data-target="#modal-nuevo" data-toggle="modal"><button class='btn btn-success'><span class='glyphicon glyphicon-plus'></span>Nuevo</button></a></h3> --}}
-        <h3>Listado de Cargos
+        <h3>Listado de Cargos {{ config('app.name', 'VillaSoft') }}
 
 
 
@@ -164,7 +164,7 @@
                     extend:'excelHtml5',
                     text: '<i class="fa fa-file-excel-o fa-inverse"></i>',
                     title : function() {
-                    return "Listado de Cargos";
+                    return "Listado de Cargos {{ config('app.name', 'VillaSoft') }}";
                     },
                     alignment: "center",
 
@@ -180,7 +180,7 @@
                     extend:'pdfHtml5',
                     text: '<i class="fa fa-file-pdf-o fa-inverse"></i>',
                     title : function() {
-                    return "Listado de Cargos";
+                    return "Listado de Cargos {{ config('app.name', 'VillaSoft') }}";
                     },
                     alignment: "center",
                     customize : function(doc){
@@ -203,7 +203,7 @@
                     extend:'print',
                     text: '<i class="fa fa-print fa-inverse"></i>',
                     title : function() {
-                    return "Listado de Cargos";
+                    return "Listado de Cargos {{ config('app.name', 'VillaSoft') }}";
                     },
                     alignment: "center",
 

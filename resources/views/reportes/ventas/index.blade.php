@@ -213,7 +213,7 @@
                     text: '<i class="fa fa-file-excel-o fa-inverse no-print"></i>',
                     footer: true,
                     title : function() {
-                    return "Reporte de Articulos Vendidos";
+                    return "Reporte de Articulos Vendidos {{ config('app.name', 'VillaSoft Hotel') }}";
                     },
                     alignment: "center",
 
@@ -232,7 +232,7 @@
 
                     // messageBottom: 'null',
                     title : function() {
-                    return "Reporte de Articulos Vendidos";
+                    return "Reporte de Articulos Vendidos {{ config('app.name', 'VillaSoft Hotel') }}";
                     },
                     alignment: "center",
                     customize : function(doc){
@@ -252,7 +252,7 @@
                     text: '<i class="fa fa-print fa-inverse no-print"></i>',
                     footer: true,
                     title : function() {
-                    return "Reporte de Articulos Vendidos";
+                    return "Reporte de Articulos Vendidos {{ config('app.name', 'VillaSoft Hotel') }}";
                     },
                     alignment: "center",
 

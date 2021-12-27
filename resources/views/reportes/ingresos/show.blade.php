@@ -54,7 +54,7 @@
     <div class="row">
       <div class="col-xs-12">
         <h2 class="page-header">
-          <i class="fa fa-globe"></i> VillaSoft Punto
+          <i class="fa fa-globe"></i>  {{ config('app.name', 'VillaSoft Hotel') }}
         <small class="pull-right">Fecha: {{date('d-m-y')}}<br>Hora: {{date('H:m A')}}</small>
         </h2>
       </div>
@@ -363,6 +363,10 @@
 //             $("div.contePrint").printArea( options );
 //         });
 // });
+
+function imprimir() {
+            window.print();
+        }
 </script>
 @endpush
 @endsection

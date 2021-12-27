@@ -26,7 +26,7 @@
         {{-- cabecera de box --}}
 <div class="row">
     <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
-        <h3>Listado de Precios</h3>
+        <h3>Listado de Precios {{ config('app.name', 'VillaSoft Hotel') }}</h3>
         {{-- @include('almacen.articulo.buscar') --}}
     </div>
 </div>
@@ -231,7 +231,7 @@ var table = jQuery(document).ready(function() {
                     extend:'excelHtml5',
                     text: '<i class="fa fa-file-excel-o fa-inverse"></i>',
                     title : function() {
-                    return "Listado de Artículos";
+                    return "Listado de Precios {{ config('app.name', 'VillaSoft Hotel') }}";
                     },
                     alignment: "center",
 
@@ -241,13 +241,13 @@ var table = jQuery(document).ready(function() {
                     pageSize : 'LEGAL',
                     titleAttr:'Exportar a Excel',
                     className:'btn btn-success',
-                    filename: 'listadod_de_Artículos_excel'
+                    filename: "listadod_de_Precios_excel_{{ config('app.name', 'VillaSoft Hotel') }}"
                     },
                     {
                     extend:'pdfHtml5',
                     text: '<i class="fa fa-file-pdf-o fa-inverse"></i>',
                     title : function() {
-                    return "Listado de Artículos";
+                    return "Listado de Precios {{ config('app.name', 'VillaSoft Hotel') }}";
                     },
                     alignment: "center",
                     customize : function(doc){
@@ -264,13 +264,13 @@ var table = jQuery(document).ready(function() {
                     pageSize : 'LEGAL',
                     titleAttr:'Exportar a PDF',
                     className:'btn btn-danger',
-                    filename: 'listadod_de_Artículos_pdf'
+                    filename: "listadod_de_Precios_pdf_{{ config('app.name', 'VillaSoft Hotel') }}"
                     },
                     {
                     extend:'print',
                     text: '<i class="fa fa-print fa-inverse"></i>',
                     title : function() {
-                    return "Listado de Artículos";
+                    return "Listado de Precios {{ config('app.name', 'VillaSoft Hotel') }}";
                     },
                     alignment: "center",
 
@@ -280,7 +280,7 @@ var table = jQuery(document).ready(function() {
                     pageSize : 'LEGAL',
                     titleAttr:'Imprimir',
                     className:'btn btn-info',
-                    filename: 'listadod_de_Artículos_print'
+                    filename: "listadod_de_Precios_print_{{ config('app.name', 'VillaSoft Hotel') }}"
                     },
                 ],
 

@@ -166,7 +166,7 @@
                     extend:'excelHtml5',
                     text: '<i class="fa fa-file-excel-o fa-inverse"></i>',
                     title : function() {
-                    return "Listado de Descargos";
+                    return "Listado de Descargos {{ config('app.name', 'VillaSoft') }}";
                     },
                     alignment: "center",
 
@@ -182,7 +182,7 @@
                     extend:'pdfHtml5',
                     text: '<i class="fa fa-file-pdf-o fa-inverse"></i>',
                     title : function() {
-                    return "Listado de Descargos";
+                    return "Listado de Descargos {{ config('app.name', 'VillaSoft') }}";
                     },
                     alignment: "center",
                     customize : function(doc){
@@ -205,7 +205,7 @@
                     extend:'print',
                     text: '<i class="fa fa-print fa-inverse"></i>',
                     title : function() {
-                    return "Listado de Descargos";
+                    return "Listado de Descargos {{ config('app.name', 'VillaSoft') }}";
                     },
                     alignment: "center",
 

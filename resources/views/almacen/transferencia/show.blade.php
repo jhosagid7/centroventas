@@ -42,7 +42,7 @@
             <div class="row">
               <div class="col-xs-12">
                 <h2 class="page-header">
-                  <i class="fa fa-globe"></i> VillaSoft Punto
+                  <i class="fa fa-globe"></i>  {{ config('app.name', 'VillaSoft') }}
                 <small class="pull-right">Fecha: {{date('d-m-y')}}</small>
                 </h2>
               </div>

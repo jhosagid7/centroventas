@@ -153,6 +153,9 @@
 @push('sciptsMain')
 
 <script language="javascript">
+    function imprimir() {
+            window.print();
+        }
 
 //     function imprimirContenido(el){
 //         // $('#guion').show();

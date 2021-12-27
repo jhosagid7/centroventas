@@ -26,7 +26,7 @@
         {{-- cabecera de box --}}
 <div class="row">
     <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
-        <h3>Planilla de Inventario</h3>
+        <h3>Planilla de Inventario  {{ config('app.name', 'VillaSoft Hotel') }}</h3>
         {{-- @include('almacen.articulo.buscar') --}}
     </div>
 </div>
@@ -105,7 +105,7 @@
 </div> --}}
 <!-- /.box-footer-->
 @php
-    $pdftitle = 'Planilla de Inventario';
+    // $pdftitle = 'Planilla de Inventario {{ config('app.name', 'VillaSoft Hotel') }}';
 @endphp
 </div>
 <!-- /.box -->
@@ -185,7 +185,7 @@ var table = jQuery(document).ready(function() {
                     extend:'excelHtml5',
                     text: '<i class="fa fa-file-excel-o fa-inverse"></i>',
                     title : function() {
-                    return "Planilla de Inventario";
+                    return "Planilla de Inventario {{ config('app.name', 'VillaSoft Hotel') }}";
                     },
                     alignment: "center",
 
@@ -201,8 +201,7 @@ var table = jQuery(document).ready(function() {
                     extend:'pdfHtml5',
                     text: '<i class="fa fa-file-pdf-o fa-inverse"></i>',
                     title : function() {
-                        let plan = '<?php echo "$pdftitle" ?>'
-                    return plan;
+                        return "Planilla de Inventario {{ config('app.name', 'VillaSoft Hotel') }}";
                     },
                     alignment: "center",
                     customize : function(doc){
@@ -225,7 +224,7 @@ var table = jQuery(document).ready(function() {
                     extend:'print',
                     text: '<i class="fa fa-print fa-inverse"></i>',
                     title : function() {
-                    return "Planilla de Inventario";
+                    return "Planilla de Inventario {{ config('app.name', 'VillaSoft Hotel') }}";
                     },
                     alignment: "center",
 
