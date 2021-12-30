@@ -1969,8 +1969,15 @@
                     // var tasaE = parseFloat($("#tasaEfectivo").val());
 
                     // var descuento=parseFloat(0.00);
+                    let inv = $('#jstock').data('limit');
+                    console.log('limit: ',inv)
+                    console.log('stock: ',stock)
+                    console.log('cantidad: ',cantidad)
 
-                    if (stock >= cantidad) {
+                    stock_actual = stock + cantidad;
+                    console.log('stock actual: ',stock_actual)
+
+                    if (cantidad <= stock_actual) {
                         subtotal[cont]      = (cantidad * precio_venta - descuento);
                         subtotalPC[cont]    = (cantidad * precio_venta_c);
                         subtotald[cont]     = (cantidad * precio_venta_d - descuento);
