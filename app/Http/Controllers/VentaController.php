@@ -7,17 +7,21 @@ use App\Caja;
 use App\Tasa;
 use Response;
 use App\venta;
+use App\Persona;
 use App\Articulo;
 use Carbon\Carbon;
 use App\Pago_Venta;
 use App\PagoVuelto;
 use App\DetallePago;
-use App\Sessioncaja;
-use App\DetalleVenta;
 
-use App\Http\Requests;
+use App\Sessioncaja;
 //use Illuminate\Http\Response;
+use App\CreditoVenta;
+use App\DetalleVenta;
+use App\Http\Requests;
 use App\Articulo_venta;
+use App\ClienteCredito;
+use App\DetalleCreditoVenta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -215,6 +219,16 @@ class VentaController extends Controller
     //     dd('hola');
         try{
             DB::beginTransaction();
+
+            if ($request->get('credt') == 1){
+                $tipo_pago_condicion = 'Credito';
+                $status = 'Pendiente';
+            }else{
+                $tipo_pago_condicion = 'Contado';
+                $status = 'Pagado';
+            }
+
+
             $myTime = Carbon::now('America/Caracas');
             // number_format($número, 2, '.', '');
 
@@ -233,11 +247,11 @@ class VentaController extends Controller
             }
 
             // return $precio_costo_final;
-            $utilidad = $request->get('total_venta') - $precio_costo_final;
+            $utilidad = $request->get('precio_costo') - $precio_costo_final;
 
 
 
-            $margen_gananacia = $utilidad / $request->get('total_venta');
+            $margen_gananacia = $utilidad / $request->get('precio_costo');
             // dd($margen_gananacia);
 
             $venta = new Venta;
@@ -263,390 +277,270 @@ class VentaController extends Controller
             $venta->total_venta = $request->get('total_venta');
             $venta->ganancia_neta = $utilidad;
             $venta->estado = 'Aceptada';
+            $venta->tipo_pago_condicion = $tipo_pago_condicion;
+            $venta->status = $status;
             $venta->persona_id = $request->get('idcliente');
             $venta->caja_id = $request->get('caja_id');
             $venta->save();
 
-            //cargamos los datos del detalle del venta en la tabla articulo_venta en unas variables que reciven
-            //un array
+            $UserName = $request->user()->name;
+            $UserId = $request->user()->id;
+            $caja =  Sessioncaja::where('estado', 'Abierta')->orderBy('id', 'desc')->first();
 
-            $tipo_pago = $request->get('tipo_pago');
+            if ($tipo_pago_condicion == 'Credito'){
 
-            if ($tipo_pago == 'Dolar') {
-                $precio_venta_unidad = $request->get('precio_venta');
-            }elseif ($tipo_pago == 'Peso') {
-                $precio_venta_unidad = $request->get('precio_venta_p');
-            }elseif ($tipo_pago == 'Trans/Punto') {
-                $precio_venta_unidad = $request->get('precio_venta_tp');
-            }elseif ($tipo_pago == 'Mixto') {
-                $precio_venta_unidad = $request->get('precio_venta_m');
-            }elseif ($tipo_pago == 'Efectivo') {
-                $precio_venta_unidad = $request->get('precio_venta_e');
+                if($request->get('idcliente')){
+                    $cliente = Persona::findOrFail($request->get('idcliente'));
+
+                    $isDeuda = ClienteCredito::where('persona_id', $cliente->id)->first();
+
+                    if(isset($isDeuda)){
+                        // return $isDeuda->total_factura;
+                        $clienteCredito = ClienteCredito::findOrFail($isDeuda->id);
+                        $clienteCredito->total_factura += 1;
+                        $clienteCredito->total_deuda += $request->get('precio_costo');
+                        $clienteCredito->update();
+                    }else{
+                        $clienteCredito = New ClienteCredito();
+                        $clienteCredito->nombre_cliente = $cliente->nombre;
+                        $clienteCredito->cedula_cliente = $cliente->num_documento;
+                        $clienteCredito->direccion_cliente = $cliente->direccion;
+                        $clienteCredito->telefono_cliente = $cliente->telefono;
+                        $clienteCredito->total_factura = 1;
+                        $clienteCredito->total_deuda = $request->get('precio_costo');
+                        // $clienteCredito->fecha_limite_pago = $request->get('total');
+                        $clienteCredito->estado_credito = 'Activo';
+                        $clienteCredito->persona_id = $cliente->id;
+                        $clienteCredito->user_id = $UserId;
+                        $clienteCredito->save();
+
+
+                    }
+
+                    $creditoIngreso = New CreditoVenta();
+                    $creditoIngreso->venta_id = $venta->id;
+                    $creditoIngreso->cliente_credito_id = $clienteCredito->id;
+                    $creditoIngreso->estado_credito_venta = 'Pendiente';
+                    $creditoIngreso->save();
+
+                    $detalleCredito = New DetalleCreditoVenta();
+                    $detalleCredito->venta_id = $venta->id;
+                    $detalleCredito->cliente = $request->get('idcliente');
+                    $detalleCredito->operador = $UserId;
+                    $detalleCredito->caja = $caja->id;
+                    $detalleCredito->moto = $request->get('precio_costo');
+                    $detalleCredito->abono = 0;
+                    $detalleCredito->resta = $request->get('precio_costo');
+                    $detalleCredito->descuento = 0;
+                    $detalleCredito->incremento = 0;
+                    $detalleCredito->observaciones = $request->get('Observaciones');
+                    $detalleCredito->save();
+                }
+
+                //cargamos los datos del detalle del venta en la tabla articulo_venta en unas variables que reciven
+                //un array
+
+                $tipo_pago = $request->get('tipo_pago');
+
+                if ($tipo_pago == 'Dolar') {
+                    $precio_venta_unidad = $request->get('precio_venta');
+                }elseif ($tipo_pago == 'Peso') {
+                    $precio_venta_unidad = $request->get('precio_venta_p');
+                }elseif ($tipo_pago == 'Trans/Punto') {
+                    $precio_venta_unidad = $request->get('precio_venta_tp');
+                }elseif ($tipo_pago == 'Mixto') {
+                    $precio_venta_unidad = $request->get('precio_venta_m');
+                }elseif ($tipo_pago == 'Efectivo') {
+                    $precio_venta_unidad = $request->get('precio_venta_e');
+                }else{
+                    $precio_venta_unidad = $request->get('precio_venta');
+                }
+
+
+                $cantidad = $request->get('cantidad');
+                $precio_costo_unidad = $request->get('precio_costo_unidad');
+                $porEspecial = $request->get('porEspecial');
+
+                $descuento = $request->get('descuento');
+                $articulo_id = $request->get('idarticulo');
+
+                //creamos un contador
+                $cont = 0;
+
+                //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
+                while ($cont < count($articulo_id)) {
+
+                    $isDivisa = Articulo::find($articulo_id[$cont]);
+
+                    if($isDivisa->isDolar){
+                        $activoD = $isDivisa->isDolar;
+                    }else{
+                        $activoD = null;
+                    }
+                    if($isDivisa->isPeso){
+                        $activoP = $isDivisa->isPeso;
+                    }else{
+                        $activoP = null;
+                    }
+                    if($isDivisa->isTransPunto){
+                        $activoT = $isDivisa->isTransPunto;
+                    }else{
+                        $activoT = null;
+                    }
+                    if($isDivisa->isMixto){
+                        $activoM = $isDivisa->isMixto;
+                    }else{
+                        $activoM = null;
+                    }
+                    if($isDivisa->isEfectivo){
+                        $activoE = $isDivisa->isEfectivo;
+                    }else{
+                        $activoE = null;
+                    }
+
+                    $Articulo_venta = new Articulo_venta();
+                    $Articulo_venta->cantidad = $cantidad[$cont];
+                    $Articulo_venta->precio_costo_unidad = $precio_costo_unidad[$cont];
+                    $Articulo_venta->precio_venta_unidad = $precio_venta_unidad[$cont];
+                    $Articulo_venta->porEspecial = $porEspecial[$cont];
+                    $Articulo_venta->isDolar = $activoD;
+                    $Articulo_venta->isPeso = $activoP;
+                    $Articulo_venta->isTransPunto = $activoT;
+                    $Articulo_venta->isMixto = $activoM;
+                    $Articulo_venta->isEfectivo = $activoE;
+                    $Articulo_venta->descuento = $descuento[$cont];
+                    $Articulo_venta->articulo_id = $articulo_id[$cont];
+                    $Articulo_venta->venta_id =  $venta->id;//este idingreso se autogenera cuando se crea el objeto en la parte superior (*)
+                    $Articulo_venta->save();
+
+                    $cont = $cont+1;
+                }
+
+            }else{
+
+
+
+                //cargamos los datos del detalle del venta en la tabla articulo_venta en unas variables que reciven
+                //un array
+
+                $tipo_pago = $request->get('tipo_pago');
+
+                if ($tipo_pago == 'Dolar') {
+                    $precio_venta_unidad = $request->get('precio_venta');
+                }elseif ($tipo_pago == 'Peso') {
+                    $precio_venta_unidad = $request->get('precio_venta_p');
+                }elseif ($tipo_pago == 'Trans/Punto') {
+                    $precio_venta_unidad = $request->get('precio_venta_tp');
+                }elseif ($tipo_pago == 'Mixto') {
+                    $precio_venta_unidad = $request->get('precio_venta_m');
+                }elseif ($tipo_pago == 'Efectivo') {
+                    $precio_venta_unidad = $request->get('precio_venta_e');
+                }
+
+
+                $cantidad = $request->get('cantidad');
+                $precio_costo_unidad = $request->get('precio_costo_unidad');
+                $porEspecial = $request->get('porEspecial');
+
+                $descuento = $request->get('descuento');
+                $articulo_id = $request->get('idarticulo');
+
+                //creamos un contador
+                $cont = 0;
+
+                //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
+                while ($cont < count($articulo_id)) {
+
+                    $isDivisa = Articulo::find($articulo_id[$cont]);
+
+                    if($isDivisa->isDolar){
+                        $activoD = $isDivisa->isDolar;
+                    }else{
+                        $activoD = null;
+                    }
+                    if($isDivisa->isPeso){
+                        $activoP = $isDivisa->isPeso;
+                    }else{
+                        $activoP = null;
+                    }
+                    if($isDivisa->isTransPunto){
+                        $activoT = $isDivisa->isTransPunto;
+                    }else{
+                        $activoT = null;
+                    }
+                    if($isDivisa->isMixto){
+                        $activoM = $isDivisa->isMixto;
+                    }else{
+                        $activoM = null;
+                    }
+                    if($isDivisa->isEfectivo){
+                        $activoE = $isDivisa->isEfectivo;
+                    }else{
+                        $activoE = null;
+                    }
+
+                    $Articulo_venta = new Articulo_venta();
+                    $Articulo_venta->cantidad = $cantidad[$cont];
+                    $Articulo_venta->precio_costo_unidad = $precio_costo_unidad[$cont];
+                    $Articulo_venta->precio_venta_unidad = $precio_venta_unidad[$cont];
+                    $Articulo_venta->porEspecial = $porEspecial[$cont];
+                    $Articulo_venta->isDolar = $activoD;
+                    $Articulo_venta->isPeso = $activoP;
+                    $Articulo_venta->isTransPunto = $activoT;
+                    $Articulo_venta->isMixto = $activoM;
+                    $Articulo_venta->isEfectivo = $activoE;
+                    $Articulo_venta->descuento = $descuento[$cont];
+                    $Articulo_venta->articulo_id = $articulo_id[$cont];
+                    $Articulo_venta->venta_id =  $venta->id;//este idingreso se autogenera cuando se crea el objeto en la parte superior (*)
+                    $Articulo_venta->save();
+
+                    $cont = $cont+1;
+                }
+
+                $MontoDivisaR = $request->get('MontoDivisa');
+                $divisaR = $request->get('divisa');
+                $TasaTikeR = $request->get('TasaTike');
+                $MontoDolarR = $request->get('MontoDolar');
+                $VeltosR = $request->get('Veltos');
+
+                $MontoDivisaR = array_filter($MontoDivisaR);
+
+
+                foreach($MontoDivisaR as $key => $val) {
+
+
+                    $divisa[]=$divisaR[$key];
+                    $MontoDivisa[]=$MontoDivisaR[$key];
+                    $TasaTiket[]=$TasaTikeR[$key];
+                    $MontoDolar[]=$MontoDolarR[$key];
+                    $Vueltos[]=$VeltosR[$key];
+
+                }
+
+
+
+
+                // dd($divisa, $MontoDivisa,$TasaTike,$MontoDolar,$Veltos);
+                //creamos un contador
+                $cont = 0;
+
+                //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
+                while ($cont < count($MontoDolar)) {
+
+
+                    $Pago_Venta = new Pago_Venta();
+                    $Pago_Venta->Divisa = $divisa[$cont];
+                    $Pago_Venta->MontoDivisa = $MontoDivisa[$cont];
+                    $Pago_Venta->TasaTiket = $TasaTiket[$cont];
+                    $Pago_Venta->MontoDolar = $MontoDolar[$cont];
+                    $Pago_Venta->Vueltos = $Vueltos[$cont];
+                    $Pago_Venta->venta_id = $venta->id;
+                    $Pago_Venta->save();
+
+                    $cont = $cont+1;
+                }
             }
 
-
-            $cantidad = $request->get('cantidad');
-            $precio_costo_unidad = $request->get('precio_costo_unidad');
-            $porEspecial = $request->get('porEspecial');
-
-            $descuento = $request->get('descuento');
-            $articulo_id = $request->get('idarticulo');
-
-            //creamos un contador
-            $cont = 0;
-
-            //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
-            while ($cont < count($articulo_id)) {
-
-                $isDivisa = Articulo::find($articulo_id[$cont]);
-
-                if($isDivisa->isDolar){
-                    $activoD = $isDivisa->isDolar;
-                }else{
-                    $activoD = null;
-                }
-                if($isDivisa->isPeso){
-                    $activoP = $isDivisa->isPeso;
-                }else{
-                    $activoP = null;
-                }
-                if($isDivisa->isTransPunto){
-                    $activoT = $isDivisa->isTransPunto;
-                }else{
-                    $activoT = null;
-                }
-                if($isDivisa->isMixto){
-                    $activoM = $isDivisa->isMixto;
-                }else{
-                    $activoM = null;
-                }
-                if($isDivisa->isEfectivo){
-                    $activoE = $isDivisa->isEfectivo;
-                }else{
-                    $activoE = null;
-                }
-
-                $Articulo_venta = new Articulo_venta();
-                $Articulo_venta->cantidad = $cantidad[$cont];
-                $Articulo_venta->precio_costo_unidad = $precio_costo_unidad[$cont];
-                $Articulo_venta->precio_venta_unidad = $precio_venta_unidad[$cont];
-                $Articulo_venta->porEspecial = $porEspecial[$cont];
-                $Articulo_venta->isDolar = $activoD;
-                $Articulo_venta->isPeso = $activoP;
-                $Articulo_venta->isTransPunto = $activoT;
-                $Articulo_venta->isMixto = $activoM;
-                $Articulo_venta->isEfectivo = $activoE;
-                $Articulo_venta->descuento = $descuento[$cont];
-                $Articulo_venta->articulo_id = $articulo_id[$cont];
-                $Articulo_venta->venta_id =  $venta->id;//este idingreso se autogenera cuando se crea el objeto en la parte superior (*)
-                $Articulo_venta->save();
-
-                $cont = $cont+1;
-            }
-
-            $MontoDivisaR = $request->get('MontoDivisa');
-            $divisaR = $request->get('divisa');
-            $TasaTikeR = $request->get('TasaTike');
-            $MontoDolarR = $request->get('MontoDolar');
-            $VeltosR = $request->get('Veltos');
-
-            $MontoDivisaR = array_filter($MontoDivisaR);
-
-
-            foreach($MontoDivisaR as $key => $val) {
-
-
-                $divisa[]=$divisaR[$key];
-                $MontoDivisa[]=$MontoDivisaR[$key];
-                $TasaTiket[]=$TasaTikeR[$key];
-                $MontoDolar[]=$MontoDolarR[$key];
-                $Vueltos[]=$VeltosR[$key];
-
-            }
-
-
-
-
-            // dd($divisa, $MontoDivisa,$TasaTike,$MontoDolar,$Veltos);
-            //creamos un contador
-            $cont = 0;
-
-            //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
-            while ($cont < count($MontoDolar)) {
-
-
-                $Pago_Venta = new Pago_Venta();
-                $Pago_Venta->Divisa = $divisa[$cont];
-                $Pago_Venta->MontoDivisa = $MontoDivisa[$cont];
-                $Pago_Venta->TasaTiket = $TasaTiket[$cont];
-                $Pago_Venta->MontoDolar = $MontoDolar[$cont];
-                $Pago_Venta->Vueltos = $Vueltos[$cont];
-                $Pago_Venta->venta_id = $venta->id;
-                $Pago_Venta->save();
-
-                $cont = $cont+1;
-            }
-
-            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-                        // TODO creamos metodo para realizar el pago cuando se paga con dinero contable viene en la variable base_vuelto_monto_dejado
-                        // primero validamos si exciste un pago hecho.
-
-                        // $montoBase = $request->get('base_vuelto_monto_dejado');
-                        // $montoResta = $request->get('monto_dejadoResta');
-                        // $total_venta = $request->get('total_costo');
-
-
-                        // $montoBase = floatval($montoBase);
-                        // $montoResta = floatval($montoResta);
-                        // $total_venta = floatval($total_venta);
-
-                        // $modo_pago = 'contado';
-
-                        // $venta_id = $venta->id;
-                        // $caja_id = $request->get('caja_id');
-
-                        // $opS = $montoBase;
-
-//                         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//                         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//             //validamos si el monto pagado es mayor a 0 sea que lo paguen con montoBase o con montoPendiente y que el tipo de pago sea contado
-//                         if($opS > 0 && $modo_pago == 'contado'){
-//                             // return $opS;
-//                             //validamos que el monto pagado sea mayor o igual al total de la venta
-//                             if($opS >= $total_venta){
-//                                 // return 'si';
-//                                 // calculamos excedente si el valor pagado es mayor a la venta
-//                                 // $MontoDolarR = $request->get('MontoDolar');
-//                                 // return $montoD;
-//                                 //validamos si montobase es mayor y montopendiente es menor... lo que significa esto es que estamos reciviendo una moneda nueva
-//                                 if($montoBase > 0){
-//                                     // return 'pagado con plata nueva = montoBase';
-//                                     //metodo para procesar pago con dinero nuevo
-//                                     $montoD = [];
-//                                     $montoDiv = [];
-//                                     $TasaT = [];
-
-//                                     // $prueba[]= ['Divisa' => $divisaVueltos[$key], 'MontoDivisa' => $MontoDivisaVueltos[$key], 'TasaTiket' => $TasaTikeVueltos[$key], 'MontoDolar' => $MontoDolarVueltos[$key]];
-//                                     $MontoDivisa = $request->get('MontoDivisa');
-//                                     $divisa = $request->get('divisa');
-//                                     $TasaTike = $request->get('TasaTike');
-//                                     $MontoDolar = $request->get('MontoDolar');
-
-//                                     $MontoDolar = array_filter($MontoDolar);
-
-//                                     foreach($MontoDolar as $key => $val) {
-
-//                                         $DivisaArray[$divisa[$key]] = $divisa[$key];
-//                                         $montoDivisaArray[$divisa[$key]] = $MontoDivisa[$key];
-//                                         $TasaTikeArray[$divisa[$key]]= $TasaTike[$key];
-//                                         $montoDolarArray[$divisa[$key]]= $MontoDolar[$key];
-//                                     }
-
-//                                     // return $request;
-//                                     $restk = $total_venta;
-//                                     $totalVuelto = $montoResta;
-//                                     // echo  'total vuelto '.$totalVuelto.'<br>';
-//                                     // return $opS;
-//                                     //  $re[] = '';
-//                                     asort($montoDolarArray);
-//                                     foreach ($montoDolarArray as $key => $val) {
-//                                         if($val > 0){
-//                                             $montoD[$key]= $val;
-//                                             $montoDiv[$key]= $montoDivisaArray[$key];
-//                                             $TasaT[$key]= $TasaTikeArray[$key];
-//                                         }
-//                                     }
-//                                     // return $montoDiv;
-//                                     $x = $opS;
-//                                     $residuo = 0;
-//                                     $exc = 0;
-//                                     foreach ($montoD as $p => $value) {
-
-//                                         if(round($value,6) == round($restk,6)){
-//                                             echo 'igual <br> ';
-//                                             echo 'value '.$value.' <br> ';
-//                                             echo 'restk '.$restk.' <br> ';
-//                                             $restk = $restk - $value;
-//                                             $x = floatval($x - $value);
-//                                             $restk = floatval($restk);
-//                                             echo  ' divisa: '.$p.' montoDivisa: '.$montoDiv[$p].' tasaTiket: '.$TasaT[$p].' montoDolar: '.floatval($value).' montoDolarConsumo: '.floatval($value).'  excedente:  '. 0 .' vueltos: '. 0 .'<br> ';
-
-//                                             $Pago_Servicio = new Pago_Venta();
-//                                             $Pago_Servicio->Divisa = $p;
-//                                             $Pago_Servicio->MontoDivisa = $montoDiv[$p];
-//                                             $Pago_Servicio->TasaTiket = $TasaT[$p];
-//                                             $Pago_Servicio->MontoDolar = floatval($value);
-//                                             $Pago_Servicio->MontoDolarServicio = floatval($value);
-//                                             $Pago_Servicio->Excedente = 0;
-//                                             $Pago_Servicio->Vueltos = 0;
-//                                             $Pago_Servicio->venta_id = $venta_id;
-//                                             $Pago_Servicio->caja_id = $caja_id;
-//                                             $Pago_Servicio->save();
-
-
-
-//                                             echo 'excd '. 0 .' <br> ';
-//                                             echo 'vueltos '. 0 .' <br> ';
-//                                             echo $restk.' <br> ';
-//                                             $residuo = $restk;
-
-
-//                                         }else if (round($value,6) < round($restk,6)){
-
-//                                             echo 'value '.$value.' <br> ';
-//                                             echo 'restk '.$restk.' <br> ';
-//                                             echo 'menor <br> ';
-//                                             $restk = $restk - $value;
-//                                             echo  ' divisa: '.$p.' montoDivisa: '.$montoDiv[$p].' tasaTiket: '.$TasaT[$p].' montoDolar: '.floatval($value).' montoDolarConsumo: '.floatval($value).'  excedente:  '. 0 .' vueltos: '. 0 .'<br> ';
-
-
-//                                             $Pago_Servicio = new Pago_Venta();
-//                                             $Pago_Servicio->Divisa = $p;
-//                                             $Pago_Servicio->MontoDivisa = $montoDiv[$p];
-//                                             $Pago_Servicio->TasaTiket = $TasaT[$p];
-//                                             $Pago_Servicio->MontoDolar = floatval($value);
-//                                             $Pago_Servicio->MontoDolarServicio = floatval($value);
-//                                             $Pago_Servicio->Excedente = 0;
-//                                             $Pago_Servicio->Vueltos = 0;
-//                                             $Pago_Servicio->venta_id = $venta_id;
-//                                             $Pago_Servicio->caja_id = $caja_id;
-//                                             $Pago_Servicio->save();
-
-//                                             echo 'excd '. 0 .' <br> ';
-//                                             echo 'vueltos '. 0 .' <br> ';
-//                                             echo $restk.' <br> ';
-//                                             $residuo = $restk;
-//                                         }else if (round($value,6) > round($restk,6)){
-//                                             // echo 'value '.$value.' <br> ';
-//                                             // echo 'restk '.$restk.' <br> ';
-//                                             $residuo = $restk;
-//                                             $restk =   $value - $restk;
-//                                             // $vuel = $totalVuelto;
-//                                             // return $restk;
-//                                             // if($totalVuelto > 0){
-//                                                 if (round($totalVuelto,6) > round($restk,6)) {
-//                                                     // $totalVuelto = $totalVuelto - $restk;
-//                                                     $exc = $restk;
-//                                                     $vuel = 0;
-//                                                 }
-//                                                 if (round($totalVuelto,6) < round($restk,6)) {
-
-//                                                     echo '$totalVuelto: '.$totalVuelto;
-//                                                     $exc = $restk - $totalVuelto;
-//                                                     $vuel = $totalVuelto;
-//                                                     $totalVuelto = 0;
-//                                                     // $residuo = 0;
-//                                                 }
-//                                                 // }
-//                                                 if (round($totalVuelto,6) == round($restk,6)) {
-//                                                     $exc = 0;
-//                                                     $vuel = $totalVuelto;
-//                                                     $totalVuelto = 0;
-//                                                 }
-//                                             echo 'mayor <br> ';
-//                                             echo  ' divisa: '.$p.' montoDivisa: '.$montoDiv[$p].' tasaTiket: '.$TasaT[$p].' montoDolar: '.floatval($value).' montoDolarConsumo: '.floatval($residuo).'  excedente:  '.$exc.' vueltos: '.$vuel.'<br> ';
-
-//                                             $Pago_Servicio = new Pago_Venta();
-//                                             $Pago_Servicio->Divisa = $p;
-//                                             $Pago_Servicio->MontoDivisa = $montoDiv[$p];
-//                                             $Pago_Servicio->TasaTiket = $TasaT[$p];
-//                                             $Pago_Servicio->MontoDolar = floatval($value);
-//                                             $Pago_Servicio->MontoDolarServicio = floatval($residuo);
-//                                             $Pago_Servicio->Excedente = $exc;
-//                                             $Pago_Servicio->Vueltos = $vuel;
-//                                             $Pago_Servicio->venta_id = $venta_id;
-//                                             $Pago_Servicio->caja_id = $caja_id;
-//                                             $Pago_Servicio->save();
-
-
-//                                             if($exc > 0){
-//                                                 $excdtsRecibidosCaja = new ExcedentesRecibidosCajaActual();
-//                                                 $excdtsRecibidosCaja->Tipo = 'Servicio';
-//                                                 $excdtsRecibidosCaja->Estado = 'Pendiente';
-//                                                 $excdtsRecibidosCaja->Divisa = $p;
-//                                                 $excdtsRecibidosCaja->MontoDivisa = floatval($exc * $TasaT[$p]);
-//                                                 $excdtsRecibidosCaja->TasaTiket = $TasaT[$p];
-//                                                 $excdtsRecibidosCaja->MontoDolar = floatval($exc);
-//                                                 $excdtsRecibidosCaja->venta_id = $venta_id;
-//                                                 $excdtsRecibidosCaja->venta_id = 0;
-//                                                 $excdtsRecibidosCaja->horas_extra_id = 0;
-//                                                 $excdtsRecibidosCaja->caja_id = $caja_id;
-//                                                 $excdtsRecibidosCaja->save();
-//                                                 echo  'Excedentes_Recibidos_Caja_Actual Tipo: Servicio Estado: Pendiente Divisa: '.$p.' MontoDivisa: '.floatval($exc * $TasaT[$p]).' TasaTiket: '.$TasaT[$p].'  MontoDolar:  '.floatval($exc).'<br> ';
-//                                             }
-
-//                                             if($vuel > 0){
-//                                                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//                                                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//                                                 // En esta seccion trabajaremos la parte de vueltos llenamos la tabla pagos_vueltos
-
-//                                                 // $isVuelos = $request->get('isVueltos');
-
-//                                                 if($montoResta > 0 || $montoResta != null){
-//                                                     $MontoDivisaVueltos = $request->get('MontoDivisaV');
-//                                                     $divisaVueltos = $request->get('divisaV');
-//                                                     $TasaTikeVueltos = $request->get('TasaTikeV');
-//                                                     $MontoDolarVueltos = $request->get('MontoDolarV');
-
-//                                                     $MontoDivisaVueltos = array_filter($MontoDivisaVueltos);
-
-//                                                     foreach($MontoDivisaVueltos as $key => $val) {
-
-//                                                         $Vdivisa[]=$divisaVueltos[$key];
-//                                                         $VMontoDivisa[]=$MontoDivisaVueltos[$key];
-//                                                         $VTasaTiket[]=$TasaTikeVueltos[$key];
-//                                                         $VMontoDolar[]=$MontoDolarVueltos[$key];
-//                                                     }
-//                                                     // dd($divisa, $MontoDivisa,$TasaTike,$MontoDolar,$Veltos);
-//                                                     //creamos un contador
-//                                                     $cont = 0;
-
-//                                                     //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
-//                                                     while ($cont < count($VMontoDolar)) {
-//                                                         $Pago_Extras_Vueltos = new PagoVuelto();
-//                                                         $Pago_Extras_Vueltos->Tipo = 'Servicio';
-//                                                         $Pago_Extras_Vueltos->tipo_vuelto = 'Vueltos_Pago';
-//                                                         $Pago_Extras_Vueltos->Divisa = $Vdivisa[$cont];
-//                                                         $Pago_Extras_Vueltos->MontoDivisa = $VMontoDivisa[$cont];
-//                                                         $Pago_Extras_Vueltos->TasaTiket = $VTasaTiket[$cont];
-//                                                         $Pago_Extras_Vueltos->MontoDolar = floatval($VMontoDolar[$cont]);
-//                                                         $Pago_Extras_Vueltos->venta_id = $venta_id;
-//                                                         $Pago_Extras_Vueltos->venta_id = 0;
-//                                                         $Pago_Extras_Vueltos->horas_extra_id = 0;
-//                                                         $Pago_Extras_Vueltos->detalle__creditos__pagado_id = 0;
-//                                                         $Pago_Extras_Vueltos->caja_id = $caja_id;
-//                                                         $Pago_Extras_Vueltos->save();
-
-//                                                         echo  'Pago_Vuelto Tipo: Consumo  Divisa: '.$Vdivisa[$cont].' MontoDivisa: '.$VMontoDivisa[$cont].' TasaTiket: '.$VTasaTiket[$cont].' MontoDolar: '.floatval($VMontoDolar[$cont]).'<br> ';
-//                                                         $cont = $cont+1;
-//                                                     }
-
-//                                                 }
-//                                                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//                                                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//                                             }
-//                                             echo 'excd '.$exc.' <br> ';
-//                                             echo 'vueltos '.$vuel.' <br> ';
-//                                             echo $restk.' <br> ';
-//                                         }
-
-//                                     }
-//                                 // validamos  si montopendiente es mayor y montobase es menor... lo que significa esto es que estamos reciviendo una moneda pendiente
-//                                 }
-// // return 'Finalizo';
-
-//                             }else{
-//                                 return Redirect::back()
-//                                 ->with('status_danger', '¡Error Pago incompleto! Debe ingresar un monto para pagar y procesar el servicio... ');
-//                             }
-
-//                             // return 'no';
-//                         }
 
             DB::commit();
 

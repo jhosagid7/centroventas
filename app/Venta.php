@@ -27,10 +27,10 @@ class Venta extends Model
         return $this->belongsTo(Persona::class);
     }
 
-    public function user()
-    {
-        return $this->hasOneThrough(User::class, Caja::class);
-    }
+    // public function user()
+    // {
+    //     return $this->hasOneThrough(User::class, Caja::class);
+    // }
 
     protected $dates = [
         'fecha_hora',

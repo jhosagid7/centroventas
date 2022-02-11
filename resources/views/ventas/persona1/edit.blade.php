@@ -118,76 +118,11 @@
             @endif
             </div>
         </div> --}}
-
-
-
-    </div>
-    <div class="box box-default">
-        <div class="box-header with-border">
-          <h3 class="box-title"><b>Conceder Privilegios</b></h3>
-        </div>
-        <!-- /.box-header -->
-        <div class="box-body">
-          <div class="table-responsive">
-            <table class="table no-margin">
-
-              <tbody style="padding: 0px;">
-              <tr style="padding: 0px;">
-                <td><h4 class="text-primary" style="margin-top: 0px !important;">Puede tener Cortesía:
-                  <label>
-                    <input name="isCortesia" type="checkbox"
-                    @if ($persona->isCortesia =="1")
-                          checked
-                      @elseif (old('isCortesia')=="1")
-                          checked
-                      @endif
-                    >
-                  </label>
-                </h4>
-                </td>
-                <td><h4 class="text-primary" style="margin-top: 0px !important;">Puede tener Crédito:
-                    <label>
-                      <input name="isCredito" type="checkbox"
-                      @if ($persona->isCredito =="1")
-                            checked
-                        @elseif (old('isCredito')=="1")
-                            checked
-                        @endif
-                      >
-                    </label>
-                </h4>
-                  </td>
-              </tr>
-
-              <tr style="padding: 0px;">
-                <td><h4 class="text-primary" style="margin-top: 0px !important;">Fecha limite: (en días)&nbsp;&nbsp;&nbsp; </h4></td>
-                <td><label>
-                    <input required type="limite_fecha" name="limite_fecha" class="form-control" value="{{$persona->limite_fecha}}" placeholder="Fecha limite... (15)">
-
-                  </label></td>
-                <td><h4 class="text-primary" style="margin-top: 0px !important;">Monto limite de crédito: (en Dolar)&nbsp;&nbsp;&nbsp;</h4></td>
-                <td>
-                  <div class="sparkbar" data-color="#00a65a" data-height="20"><label>
-                    <input required type="limite_monto" name="limite_monto" class="form-control" value="{{$persona->limite_monto}}" placeholder="Monto limite crédito... (40)">
-
-                  </label></div>
-                </td>
-              </tr>
-
-
-              </tbody>
-            </table>
-
-          </div>
-          <!-- /.table-responsive -->
-        </div>
-
-
-      </div>
-    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-        <div class="form-group">
-            <button class="btn btn-primary" type="submit">Guardar</button>
-            <a class="btn btn-danger" href="{{ url()->previous() }}">{{__('Regresar')}}</a>
+        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+            <div class="form-group">
+                <button class="btn btn-primary" type="submit">Guardar</button>
+                <a class="btn btn-danger" href="{{ url()->previous() }}">{{__('Regresar')}}</a>
+            </div>
         </div>
     </div>
 

@@ -1,19 +1,7 @@
 @extends ('layouts.admin3')
 @section('contenido')
 
-<!-- Default box -->
-<!-- Content Header (Page header) -->
-    {{-- <section class="content-header">
-      <h1>
-        <!--Blank page-->
-        <small>it all starts here</small>
-      </h1>
-      <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li><a href="#">Examples</a></li>
-        <li class="active">Blank page</li>
-      </ol>
-    </section> --}}
+
 
     <!-- Main content -->
     <section class="content">
@@ -39,8 +27,8 @@
         {{-- cabecera de box --}}
 <div class="row">
     <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
-        <h3>Listado de Ingresos <a href="{{URL::action('IngresoController@create')}}"><button class='btn btn-success'><span class='glyphicon glyphicon-plus'></span> Nuevo</button></a></h3>
-        {{-- @include('compras.ingreso.buscar') --}}
+        <h3>Listado de Clientes <a href="{{URL::action('ClienteController@create')}}"><button class='btn btn-success'><span class='glyphicon glyphicon-plus'></span> Nuevo</button></a></h3>
+        {{-- @include('ventas.persona.buscar') --}}
     </div>
 </div>
 
@@ -48,62 +36,42 @@
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="table-responsive">
             @include('custom.message')
-            <table id="ingre" class="table table-striped table-bordered table-condensed table-hover">
+            <table id="provdor" class="table table-striped table-bordered table-condensed table-hover">
                 <thead>
-                    <th>ID</th>
-                    <th>Fecha</th>
-                    <th>Operador</th>
-                    <th>Proveedor</th>
-                    <th>Comprobante</th>
-                    <th>Total</th>
-                    <th>Estado</th>
-                    <th>Tipo pago</th>
-                    <th>status</th>
+                    <th>Id</th>
+                    <th>Nombre</th>
+                    <th>Tipo Doc</th>
+                    <th>Número Doc</th>
+                    <th>Dirección</th>
+                    <th>Teléfono</th>
+                    <th>Email</th>
+                    {{-- <th>Imagen</th> --}}
                     <th>Opciones</th>
                 </thead>
                 <tbody>
-                    @foreach ($ingresos as $ing)
-                    @if ($ing->tipo_pago == 'Contado')
-                        @php
-                            $color = 'success';
-                        @endphp
-                    @endif
-                    @if ($ing->tipo_pago == 'Credito')
-                        @php
-                            $color = 'warning';
-                        @endphp
-                    @endif
-                    @if ($ing->status == 'Pagado')
-                        @php
-                            $colorStatus = 'primary';
-                        @endphp
-                    @endif
-                    @if ($ing->status == 'Pendiente')
-                        @php
-                            $colorStatus = 'danger';
-                        @endphp
-                    @endif
+                    @foreach ($personas as $per)
                     <tr>
-                        <td>{{ $ing->id ?? '' }}</td>
-                        <td>{{ $ing->fecha_hora }}</td>
-                        <td>{{ $ing->name ?? '' }}</td>
-                        <td>{{ $ing->nombre ?? '' }}</td>
-                        <td>{{ $ing->tipo_comprobante . ': ' . $ing->serie_comprobante . '-' . $ing->num_comprobante ?? '' }}</td>
-                        <td>{{ floatval($ing->total) ?? '' }}</td>
-                        <td>{{ $ing->estado ?? '' }}</td>
-                        <td><span class="label label-{{$color}}">{{ strtoupper($ing->tipo_pago) ?? '' }}</span></td>
-                        <td><span class="label label-{{$colorStatus}}">{{ strtoupper($ing->status) ?? '' }}</span></td>
+                        <td>{{ $per->id }}</td>
+                        <td>{{ $per->nombre }}</td>
+                        <td>{{ $per->tipo_documento }}</td>
+                        <td>{{ $per->num_documento }}</td>
+                        <td>{{ $per->direccion }}</td>
+                        <td>{{ $per->telefono }}</td>
+                        <td>{{ $per->email }}</td>
+                        {{-- <td>
+                            <img src="{{asset('imagenes/personas/'.$per->imagen)}}" alt="{{ $per->nombre }}" height="50px" width="50px" class="img-circle">
+                        </td> --}}
                         <td>
-                        <a href="{{URL::action('IngresoController@show', $ing->id)}}"><button class='btn btn-primary btn-sm'><span class='glyphicon glyphicon-edit'></span></button></a>
-                        <a href="" data-target="#modal-delete-{{$ing->id}}" data-toggle="modal"><button class='btn btn-danger btn-sm'><i class='glyphicon glyphicon-trash'></i></button></a>
+                        <a href="{{URL::action('ClienteController@edit', $per->id)}}"><button class='btn btn-info'><span class='glyphicon glyphicon-edit'></span></button></a>
+                        <a href="" data-target="#modal-delete-{{$per->id}}" data-toggle="modal"><button class='btn btn-danger'><i class='glyphicon glyphicon-trash'></i></button></a>
                         </td>
                     </tr>
-                    @include('compras.ingreso.modal')
+                    @include('ventas.persona.modal')
                     @endforeach
                 </tbody>
             </table>
         </div>
-        {{-- {{$ingresos->render()}} --}}
+        {{-- {{$personas->render()}} --}}
     </div>
 </div>
 
@@ -117,9 +85,9 @@
 </div>
 <!-- /.box -->
 @push('sciptsMain')
-    <script>
-       var table = jQuery(document).ready(function() {
-    jQuery('#ingre').DataTable({
+<script>
+    var table = jQuery(document).ready(function() {
+    jQuery('#provdor').DataTable({
     rowReorder: {
     selector: 'td:nth-child(2)'
     },
@@ -161,7 +129,7 @@
                     extend:'excelHtml5',
                     text: '<i class="fa fa-file-excel-o fa-inverse"></i>',
                     title : function() {
-                    return "Listado de Ingresos";
+                    return "Listado de Clientes";
                     },
                     alignment: "center",
 
@@ -171,18 +139,18 @@
                     pageSize : 'LEGAL',
                     titleAttr:'Exportar a Excel',
                     className:'btn btn-success',
-                    filename: 'listadod_de_Ingresos_excel'
+                    filename: 'listadod_de_Clientes_excel'
                     },
                     {
                     extend:'pdfHtml5',
                     text: '<i class="fa fa-file-pdf-o fa-inverse"></i>',
                     title : function() {
-                    return "Listado de Ingresos";
+                    return "Listado de Clientes";
                     },
                     alignment: "center",
                     customize : function(doc){
                     doc.styles.tableHeader.alignment = 'left'; //giustifica a sinistra titoli colonne
-                    doc.content[1].table.widths = [20,100,100,100,100,60]; //costringe le colonne ad occupare un dato spazio per gestire il baco del 100% width che non si concretizza mai
+                    doc.content[1].table.widths = [10,120,40,60,100,60,100]; //costringe le colonne ad occupare un dato spazio per gestire il baco del 100% width che non si concretizza mai
                     },
                     exportOptions: {
                         columns: [0,1,2,3,4,5,6],
@@ -194,13 +162,13 @@
                     pageSize : 'LETTER',
                     titleAttr:'Exportar a PDF',
                     className:'btn btn-danger',
-                    filename: 'listadod_de_Ingresos_pdf'
+                    filename: 'listadod_de_Clientes_pdf'
                     },
                     {
                     extend:'print',
                     text: '<i class="fa fa-print fa-inverse"></i>',
                     title : function() {
-                    return "Listado de Ingresos";
+                    return "Listado de Clientes";
                     },
                     alignment: "center",
 
@@ -210,7 +178,7 @@
                     pageSize : 'LEGAL',
                     titleAttr:'Imprimir',
                     className:'btn btn-info',
-                    filename: 'listadod_de_Ingresos_print'
+                    filename: 'listadod_de_Clientes_print'
                     },
                 ],
 
@@ -221,6 +189,7 @@
 
 
     } );
-    </script>
-    @endpush
+</script>
+@endpush
+
 @endsection

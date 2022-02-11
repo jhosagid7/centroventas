@@ -26,7 +26,7 @@ class CreateSaldosMovimientosTable extends Migration
     }
 
     /**
-     * Reverse the migrations.
+     * Reverse the migrationss.
      *
      * @return void
      */

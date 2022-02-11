@@ -34,7 +34,7 @@ class AddColumnToCajasTable extends Migration
     }
 
     /**
-     * Reverse the migrations.
+     * Reverse the migrationss.
      *
      * @return void
      */

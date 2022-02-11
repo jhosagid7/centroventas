@@ -416,6 +416,7 @@
                     <div class="container-small text-sm">
                         <form id="form1" action="{{ route('venta.store') }}" method="POST" autocomplete="off" class="submit-prevent-form">
                             @csrf
+                            <input name="credt" id="credt" type="hidden" value="">
                             <input id="modo" name="modo" type="hidden" value="">
                             <input id="precio_costo_unidad" name="precio_costo_unidad" type="hidden" value="">
                             <input id="precio_costo" name="precio_costo" type="hidden" value="">
@@ -703,6 +704,10 @@
                                                                     <button id='bt_addE' type='button'
                                                                         class='btn btn-sm btn-primary btn-block col-lg-pull-2'>Efectivo</button>
                                                                 </div>
+                                                                <div
+                                                                    class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
+                                                                    <button id="credito" class="btn btn-warning" type="submit">Credito</button>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -902,6 +907,12 @@
     @push('sciptsMain')
         <script>
             $(document).ready(function() {
+                $("#credito").click(function(){
+                    alert("credito")
+                    $('#credt').val(1);
+                    $('#contd').val(0);
+                    // alert('credito');
+                });
                 var dataTable = $('#ven').dataTable({
                     "language": {
                         "info": "_TOTAL_ registros",

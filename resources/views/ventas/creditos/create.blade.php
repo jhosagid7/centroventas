@@ -39,7 +39,7 @@
         {{-- cabecera de box --}}
 <div class="row">
     <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
-        <h3>Listado de Ingresos <a href="{{URL::action('IngresoController@create')}}"><button class='btn btn-success'><span class='glyphicon glyphicon-plus'></span> Nuevo</button></a></h3>
+        <h3>Listado de Facturas por cobrar de <b>{{ $creditos[0]->persona->nombre ?? '' }}</b> <a href="{{URL::action('IngresoController@create')}}"><button class='btn btn-success'><span class='glyphicon glyphicon-plus'></span> Nuevo</button></a></h3>
         {{-- @include('compras.ingreso.buscar') --}}
     </div>
 </div>
@@ -53,52 +53,36 @@
                     <th>ID</th>
                     <th>Fecha</th>
                     <th>Operador</th>
-                    <th>Proveedor</th>
+                    <th>Cliente</th>
                     <th>Comprobante</th>
                     <th>Total</th>
                     <th>Estado</th>
-                    <th>Tipo pago</th>
-                    <th>status</th>
+                    <th>Status</th>
+                    <th>Estado pago</th>
                     <th>Opciones</th>
                 </thead>
                 <tbody>
-                    @foreach ($ingresos as $ing)
-                    @if ($ing->tipo_pago == 'Contado')
-                        @php
-                            $color = 'success';
-                        @endphp
-                    @endif
-                    @if ($ing->tipo_pago == 'Credito')
-                        @php
-                            $color = 'warning';
-                        @endphp
-                    @endif
-                    @if ($ing->status == 'Pagado')
-                        @php
-                            $colorStatus = 'primary';
-                        @endphp
-                    @endif
-                    @if ($ing->status == 'Pendiente')
-                        @php
-                            $colorStatus = 'danger';
-                        @endphp
-                    @endif
+                    @foreach ($creditos as $ing)
+                    <?php $deuda_cliente = "App\DetalleCreditoVenta"::where('venta_id',$ing->id)->orderBy('created_at', 'desc')->first();
+                    // echo $deuda_cliente['resta'];
+                    ?>
                     <tr>
                         <td>{{ $ing->id ?? '' }}</td>
                         <td>{{ $ing->fecha_hora }}</td>
-                        <td>{{ $ing->name ?? '' }}</td>
-                        <td>{{ $ing->nombre ?? '' }}</td>
+                        <td>{{ $ing->caja->user->name ?? '' }}</td>
+                        <td>{{ $ing->persona->nombre ?? '' }}</td>
                         <td>{{ $ing->tipo_comprobante . ': ' . $ing->serie_comprobante . '-' . $ing->num_comprobante ?? '' }}</td>
-                        <td>{{ floatval($ing->total) ?? '' }}</td>
+                        <td>{{ floatval($deuda_cliente['resta']) ?? '' }}</td>
                         <td>{{ $ing->estado ?? '' }}</td>
-                        <td><span class="label label-{{$color}}">{{ strtoupper($ing->tipo_pago) ?? '' }}</span></td>
-                        <td><span class="label label-{{$colorStatus}}">{{ strtoupper($ing->status) ?? '' }}</span></td>
+                        <td>{{ $ing->tipo_pago ?? '' }}</td>
+                        <td>{{ $ing->status ?? '' }}</td>
                         <td>
-                        <a href="{{URL::action('IngresoController@show', $ing->id)}}"><button class='btn btn-primary btn-sm'><span class='glyphicon glyphicon-edit'></span></button></a>
-                        <a href="" data-target="#modal-delete-{{$ing->id}}" data-toggle="modal"><button class='btn btn-danger btn-sm'><i class='glyphicon glyphicon-trash'></i></button></a>
+                        <a href="{{URL::action('DetalleCreditoVentaController@show', $ing->id)}}"><button class='btn btn-success btn-sm'><span class='fa fa-money'></span></button></a>
+                        {{-- <a href="" data-target="#modal-delete-{{$ing->id}}" data-toggle="modal"><button class='btn btn-primary btn-sm'><span class='fa fa-eye'></span></button></a> --}}
+                        {{-- <a href="" data-target="#modal-delete-{{$ing->id}}" data-toggle="modal"><button class='btn btn-danger btn-sm'><i class='glyphicon glyphicon-trash'></i></button></a> --}}
                         </td>
                     </tr>
-                    @include('compras.ingreso.modal')
+                    @include('compras.credito.modal')
                     @endforeach
                 </tbody>
             </table>
@@ -111,7 +95,12 @@
 </div>
 <!-- /.box-body -->
 <div class="box-footer">
-  {{-- Footer --}}
+    <a class="btn btn-danger no-print" href="{{ url()->previous() }}">{{__('Regresar')}}</a>
+    <a onClick="imprimir('imprimir')" target="_blank" class="btn btn-primary  hidden-print">
+        <i class="fa fa-print"></i>
+        Imprimir
+    </a>
+
 </div>
 <!-- /.box-footer-->
 </div>

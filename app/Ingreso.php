@@ -13,6 +13,13 @@ class Ingreso extends Model
         return $this->hasMany(Articulo_Ingreso::class);
     }
 
+
+
+    public function credito_ingresos()
+    {
+        return $this->hasMany(CreditoIngresos::class);
+    }
+
     public function persona(){
         return $this->belongsTo(Persona::class);
     }
@@ -24,11 +31,11 @@ class Ingreso extends Model
         'tipo_comprobante',
         'serie_comprobante',
         'num_comprobante',
-        'tipo_pago',
-        'status',
         'precio_compra',
         'fecha_hora',
         'estado',
+        'tipo_pago',
+        'status',
         'persona_id',
         'user_id'
     ];

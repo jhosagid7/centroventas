@@ -117,6 +117,9 @@ Route::resource('almacen/articulo', 'ArticuloController');
 Route::resource('ventas/cliente', 'ClienteController');
 Route::resource('compras/proveedor', 'ProveedorController');
 Route::resource('compras/ingreso', 'IngresoController');
+Route::resource('compras/credito', 'DetalleCreditoIngresoController');
+Route::resource('ventas/creditos', 'DetalleCreditoVentaController');
+// Route::resource('credito-ver', 'DetalleCreditoIngresoController@ver');
 Route::resource('ventas/venta', 'VentaController');
 
 

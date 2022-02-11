@@ -1,6 +1,5 @@
 @extends ('layouts.admin3')
 @section('contenido')
-
 <!-- Default box -->
 <!-- Content Header (Page header) -->
     {{-- <section class="content-header">
@@ -37,52 +36,75 @@
           </div>
           <div class="box-body">
         {{-- cabecera de box --}}
-
-    <div class="row">
-        <div class="col-lg-6">
-            <h3>Nuevo Ingreso</h3><a class="btn btn-danger" href="{{ url()->previous() }}">{{__('Regresar')}}</a>
-            @include('custom.message')
-        </div>
-    </div>
-
-
-<form action="{{route('ingreso.store')}}" method="POST">
-    @csrf
-    <input id="total_compra" type="hidden" name="total" value="">
+        <section id="imprimir" class="invoice">
+            <!-- title row -->
+            <div class="row">
+              <div class="col-xs-12">
+                <h2 class="page-header">
+                  <i class="fa fa-globe"></i> {{ config('app.name', 'VillaSoft') }}
+                <small class="pull-right">Fecha: {{date('d-m-y')}}</small>
+                </h2>
+              </div>
+              <!-- /.col -->
+            </div>
+            <h3 class="box-title">@isset($title)
+                {{$title}}
+                @else
+                {!!"Sistema"!!}
+            @endisset</h3>
     <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-            <div class="form-group">
-                <label for="proveedor">Proveedor</label>
-                <select name="idproveedor" id="idproveedor" class="form-control selectpicker" data-live-search="true">
-                    @foreach ($personas as $persona)
-                <option value="{{$persona->id}}">{{$persona->nombre}}</option>
-                    @endforeach
-                </select>
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                <div class="form-group">
+                    <label for="operador">Operador</label>
+                    <p>{{ $creditos->name ?? ''}}</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                <div class="form-group">
+                    <label for="proveedor">Proveedor</label>
+                    <p>{{ $creditos->nombre ?? ''}}</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                <div class="form-group">
+                    <label for="num_comprobante">N° Factura/ID</label>
+                    <p>{{ $creditos->id ?? ''}}</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                <div class="form-group">
+                    <label for="num_comprobante">Tipo Pago</label>
+                    <p>{{ $creditos->tipo_pago ?? ''}}</p>
+                </div>
             </div>
         </div>
-
-        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-            <div class="form-group">
-                <label for="tipo_comprobante">Tipo Comprobante</label>
-                <select name="tipo_comprobante" class="form-control">
-                    <option value="Orden">Orden</option>
-                    <option value="Factura">Factura</option>
-                    <option value="Ticket">Ticket</option>
-                </select>
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                <div class="form-group">
+                    <label for="tipo_comprobante">Número Comprobante</label>
+                    <p>{{ $creditos->num_comprobante ?? ''}}</p>
+                </div>
             </div>
-        </div>
 
-        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-            <div class="form-group">
-                <label for="serie_comprobante">Control Comprobante</label>
-                <input type="text" name="serie_comprobante" class="form-control" value="{{old('serie_comprobante')}}" placeholder="Control Comprobante...">
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                <div class="form-group">
+                    <label for="serie_comprobante">Control Comprobante</label>
+                    <p>{{ $creditos->serie_comprobante ?? ''}}</p>
+                </div>
             </div>
-        </div>
 
-        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-            <div class="form-group">
-                <label for="num_comprobante">Número Comprobante</label>
-                <input type="text" name="num_comprobante" required class="form-control" value="{{old('num_comprobante')}}" placeholder="Número Comprobante...">
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                <div class="form-group">
+                    <label for="proveedor">Fecha</label>
+                    <p>{{ $creditos->fecha_hora ?? '' }}</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                <div class="form-group">
+                    <label for="proveedor">Estado Pago</label>
+                    <p>{{ $creditos->status ?? '' }}</p>
+                </div>
             </div>
         </div>
 
@@ -92,51 +114,34 @@
         <div class="col-lg-12 col-sm-12 col-md-12 col-xs-12">
             <div class="panel panel-primary">
                 <div class="panel-body">
-                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-                        <div class="form-group">
-                            <label for="articulo">Artículo</label>
-                            <select name="jidarticulo" id="jidarticulo" class="form-control selectpicker" data-live-search="true">
-                                @foreach ($articulos as $articulo)
-                            <option value="{{$articulo->id}}_{{ $articulo->precio_costo }}">{{$articulo->articulo}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-sm-3 col-md-3 col-xs-12">
-                        <div class="form group">
-                            <label for="cantidad">Cantidad</label>
-                            <input type="number" name="jcantidad" id="jcantidad"  class="form-control enteros" placeholder="Cantidad...">
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-sm-3 col-md-3 col-xs-12">
-                        <div class="form group">
-                            <label for="precio_compra">Precio Compra</label>
-                            <input type="number" name="jprecio_compra" id="jprecio_compra"  class="form-control decimal" placeholder="Precio compra...">
-                        </div>
-                    </div>
-                    <div class="col-lg-2 col-sm-2 col-md-2 col-xs-12">
-                        <div class="form group">
-                            <button type="button" id="bt_add" class="btn btn-primary">Agregar</button>
-                        </div>
-                    </div>
                     <div class="col-lg-12 col-sm-12 col-md-12 col-xs-12">
                         <table id="detalles" class="table table-striped table-borderd table-condensed table-hover">
                             <thead style="background-color: #A9D0F5">
-                                <th>Opciones</th>
                                 <th>Artículo</th>
                                 <th>Cantidad</th>
                                 <th>Precio Compra</th>
                                 <th>Subtotal</th>
                             </thead>
                             <tfoot>
-                                <th>TOTAL</th>
                                 <th></th>
                                 <th></th>
                                 <th></th>
-                                <th><h4 id="total">$. 0.00</h4></th>
+                                <?php $deuda_cliente = "App\DetalleCreditoIngreso"::where('ingreso_id',$creditos->id)->orderBy('created_at', 'desc')->first();
+                                // echo $deuda_cliente['resta'];
+                                ?>
+                                <input name="total_pago" id="total_pago" type="hidden" value="{{ floatval($deuda_cliente['resta']) }}">
+                            <th><h4 id="total"><b>$. {{ floatval($deuda_cliente['resta']) }}</b></h4></th></b></h4></th>
                             </tfoot>
                             <tbody>
+                                @foreach ($creditos->articulo_ingresos as $Articulo_Ingreso)
+                                    <tr>
+                                    <td>{{$Articulo_Ingreso->articulo->nombre ?? ''}}</td>
+                                    <td>{{$Articulo_Ingreso->cantidad ?? ''}}</td>
+                                    <td>{{ floatval($Articulo_Ingreso->precio_costo_unidad) ?? ''}}</td>
+                                    <td>{{ floatval($Articulo_Ingreso->cantidad*$Articulo_Ingreso->precio_costo_unidad) ?? '' }}</td>
 
+                                    </tr>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
@@ -144,48 +149,56 @@
 
             </div>
 
-            @include('compras.ingreso.credito')
-        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" id="guardar">
-            <div class="form-group">
-                <a href="" data-target="#modal-pago" data-toggle="modal"><button id="contado" class='btn btn-primary'><i class=''> Contado</i></button></a>
-                <button id="credito" class="btn btn-warning" type="submit">Credito</button>
 
-            </div>
 
-        </div>
         </div>
     </div>
-
-
-</form>
 
 {{-- fin de la cabecera de box --}}
 </div>
 <!-- /.box-body -->
 <div class="box-footer">
-  {{-- Footer --}}
+    <a class="btn btn-danger no-print" href="{{ url()->previous() }}">{{__('Regresar')}}</a>
+    <a onClick="imprimir('imprimir')" target="_blank" class="btn btn-primary  hidden-print">
+        <i class="fa fa-print"></i>
+        Imprimir
+    </a>
+    <a href="" data-target="#modal-pago" data-toggle="modal"><button id="contado" class='btn btn-success'><i class='fa fa-money'> <b>Pagar</b> </i></button></a>
 </div>
 <!-- /.box-footer-->
 </div>
 <!-- /.box -->
+</div>
+@include('compras.credito.credito')
 
+</section>
 @push('sciptsMain')
+
 <script>
 
     $(document).ready(function(){
-        focusMethod();
+
+        // focusMethod();
         $("#bt_add").click(function(){
             add_article();
         });
 
         $("#credito").click(function(){
-            alert("credito")
+            // alert("credito")
             $('#credt').val(1);
             $('#contd').val(0);
             // alert('credito');
         });
         $("#contado").click(function(){
-            alert("contado")
+            var total = $("#total_pago").val();
+            // console.log('total pago: ' + total);
+            $("#total_compra").val(numDecimal(total));
+            $("#total").html("$. " + numDecimal(total));
+            $("#total_sistema_reg_input").val(numDecimal(total));
+            $("#total_sistema_reg").html(numDecimal(numDecimal(total)));
+            // var precio_compra = $("#precio_compra").html();
+            // console.log(precio_compra);
+            // alert("contado")
             $('#contd').val(1);
             $('#credt').val(0);
             // alert('credito');
@@ -581,5 +594,4 @@ return false;
         });
     </script>
 @endpush
-
 @endsection

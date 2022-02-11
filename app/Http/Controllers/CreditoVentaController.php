@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Cuenta;
-use App\SaldosMovimiento;
+use App\CreditoVenta;
 use Illuminate\Http\Request;
 
-class BancoController extends Controller
+class CreditoVentaController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,11 +14,7 @@ class BancoController extends Controller
      */
     public function index()
     {
-        $title = 'Cuentas';
-        $cuentas =  Cuenta::all();
-
-
-        return view('bancos.banco.index', compact('cuentas','title'));
+        //
     }
 
     /**
@@ -46,29 +41,21 @@ class BancoController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\CreditoVenta  $creditoVenta
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(CreditoVenta $creditoVenta)
     {
-        $datosBanco = Cuenta::findOrFail($id);
-        $nombre_banco = $datosBanco->nombre_cuenta;
-        $moneda_banco = $datosBanco->moneda;
-        $title = 'Relacion Banco Moneda '.$moneda_banco;
-        $saldosMovimientos = SaldosMovimiento::where('cuenta_id',$id)->take(25)->orderBy('created_at', 'desc')->get();
-
-        // return $saldosMovimientos;
-
-        return view('bancos.banco.show', compact('saldosMovimientos','title','nombre_banco','moneda_banco'));
+        //
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\CreditoVenta  $creditoVenta
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(CreditoVenta $creditoVenta)
     {
         //
     }
@@ -77,10 +64,10 @@ class BancoController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \App\CreditoVenta  $creditoVenta
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, CreditoVenta $creditoVenta)
     {
         //
     }
@@ -88,10 +75,10 @@ class BancoController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param  \App\CreditoVenta  $creditoVenta
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(CreditoVenta $creditoVenta)
     {
         //
     }

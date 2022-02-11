@@ -51,7 +51,7 @@ class CreateCajasTable extends Migration
             $table->decimal('total_sistema_reg', 25, 3)->nullable();
             $table->decimal('total_operador_reg', 25, 3)->nullable();
             $table->decimal('total_diferencia')->nullable();
-            $table->text('Observaciones', 25, 3)->nullable();
+            $table->text('Observaciones')->nullable();
             $table->enum('estado', ['Abierta', 'Cerrada', 'Auditoria']);
             $table->string('caja', 20);
             $table->decimal('tasaActualVenta', 25, 2)->nullable();

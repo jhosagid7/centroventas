@@ -1,20 +1,6 @@
 @extends ('layouts.admin3')
 @section('contenido')
 
-<!-- Default box -->
-<!-- Content Header (Page header) -->
-    {{-- <section class="content-header">
-      <h1>
-        <!--Blank page-->
-        <small>it all starts here</small>
-      </h1>
-      <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li><a href="#">Examples</a></li>
-        <li class="active">Blank page</li>
-      </ol>
-    </section> --}}
-
     <!-- Main content -->
     <section class="content">
 
@@ -147,7 +133,7 @@
             @include('compras.ingreso.credito')
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" id="guardar">
             <div class="form-group">
-                <a href="" data-target="#modal-pago" data-toggle="modal"><button id="contado" class='btn btn-primary'><i class=''> Contado</i></button></a>
+                <a href="" data-target="#modal-pago" data-toggle="modal"><button id="contado" class='btn btn-primary'><i class='fa fa-money'> Pagar</i></button></a>
                 <button id="credito" class="btn btn-warning" type="submit">Credito</button>
 
             </div>

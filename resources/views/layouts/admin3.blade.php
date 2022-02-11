@@ -341,6 +341,9 @@
               @can('haveaccess', 'ingreso.index')
               <li><a href="{{asset('compras/ingreso')}}"><i class="fa fa-sign-in"></i> Ingreso</a></li>
               @endcan
+              @can('haveaccess', 'ingreso.index')
+              <li><a href="{{asset('compras/credito')}}"><i class="fa fa-sign-in"></i> Creditos</a></li>
+              @endcan
           </ul>
 
       </li>
@@ -360,6 +363,9 @@
                 @can('haveaccess', 'venta.index')
                 <li><a href="{{asset('ventas/venta')}}"><i class="fa fa-desktop"></i> Venta</a></li>
                 @endcan
+                @can('haveaccess', 'ingreso.index')
+              <li><a href="{{asset('ventas/creditos')}}"><i class="fa fa-sign-in"></i> Creditos</a></li>
+              @endcan
                 @can('haveaccess', 'tasa.index')
                 <li><a href="{{asset('ventas/tasa')}}"><i class="fa fa-desktop"></i> Tasa</a></li>
                 @endcan

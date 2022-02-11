@@ -44,6 +44,11 @@ class User extends Authenticatable
         return $this->hasMany(Caja::class);
     }
 
+
+    public function proveedor_creditos(){
+        return $this->hasMany(ProveedorCredito::class);
+    }
+
     public function ventas()
     {
         return $this->hasManyThrough(Venta::class, Caja::class);
@@ -57,6 +62,8 @@ class User extends Authenticatable
     public function persona(){
         return $this->hasOneThrough(Persona::class, Ingreso::class);
     }
+
+
 
     public function Transactions(){
         return $this->hasMany(Transactions::class);

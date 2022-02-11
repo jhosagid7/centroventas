@@ -11,6 +11,10 @@ class Persona extends Model
         return $this->hasMany(Venta::class);
     }
 
+    public function proveedor_creditos(){
+        return $this->hasMany(ProveedorCredito::class);
+    }
+
     public function ingresos(){
         return $this->hasMany(Ingreso::class);
     }
@@ -35,8 +39,20 @@ class Persona extends Model
         'direccion',
         'telefono',
         'email',
+        'isCortesia',
+        'Credito',
+        'limite_fecha',
+        'limite_monto',
         'imagen'
     ];
 
     protected $guarded = [];
+
+    public function setIsCortesiaAttribute($value){
+        $this->attributes['isCortesia'] = ($value == 'on' ? '1' : null);
+    }
+
+    public function setIsCreditoAttribute($value){
+        $this->attributes['isCredito'] = ($value == 'on' ? '1' : null);
+    }
 }
