@@ -1,6 +1,6 @@
 <div class="modal fade bd-example-modal-lg" aria-hidden="true" role="dialog" tabindex="-1" id="modal-pago">
 
-    <form action="{{ route('credito.store') }}" method="POST", class="submit-prevent-form">
+    <form action="{{ route('creditos.store') }}" method="POST", class="submit-prevent-form">
         @csrf
         @method('POST')
         <div class="row">
@@ -52,7 +52,7 @@
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidder="true">X</span>
                     </button>
-                    <h4 class="modal-title">Prosesar pago de Complas caja N° <b>{{$caja->codigo ?? ''}}</b></h4>
+                    <h4 class="modal-title">Prosesar pago de Compras caja N° <b>{{$caja->codigo ?? ''}}</b></h4>
                 </div>
                 <div class="modal-body">
                     <div class="col-md-12">
@@ -61,7 +61,7 @@
                             <div class="box-header with-border">
 
 
-                                <div class="row">
+                                {{-- <div class="row">
                                     <div class="col-sm-2 col-xs-6">
                                         <div class="description-block border-right">
                                             <h5 class="description-header">S/Actual:</h5>
@@ -129,7 +129,7 @@
                                         </div>
                                         <!-- /.description-block -->
                                     </div>
-                                </div>
+                                </div> --}}
                             </div>
                         </div>
                         </div>

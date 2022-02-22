@@ -130,7 +130,7 @@
 
             </div>
 
-            @include('compras.ingreso.credito')
+            @include('ventas.creditos.credito')
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" id="guardar">
             <div class="form-group">
                 <a href="" data-target="#modal-pago" data-toggle="modal"><button id="contado" class='btn btn-primary'><i class='fa fa-money'> Pagar</i></button></a>

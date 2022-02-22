@@ -1,19 +1,7 @@
 @extends ('layouts.admin3')
 @section('contenido')
 
-<!-- Default box -->
-<!-- Content Header (Page header) -->
-    {{-- <section class="content-header">
-      <h1>
-        <!--Blank page-->
-        <small>it all starts here</small>
-      </h1>
-      <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li><a href="#">Examples</a></li>
-        <li class="active">Blank page</li>
-      </ol>
-    </section> --}}
+
 
     <!-- Main content -->
     <section class="content">
@@ -39,55 +27,51 @@
         {{-- cabecera de box --}}
 <div class="row">
     <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
-        <h3>Listado de Facturas por cobrar de <b>{{ $creditos[0]->persona->nombre ?? '' }}</b> <a href="{{URL::action('IngresoController@create')}}"><button class='btn btn-success'><span class='glyphicon glyphicon-plus'></span> Nuevo</button></a></h3>
-        {{-- @include('compras.ingreso.buscar') --}}
+        {{-- <h3>Listado de Categorias <a href="" data-target="#modal-nuevo" data-toggle="modal"><button class='btn btn-success'><span class='glyphicon glyphicon-plus'></span>Nuevo</button></a></h3> --}}
+        <h3>Listado de Categorías para pogos de servicios <a href="{{URL::action('CategoriaPagoController@create')}}"><button class='btn btn-success btn-sm'><span class='glyphicon glyphicon-plus'></span> Nuevo</button></a></h3>
+
     </div>
 </div>
+{{-- @include('pagos.categoria.buscar') --}}
 
 <div class="row">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="table-responsive">
             @include('custom.message')
-            <table id="ingre" class="table table-striped table-bordered table-condensed table-hover">
+            <table id="cate" class="table table-striped table-bordered table-condensed table-hover table-ms">
                 <thead>
-                    <th>ID</th>
-                    <th>Fecha</th>
-                    <th>Operador</th>
-                    <th>Cliente</th>
-                    <th>Comprobante</th>
-                    <th>Total</th>
-                    <th>Estado</th>
-                    <th>Status</th>
-                    <th>Estado pago</th>
+                    <th>Id</th>
+                    <th>Nombre</th>
+                    <th>Descripción</th>
                     <th>Opciones</th>
                 </thead>
                 <tbody>
-                    @foreach ($creditos as $ing)
-                    <?php $deuda_cliente = "App\DetalleCreditoVenta"::where('venta_id',$ing->id)->orderBy('created_at', 'desc')->first();
-                    // echo $deuda_cliente['resta'];
-                    ?>
+                    @foreach ($categorias as $cat)
                     <tr>
-                        <td>{{ $ing->id ?? '' }}</td>
-                        <td>{{ $ing->fecha_hora }}</td>
-                        <td>{{ $ing->caja->user->name ?? '' }}</td>
-                        <td>{{ $ing->persona->nombre ?? '' }}</td>
-                        <td>{{ $ing->tipo_comprobante . ': ' . $ing->serie_comprobante . '-' . $ing->num_comprobante ?? '' }}</td>
-                        <td>{{ floatval($deuda_cliente['resta']) ?? '' }}</td>
-                        <td>{{ $ing->estado ?? '' }}</td>
-                        <td>{{ $ing->tipo_pago ?? '' }}</td>
-                        <td>{{ $ing->status ?? '' }}</td>
+                        <td>{{ $cat->id }}</td>
+                        <td>{{ $cat->nombre }}</td>
+                        <td>{{ $cat->descripcion }}</td>
                         <td>
-                        <a href="{{URL::action('DetalleCreditoVentaController@show', $ing->id)}}"><button class='btn btn-success btn-sm'><span class='fa fa-money'></span></button></a>
-                        {{-- <a href="" data-target="#modal-delete-{{$ing->id}}" data-toggle="modal"><button class='btn btn-primary btn-sm'><span class='fa fa-eye'></span></button></a> --}}
-                        {{-- <a href="" data-target="#modal-delete-{{$ing->id}}" data-toggle="modal"><button class='btn btn-danger btn-sm'><i class='glyphicon glyphicon-trash'></i></button></a> --}}
+                        <a href="{{URL::action('CategoriaPagoController@edit', $cat->id)}}"><button class='btn btn-info btn-sm'><span class='glyphicon glyphicon-edit'></span></button></a>
+                        <a href="" data-target="#modal-delete-{{$cat->id}}" data-toggle="modal"><button class='btn btn-danger btn-sm'><i class='glyphicon glyphicon-trash'></i></button></a>
                         </td>
                     </tr>
-                    {{-- @include('ventas.creditos.modal') --}}
+                    @include('pagos.categoria.modal')
                     @endforeach
+                    {{-- @include('almacen.categoria.nuevo_modal') --}}
                 </tbody>
+                <tfoot>
+                    <tr>
+                        <th>Id</th>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Opciones</th>
+
+                    </tr>
+                </tfoot>
             </table>
         </div>
-        {{-- {{$ingresos->render()}} --}}
+        {{-- {{$categorias->render()}} --}}
     </div>
 </div>
 
@@ -95,20 +79,19 @@
 </div>
 <!-- /.box-body -->
 <div class="box-footer">
-    <a class="btn btn-danger no-print" href="{{ url()->previous() }}">{{__('Regresar')}}</a>
-    <a onClick="imprimir('imprimir')" target="_blank" class="btn btn-primary  hidden-print">
-        <i class="fa fa-print"></i>
-        Imprimir
-    </a>
-
+  {{-- Footer --}}
 </div>
 <!-- /.box-footer-->
 </div>
 <!-- /.box -->
 @push('sciptsMain')
     <script>
-       var table = jQuery(document).ready(function() {
-    jQuery('#ingre').DataTable({
+
+
+ // #myInput is a <input type="text"> element
+
+ var table = jQuery(document).ready(function() {
+    jQuery('#cate').DataTable({
     rowReorder: {
     selector: 'td:nth-child(2)'
     },
@@ -144,72 +127,107 @@
     '<"row"<"col-sm-5"i><"col-sm-7"p>>',//'lBfrtip',
     fixedHeader: {
     header: true
+
   },
     buttons:[
                     {
                     extend:'excelHtml5',
                     text: '<i class="fa fa-file-excel-o fa-inverse"></i>',
+                    footer: false,
                     title : function() {
-                    return "Listado de Ingresos";
+                    return "Listado de Categorías";
                     },
                     alignment: "center",
 
-                    exportOptions: { columns: [0,1,2,3,4,5,6] } ,
+                    exportOptions: { columns: [0,1,2] } ,
                     // pageSize : 'A0',
                     orientation : 'portrait',
                     pageSize : 'LEGAL',
                     titleAttr:'Exportar a Excel',
                     className:'btn btn-success',
-                    filename: 'listadod_de_Ingresos_excel'
+                    filename: 'listadod_de_categorías_excel'
                     },
                     {
                     extend:'pdfHtml5',
                     text: '<i class="fa fa-file-pdf-o fa-inverse"></i>',
+                    footer: false,
                     title : function() {
-                    return "Listado de Ingresos";
+                    return "Listado de Categorías";
                     },
                     alignment: "center",
                     customize : function(doc){
                     doc.styles.tableHeader.alignment = 'left'; //giustifica a sinistra titoli colonne
-                    doc.content[1].table.widths = [20,100,100,100,100,60]; //costringe le colonne ad occupare un dato spazio per gestire il baco del 100% width che non si concretizza mai
+                    doc.content[1].table.widths = [50,200,250]; //costringe le colonne ad occupare un dato spazio per gestire il baco del 100% width che non si concretizza mai
                     },
-                    exportOptions: {
-                        columns: [0,1,2,3,4,5,6],
-                        stripHtml: true,
-
-                    } ,
-                    // pageSize : 'A3',
-                    orientation : 'portrait',//portrait landscape
-                    pageSize : 'LETTER',
+                    exportOptions: { columns: [0,1,2] } ,
+                    // pageSize : 'A0',
+                    orientation : 'portrait',//portrai tlandscape
+                    pageSize : 'LEGAL',
                     titleAttr:'Exportar a PDF',
                     className:'btn btn-danger',
-                    filename: 'listadod_de_Ingresos_pdf'
+                    filename: 'listadod_de_categorías_pdf'
                     },
                     {
                     extend:'print',
                     text: '<i class="fa fa-print fa-inverse"></i>',
+                    footer: false,
                     title : function() {
-                    return "Listado de Ingresos";
+                    return "Listado de Categorías";
                     },
                     alignment: "center",
 
-                    exportOptions: { columns: [0,1,2,3,4,5,6] } ,
+                    exportOptions: { columns: [0,1,2] } ,
                     // pageSize : 'A0',
                     orientation : 'portrait',
                     pageSize : 'LEGAL',
                     titleAttr:'Imprimir',
                     className:'btn btn-info',
-                    filename: 'listadod_de_Ingresos_print'
+                    filename: 'listadod_de_categorías_print'
                     },
+
+
+
                 ],
 
     "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]]
     } );
 
-
+    table.buttons().container()
+        .appendTo( '#example_wrapper .col-sm-6:eq(0)' );
 
 
     } );
+    //     $(document).ready(function() {
+    //        var dataTable = $('#cate').dataTable({
+    //         "language": {
+    //                     "info": "_TOTAL_ registros",
+    //                     "search": "Buscar",
+    //                     "paginate": {
+    //                         "next": "Siguiente",
+    //                         "previous": "Anterior",
+    //                     },
+    //                     "lengthMenu": 'Mostrar <select >'+
+    //                                 '<option value="5">5</option>'+
+    //                                 '<option value="10">10</option>'+
+    //                                 '<option value="-1">Todos</option>'+
+    //                                 '</select> registros',
+    //                     "loadingRecords": "Cargando...",
+    //                     "processing": "Procesando...",
+    //                     "emptyTable": "No hay datos",
+    //                     "zeroRecords": "No hay coincidencias",
+    //                     "infoEmpty": "",
+    //                     "infoFiltered": ""
+    //                 },
+    //                 "iDisplayLength" : 5,
+    //                 "order": [[0, "desc"]],
+    //        });
+    //        $("#buscarTexto").keyup(function() {
+    //            dataTable.fnFilter(this.value);
+    //        });
+    //    });
+
+
     </script>
     @endpush
+
 @endsection

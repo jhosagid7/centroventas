@@ -412,10 +412,6 @@ class DetalleCreditoIngresoController extends Controller
                     $saldos_movimientos->save();
                 }
 
-                $ingreso_pago = Ingreso::findOrFail($credito_id);
-                $ingreso_pago->status = 'Pagado';
-                $ingreso_pago->update();
-
                 if($creditos->proveedor){
                     $proveedor = Persona::findOrFail($creditos->proveedor);
 
@@ -430,6 +426,14 @@ class DetalleCreditoIngresoController extends Controller
                     }
 
             }
+
+            $ingreso_pago = Ingreso::findOrFail($credito_id);
+            $ingreso_pago->status = 'Pagado';
+            $ingreso_pago->update();
+
+            $CreditoIngreso = CreditoIngreso::where('ingreso_id' , $credito_id)->first();
+            $CreditoIngreso->estado_credito_ingreso = 'Pagado';
+            $CreditoIngreso->update();
         }
 
         // return $creditos->moto;
@@ -448,7 +452,7 @@ class DetalleCreditoIngresoController extends Controller
     public function show($id)
     {
         $title = 'Recivo de Credito';
-        $creditos = Ingreso::where('tipo_pago', 'Credito')->where('id', $id)->take(1000)->first();
+        $creditos = Ingreso::where('tipo_pago', 'Credito')->where('id', $id)->where('status', 'Pendiente')->first();
         // return $creditos;
         $saldo_banco_dolar = self::get_saldo_banco("Dolar");
         $saldo_banco_peso = self::get_saldo_banco("Peso");

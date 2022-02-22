@@ -416,6 +416,25 @@
             </ul>
         </li>
         @endcan
+        @can('haveaccess', 'boton.compras')
+        <li class="treeview">
+          <a href="#">
+          <i class="fa fa-cart-arrow-down"></i> <span>Pagos servicios</span>
+          <span class="pull-right-container">
+            <i class="fa fa-angle-left pull-right"></i>
+          </span>
+        </a>
+          <ul class="treeview-menu">
+              @can('haveaccess', 'proveedore.index')
+              <li><a href="{{asset('pagos/categoria')}}"><i class="fa fa-truck"></i> Categoria</a></li>
+              @endcan
+              @can('haveaccess', 'ingreso.index')
+              <li><a href="{{asset('pagos/tipo')}}"><i class="fa fa-sign-in"></i> Pagos</a></li>
+              @endcan
+          </ul>
+
+      </li>
+      @endcan
         @can('haveaccess', 'boton.sistema')
         <li class="treeview">
             <a href="#">

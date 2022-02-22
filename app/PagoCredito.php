@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Pago_Venta extends Model
+class PagoCredito extends Model
 {
     protected $fillabel = [
         'Divisa',

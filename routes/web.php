@@ -122,7 +122,8 @@ Route::resource('ventas/creditos', 'DetalleCreditoVentaController');
 // Route::resource('credito-ver', 'DetalleCreditoIngresoController@ver');
 Route::resource('ventas/venta', 'VentaController');
 
-
+Route::resource('pagos/categoria', 'CategoriaPagoController');
+Route::resource('pagos/tipo', 'TipoPagoController');
 
 
 Route::resource('ventas/tasa', 'TasaController');

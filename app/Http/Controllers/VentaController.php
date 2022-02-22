@@ -535,6 +535,7 @@ class VentaController extends Controller
                     $Pago_Venta->MontoDolar = $MontoDolar[$cont];
                     $Pago_Venta->Vueltos = $Vueltos[$cont];
                     $Pago_Venta->venta_id = $venta->id;
+                    $Pago_Venta->caja_id = $request->get('caja_id');
                     $Pago_Venta->save();
 
                     $cont = $cont+1;

@@ -126,19 +126,19 @@
                                 <th></th>
                                 <th></th>
                                 <th></th>
-                                <?php $deuda_cliente = "App\DetalleCreditoIngreso"::where('ingreso_id',$creditos->id)->orderBy('created_at', 'desc')->first();
+                                <?php $deuda_cliente = "App\DetalleCreditoVenta"::where('venta_id',$creditos->id)->orderBy('created_at', 'desc')->first();
                                 // echo $deuda_cliente['resta'];
                                 ?>
                                 <input name="total_pago" id="total_pago" type="hidden" value="{{ floatval($deuda_cliente['resta']) }}">
                             <th><h4 id="total"><b>$. {{ floatval($deuda_cliente['resta']) }}</b></h4></th></b></h4></th>
                             </tfoot>
                             <tbody>
-                                @foreach ($creditos->articulo_ingresos as $Articulo_Ingreso)
+                                @foreach ($creditos->articulo_ventas as $Articulo_Venta)
                                     <tr>
-                                    <td>{{$Articulo_Ingreso->articulo->nombre ?? ''}}</td>
-                                    <td>{{$Articulo_Ingreso->cantidad ?? ''}}</td>
-                                    <td>{{ floatval($Articulo_Ingreso->precio_costo_unidad) ?? ''}}</td>
-                                    <td>{{ floatval($Articulo_Ingreso->cantidad*$Articulo_Ingreso->precio_costo_unidad) ?? '' }}</td>
+                                    <td>{{$Articulo_Venta->articulo->nombre ?? ''}}</td>
+                                    <td>{{$Articulo_Venta->cantidad ?? ''}}</td>
+                                    <td>{{ floatval($Articulo_Venta->precio_costo_unidad) ?? ''}}</td>
+                                    <td>{{ floatval($Articulo_Venta->cantidad*$Articulo_Venta->precio_costo_unidad) ?? '' }}</td>
 
                                     </tr>
                                 @endforeach
@@ -169,7 +169,7 @@
 </div>
 <!-- /.box -->
 </div>
-@include('compras.credito.credito')
+@include('ventas.creditos.credito')
 
 </section>
 @push('sciptsMain')
@@ -363,7 +363,7 @@ return false;
                 }
 
                 function numDecimal(valor){
-                    let result = Number(valor).toFixed(2);
+                    let result = Number(valor).toFixed(3);
 
                     return result;
                 }

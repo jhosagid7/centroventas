@@ -87,9 +87,13 @@ class Caja extends Model
         return $this->hasMany(Venta::class);
     }
 
+    public function pago_creditos(){
+        return $this->hasMany(PagoCredito::class);
+    }
+
     public function pago_ventas()
     {
-        return $this->hasManyThrough(Pago_Venta::class, Venta::class);
+        return $this->hasMany(Pago_Venta::class);
     }
 
     public function personas()

@@ -19,6 +19,10 @@ class Venta extends Model
         return $this->hasMany(Pago_Venta::class);
     }
 
+    public function pago_creditos(){
+        return $this->hasMany(PagoCredito::class);
+    }
+
     public function caja(){
         return $this->belongsTo(Caja::class);
     }
