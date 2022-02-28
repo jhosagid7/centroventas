@@ -51,7 +51,7 @@
                         <td>{{ $art->id }}</td>
                         <td>{{ $art->nombre }}</td>
                         <td>{{ $art->descripcion }}</td>
-                        <td>{{ $art->categoria }}</td>
+                        <td>{{ $art->categoria_pago->nombre }}</td>
                         <td>
                         <a href="{{URL::action('TipoPagoController@edit', $art->id)}}"><button class='btn btn-info btn-sm'><span class='glyphicon glyphicon-edit'></span></button></a>
                         <a href="" data-target="#modal-delete-{{$art->id}}" data-toggle="modal"><button class='btn btn-danger btn-sm'><i class='glyphicon glyphicon-trash'></i></button></a>

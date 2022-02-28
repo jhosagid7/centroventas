@@ -401,7 +401,7 @@
         @can('haveaccess', 'boton.sistema')
         <li class="treeview">
             <a href="#">
-            <i class="fa fa-handshake-o"></i> <span>Sistema</span>
+            <i class="fa fa-handshake-o"></i> <span>Configuracion de Sistema</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
             </span>
@@ -413,23 +413,41 @@
                 @can('haveaccess', 'user.index')
                 <li><a href="{{route('user.index')}}"><i class="fa fa-desktop"></i> User</a></li>
                 @endcan
+                @can('haveaccess', 'menu.transactions')
+            <li class="treeview">
+                <a href="#"><i class="fa fa-exchange"></i> Pagos Operativos
+                <span class="pull-right-container">
+                    <i class="fa fa-angle-left pull-right"></i>
+                </span>
+                </a>
+                <ul class="treeview-menu">
+                    @can('haveaccess', 'transferencia.index')
+                    <li><a href="{{asset('pagos/categoria')}}"><i class="fa fa-cubes"></i> Categoría</a></li>
+                    @endcan
+                    @can('haveaccess', 'cargos.index')
+                    <li><a href="{{asset('pagos/tipo')}}"><i class="fa fa-truck"></i> Acreedores</a></li>
+                    @endcan
+
+                </ul>
+            </li>
+            @endcan
             </ul>
         </li>
         @endcan
         @can('haveaccess', 'boton.compras')
         <li class="treeview">
           <a href="#">
-          <i class="fa fa-cart-arrow-down"></i> <span>Pagos servicios</span>
+          <i class="fa fa-cart-arrow-down"></i> <span>Pagos de gastos optvos</span>
           <span class="pull-right-container">
             <i class="fa fa-angle-left pull-right"></i>
           </span>
         </a>
           <ul class="treeview-menu">
               @can('haveaccess', 'proveedore.index')
-              <li><a href="{{asset('pagos/categoria')}}"><i class="fa fa-truck"></i> Categoria</a></li>
+              <li><a href="{{asset('pagos/categoria')}}"><i class="fa fa-truck"></i> Pagar</a></li>
               @endcan
               @can('haveaccess', 'ingreso.index')
-              <li><a href="{{asset('pagos/tipo')}}"><i class="fa fa-sign-in"></i> Pagos</a></li>
+              <li><a href="{{asset('pagos/tipo')}}"><i class="fa fa-sign-in"></i> Pagos realizados</a></li>
               @endcan
           </ul>
 
