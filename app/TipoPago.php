@@ -21,6 +21,10 @@ class TipoPago extends Model
         return $this->belongsTo(CategoriaPago::class);
     }
 
+    public function servicio(){
+        return $this->belongsTo(Servicio::class);
+    }
+
     public function scopeName($query, $name){
         if($name)
         return $query->where('articulos.nombre', 'LIKE', "%$name%");

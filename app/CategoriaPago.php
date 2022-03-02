@@ -21,6 +21,14 @@ class CategoriaPago extends Model
         return hasMany(TipoPago::class);
     }
 
+    public function categoria_pago(){
+        return hasMany(CategoriaPago::class);
+    }
+
+    public function servicio(){
+        return $this->belongsTo(Servicio::class);
+    }
+
     public function scopeNombre($query, $nombre){
         if($nombre)
         return $query->where('nombre', 'LIKE', "%$nombre%");

@@ -444,7 +444,7 @@
         </a>
           <ul class="treeview-menu">
               @can('haveaccess', 'proveedore.index')
-              <li><a href="{{asset('pagos/categoria')}}"><i class="fa fa-truck"></i> Pagar</a></li>
+              <li><a href="{{asset('pagos/servicios')}}"><i class="fa fa-truck"></i> Pagar</a></li>
               @endcan
               @can('haveaccess', 'ingreso.index')
               <li><a href="{{asset('pagos/tipo')}}"><i class="fa fa-sign-in"></i> Pagos realizados</a></li>

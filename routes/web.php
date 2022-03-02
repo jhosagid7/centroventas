@@ -126,6 +126,7 @@ Route::resource('pagos/categoria', 'CategoriaPagoController');
 Route::resource('pagos/tipo', 'TipoPagoController');
 
 
+Route::resource('pagos/servicios', 'ServicioController');
 Route::resource('ventas/tasa', 'TasaController');
 Route::resource('almacen/transferencia', 'TransferenciaController', ['except'=>[
     'edit', 'update', 'destroy'
@@ -141,6 +142,7 @@ Route::get('/cajas/caja/{caja}/print ','CajaController@print')->name('print');
 
 Route::get('/origen', 'TransferenciaController@getProductoOrigenes')->name('origen');
 Route::get('/destino', 'TransferenciaController@getProductoDestinos')->name('destino');
+Route::get('/origen', 'ServicioController@getServiciosOrigenes')->name('origen');
 
 Route::resource('reportes/ventas', 'ReporteController');
 // Route::resource('reportes/ventas', 'ReporteController');
