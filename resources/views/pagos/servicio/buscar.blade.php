@@ -3,7 +3,7 @@
     <div class="row margin-bottom">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="page-header">
-                <form action="{{ route('transferencia.index')}}" method="GET" autocomplete="off" class="form-inline pull-right" role="buscar">
+                <form action="{{ route('servicios.index')}}" method="GET" autocomplete="off" class="form-inline pull-right" role="buscar">
                     @csrf
 
 
@@ -19,10 +19,22 @@
                     </div>
                     <div class="form-group">
                         <div class="input-group">
-                            <select name="accion" id="accion">
-                                <option value="0">Seleccione</option>
-                                <option value="Mayor a Detal">Mayor a Detal</option>
-                                <option value="Detal a Mayor">Detal a Mayor</option>
+                            <select name="categoria" id="categoria">
+                                <option value="0">Seleccione categoria</option>
+                                @foreach ($categorias as $categoria)
+                                <option value="{{$categoria->id}}">{{$categoria->nombre}}</option>
+                                @endforeach
+
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <select name="tipo" id="tipo">
+                                <option value="0">Seleccione servicio a pagar</option>
+                                @foreach ($tipos as $tipo)
+                                <option value="{{$tipo->id}}">{{$tipo->nombre}}</option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
@@ -32,7 +44,15 @@
                             <div class="input-group-addon">
                                 <i class="fa fa-user-o"></i>
                             </div>
-                            <input type="text" class='form-control' id="nombre" name="nombre" placeholder="Nombre..." value="{{ old('name') }}">
+                            <input type="text" class='form-control' id="nombre" name="nombre" placeholder="Nombre..." value="{{ old('Razon social') }}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-addon">
+                                <i class="fa fa-user-o"></i>
+                            </div>
+                            <input type="text" class='form-control' id="num_documento" name="num_documento" placeholder="Rif/CI..." value="{{ old('num_documento') }}">
                             <span class="input-group-btn">
                                 <button class="btn btn-primary" type="submit"><i class='glyphicon glyphicon-search'></i> Buscar</button>
                             </span>

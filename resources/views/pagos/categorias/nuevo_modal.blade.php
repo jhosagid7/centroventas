@@ -22,7 +22,7 @@
                             </div>
                             @endif
 
-                            {!! Form::open(array('route' => 'categoria.store','method'=>'POST', 'autocomplete'=>'off' )) !!}
+                            {!! Form::open(array('route' => 'categorias.store','method'=>'POST', 'autocomplete'=>'off' )) !!}
                             {{ Form::token() }}
 
                             <div class="form-group">

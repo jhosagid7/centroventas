@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Caja;
 use App\Tasa;
 use App\Venta;
 use App\Persona;
@@ -41,7 +42,7 @@ class DetalleCreditoVentaController extends Controller
     {
         // return $request;
         $title = 'Recivo de Credito Cliente';
-        $creditos = Venta::where('tipo_pago_condicion', 'Credito')->where('persona_id', $request->id)->get();
+        $creditos = Venta::where('tipo_pago_condicion', 'Credito')->where('status','Pendiente')->where('persona_id', $request->id)->get();
         // return $creditos;
 
 
@@ -98,13 +99,13 @@ class DetalleCreditoVentaController extends Controller
                 //abonamos a la factura
                 $UserName = $request->user()->name;
                 $UserId = $request->user()->id;
-                $caja =  Sessioncaja::where('estado', 'Abierta')->orderBy('id', 'desc')->first();
+                $caja =  Caja::where('hora_cierre', 'Sin cerrar')->orderBy('id', 'desc')->first();
 
                 $detalleCredito = New DetalleCreditoVenta();
                 $detalleCredito->venta_id = $credito_id;
                 $detalleCredito->cliente = $creditos->cliente;
                 $detalleCredito->operador = $UserId;
-                $detalleCredito->caja = $caja->id;
+                $detalleCredito->caja_id = $caja->id;
                 $detalleCredito->moto = $creditos->resta;
                 $detalleCredito->abono = $total_operador_reg_input;
                 $detalleCredito->resta = $creditos->resta - $total_operador_reg_input;
@@ -115,9 +116,7 @@ class DetalleCreditoVentaController extends Controller
 
 
                 if ($Observaciones){
-                    $denominacion = "Monto pagado por el operador $UserName con ID Factura: $credito_id. ". $request->get('Observaciones');
-                }else{
-                    $denominacion = "Monto pagado por el operador $UserName con ID Factura: $credito_id.";
+                    $denominacion = $request->get('Observaciones');
                 }
 
 
@@ -238,13 +237,13 @@ class DetalleCreditoVentaController extends Controller
             if($total_operador_reg_input == $creditos->resta){
                 $UserName = $request->user()->name;
                 $UserId = $request->user()->id;
-                $caja =  Sessioncaja::where('estado', 'Abierta')->orderBy('id', 'desc')->first();
+                $caja =  Caja::where('hora_cierre', 'Sin cerrar')->orderBy('id', 'desc')->first();
 
                 $detalleCredito = New DetalleCreditoVenta();
                 $detalleCredito->venta_id = $credito_id;
                 $detalleCredito->cliente = $creditos->cliente;
                 $detalleCredito->operador = $UserId;
-                $detalleCredito->caja = $caja->id;
+                $detalleCredito->caja_id = $caja->id;
                 $detalleCredito->moto = $creditos->resta;
                 $detalleCredito->abono = $total_operador_reg_input;
                 $detalleCredito->resta = $creditos->resta - $total_operador_reg_input;
@@ -255,9 +254,7 @@ class DetalleCreditoVentaController extends Controller
 
 
                 if ($Observaciones){
-                    $denominacion = "Monto pagado por el operador $UserName con ID Factura: $credito_id. ". $request->get('Observaciones');
-                }else{
-                    $denominacion = "Monto pagado por el operador $UserName con ID Factura: $credito_id.";
+                    $denominacion = $request->get('Observaciones');
                 }
 
                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -371,6 +368,7 @@ class DetalleCreditoVentaController extends Controller
 
             $venta_pago = Venta::findOrFail($credito_id);
             $venta_pago->status = 'Pagado';
+            $venta_pago->estado_credito = 'Pagado';
             $venta_pago->update();
 
             $CreditoVenta = CreditoVenta::where('venta_id' , $credito_id)->first();
@@ -405,6 +403,7 @@ class DetalleCreditoVentaController extends Controller
         $tasaEfectivo = Tasa::where('nombre', 'Efectivo')->first();
 
         $credito_id = $id;
+        // return $creditos;
 
         return view('ventas.creditos.show', compact('creditos',
         'title',
@@ -415,6 +414,7 @@ class DetalleCreditoVentaController extends Controller
         'tasaEfectivo',
         'credito_id'
         ));
+
     }
 
     /**

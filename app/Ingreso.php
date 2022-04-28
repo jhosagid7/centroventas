@@ -13,11 +13,17 @@ class Ingreso extends Model
         return $this->hasMany(Articulo_Ingreso::class);
     }
 
-
+    public function pago_ingresos(){
+        return $this->hasMany(PagoIngreso::class);
+    }
 
     public function credito_ingresos()
     {
         return $this->hasMany(CreditoIngresos::class);
+    }
+    public function pagos_credito_ingresos()
+    {
+        return $this->hasMany(DetalleCreditoIngreso::class);
     }
 
     public function persona(){
@@ -60,6 +66,11 @@ class Ingreso extends Model
     public function scopeEstado($query, $estado){
         if($estado)
         return $query->where('ingresos.estado', 'LIKE', "$estado");
+    }
+
+    public function scopeStatus($query, $status){
+        if($status)
+        return $query->where('ingresos.status', "$status");
     }
 
     public function scopeOperador($query, $operador){

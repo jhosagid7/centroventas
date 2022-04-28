@@ -86,9 +86,20 @@ class Caja extends Model
     public function ventas(){
         return $this->hasMany(Venta::class);
     }
+    public function transacciones_bancos(){
+        return $this->hasMany(TransaccionesBanco::class);
+    }
 
     public function pago_creditos(){
         return $this->hasMany(PagoCredito::class);
+    }
+
+    public function pago_ingresos(){
+        return $this->hasMany(PagoIngreso::class);
+    }
+
+    public function detalle_credito_ventas(){
+        return $this->hasMany(DetalleCreditoVenta::class);
     }
 
     public function pago_ventas()
@@ -109,6 +120,10 @@ class Caja extends Model
     public function articulo_ventas()
     {
         return $this->hasManyThrough(Articulo_Venta::class, Venta::class);
+    }
+
+    public function historial_creditos(){
+        return $this->hasMany(HistorialCreditoCaja::class);
     }
 
     //este metodo nos ba a verificar si existe una caja abierta en el modelo Caja

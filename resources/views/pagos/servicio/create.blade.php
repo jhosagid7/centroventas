@@ -216,7 +216,7 @@
             if ($.trim(accion != '')) {
                 $.ajax({
                     type: 'get',
-                    url: '{{ url ("origen") }}',
+                    url: '{{ url ("servicios") }}',
                     data: "accion=" + accion,
                     success: function (origens) {
 
@@ -473,7 +473,7 @@ $("#credito").click(function(){
     // alert('credito');
 });
 $("#contado").click(function(){
-    alert('contado')
+    // alert('contado')
     var total = $("#total_pago").val();
     // console.log('total pago: ' + total);
     $("#total_compra").val(numDecimal(total));
@@ -503,24 +503,7 @@ $("#contado").click(function(){
     $('#contd').val(1);
     $('#credt').val(0);
     // alert('credito');
-});
-// $("#pagar").click(function(){
-//     alert("pagar")
-//     let op_registrado = $('#total_operador_reg_input').val();
-//     alert(op_registrado)
-//     alert(numDecimal(total))
-
-
-//     if(op_registrado == numDecimal(total)){
-//         alert("sussess:")
-//         event.preventDefault();
-//         $( "#pagar" ).submit();
-//     }else{
-//         alert("ERRER: El pago debe ser exacto. Por favor verifique el monto registrado...¡")
-//         event.preventDefault();
-//     }
-
-// });
+    });
 });
 
 var cont=0;
@@ -533,8 +516,6 @@ $("#jidarticulo").change(showValues);
 
 $("#jidarticulo").on("change", function () {
         document.getElementById("jcantidad").focus();
-        // $("#jidarticulo").val('0');
-        // document.getElementById('jidarticulo').val('0');
     });
 
 focusMethod = function getFocus() {
@@ -542,20 +523,6 @@ focusMethod = function getFocus() {
         $("#jidarticulo").val('default');
         $("#jidarticulo").selectpicker("refresh");
     }
-
-    // function showValues() {
-    //     // alert('show');
-    //     datosArticulo = document.getElementById('jidarticulo').value.split('_');
-    //     // $("#jprecio_venta").val(datosArticulo[2]);
-    //     $("#jprecio_compra").val(datosArticulo[1]);
-    //     // $("#jstock").val(datosArticulo[2]);
-
-
-    //     // $("#jmarjen_venta_dolar").val(12);
-
-
-    // }
-
 
 function add_article(){
 datosArticulo = document.getElementById('jidarticulo').value.split('_');
@@ -678,42 +645,6 @@ function sumar() {
 
             $("#total_dif_input").val(numDecimal(result));
             $("#total_dif").html(numDecimal(result));
-
-            // if (result <= 0) {
-            //     // alert('soy menor');
-            //     RestaTotal.classList.remove('text-primary');
-            //     RestaTotal.classList.add('text-danger');
-            //     r.classList.remove('text-primary');
-            //     r.classList.add('text-danger');
-
-            //     PagoTtotal.classList.add('text-success');
-            //     tap.classList.add('text-success');
-
-            //     $("#tap").html("MONTO COMPLETO...");
-            //     $("#r").html("VUELTOS...");
-            //     // verify();
-            //     $("#guardar").show("linear");;
-
-
-
-
-            // }
-            // if (result > 0) {
-            //     // alert('soy mayor');
-            //     RestaTotal.classList.remove('text-danger');
-            //     RestaTotal.classList.add('text-primary');
-            //     r.classList.remove('text-danger');
-            //     r.classList.add('text-primary');
-
-            //     PagoTtotal.classList.remove('text-success');
-            //     tap.classList.remove('text-success');
-
-            //     $("#r").html("RESTA");
-            //     $("#tap").html("TOTAL A PAGAR");
-            //     $("#guardar").hide("linear");
-            // }
-
-
         }
 $(document).ready(function() {
 
@@ -729,12 +660,37 @@ $(document).ready(function() {
                 Mdolar      = $("#cantidad_dolar_rep").val();
                 MdolarSistema       = $("#dolar_sistema").val();
 
+
                 Tdolar      = $("#TasaDolar").val();
 
                 Tpeso       = $("#TasaPeso").val();
                 Tbolivar    = $("#TasaBolivar").val();
                 Tpunto      = $("#TasaPunto").val();
                 Ttrans      = $("#TasaTrans").val();
+
+                let tasa_dolar_rep = $("#tasa_dolar_rep").val();
+                let tasa_peso_rep = $("#tasa_peso_rep").val();
+                let tasa_punto_rep = $("#tasa_punto_rep").val();
+                let tasa_trans_rep = $("#tasa_trans_rep").val();
+                let tasa_efectivo_rep = $("#tasa_efectivo_rep").val();
+
+                if (tasa_dolar_rep > 0){
+                    Tdolar = tasa_dolar_rep;
+                }
+                if (tasa_peso_rep > 0){
+                    Tpeso = tasa_peso_rep;
+                }
+                if (tasa_punto_rep > 0){
+                    Tpunto = tasa_punto_rep;
+                }
+                if (tasa_trans_rep > 0){
+                    Ttrans = tasa_trans_rep
+                }
+                if (tasa_efectivo_rep > 0){
+                    Tbolivar = tasa_efectivo_rep;
+                }
+
+
 
                 TdolarToDolarSis = MdolarSistema / Tdolar;
 
@@ -767,6 +723,28 @@ $(document).ready(function() {
                 Tpunto      = $("#TasaPunto").val();
                 Ttrans      = $("#TasaTrans").val();
 
+                let tasa_dolar_rep = $("#tasa_dolar_rep").val();
+                let tasa_peso_rep = $("#tasa_peso_rep").val();
+                let tasa_punto_rep = $("#tasa_punto_rep").val();
+                let tasa_trans_rep = $("#tasa_trans_rep").val();
+                let tasa_efectivo_rep = $("#tasa_efectivo_rep").val();
+
+                if (tasa_dolar_rep > 0){
+                    Tdolar = tasa_dolar_rep;
+                }
+                if (tasa_peso_rep > 0){
+                    Tpeso = tasa_peso_rep;
+                }
+                if (tasa_punto_rep > 0){
+                    Tpunto = tasa_punto_rep;
+                }
+                if (tasa_trans_rep > 0){
+                    Ttrans = tasa_trans_rep
+                }
+                if (tasa_efectivo_rep > 0){
+                    Tbolivar = tasa_efectivo_rep;
+                }
+
                 TpesoToDolarSis = MpesoSistema / Tpeso;
 
                 PsupTotal = Mpeso / Tpeso;
@@ -794,6 +772,28 @@ $(document).ready(function() {
                 Tbolivar = $("#TasaBolivar").val();
                 Tpunto   = $("#TasaPunto").val();
                 Ttrans   = $("#TasaTrans").val();
+
+                let tasa_dolar_rep = $("#tasa_dolar_rep").val();
+                let tasa_peso_rep = $("#tasa_peso_rep").val();
+                let tasa_punto_rep = $("#tasa_punto_rep").val();
+                let tasa_trans_rep = $("#tasa_trans_rep").val();
+                let tasa_efectivo_rep = $("#tasa_efectivo_rep").val();
+
+                if (tasa_dolar_rep > 0){
+                    Tdolar = tasa_dolar_rep;
+                }
+                if (tasa_peso_rep > 0){
+                    Tpeso = tasa_peso_rep;
+                }
+                if (tasa_punto_rep > 0){
+                    Tpunto = tasa_punto_rep;
+                }
+                if (tasa_trans_rep > 0){
+                    Ttrans = tasa_trans_rep
+                }
+                if (tasa_efectivo_rep > 0){
+                    Tbolivar = tasa_efectivo_rep;
+                }
 
                 TbolivarToDolarSis = MbolivarSistema / Tbolivar;
 
@@ -825,10 +825,32 @@ $(document).ready(function() {
                 Tpunto   = $("#TasaPunto").val();
                 Ttrans   = $("#TasaTrans").val();
 
+                let tasa_dolar_rep = $("#tasa_dolar_rep").val();
+                let tasa_peso_rep = $("#tasa_peso_rep").val();
+                let tasa_punto_rep = $("#tasa_punto_rep").val();
+                let tasa_trans_rep = $("#tasa_trans_rep").val();
+                let tasa_efectivo_rep = $("#tasa_efectivo_rep").val();
+
+                if (tasa_dolar_rep > 0){
+                    Tdolar = tasa_dolar_rep;
+                }
+                if (tasa_peso_rep > 0){
+                    Tpeso = tasa_peso_rep;
+                }
+                if (tasa_punto_rep > 0){
+                    Tpunto = tasa_punto_rep;
+                }
+                if (tasa_trans_rep > 0){
+                    Ttrans = tasa_trans_rep
+                }
+                if (tasa_efectivo_rep > 0){
+                    Tbolivar = tasa_efectivo_rep;
+                }
+
                 TpuntoToDolarSis = MpuntoSistema / Tpunto;
 
 
-                PTsupTotal = Mpunto / Tbolivar;
+                PTsupTotal = Mpunto / Tpunto;
                 PTsupTotalDolar = PTsupTotal * Tpunto;
                 $("#dif_moneda_punto_to_tasa_input").val(numDecimal(PTsupTotalDolar));
                 $("#saldo_banco_punto_debitado").html(numDecimal(PTsupTotalDolar));
@@ -852,6 +874,28 @@ $(document).ready(function() {
                 Tbolivar = $("#TasaBolivar").val();
                 Tpunto   = $("#TasaPunto").val();
                 Ttrans   = $("#TasaTrans").val();
+
+                let tasa_dolar_rep = $("#tasa_dolar_rep").val();
+                let tasa_peso_rep = $("#tasa_peso_rep").val();
+                let tasa_punto_rep = $("#tasa_punto_rep").val();
+                let tasa_trans_rep = $("#tasa_trans_rep").val();
+                let tasa_efectivo_rep = $("#tasa_efectivo_rep").val();
+
+                if (tasa_dolar_rep > 0){
+                    Tdolar = tasa_dolar_rep;
+                }
+                if (tasa_peso_rep > 0){
+                    Tpeso = tasa_peso_rep;
+                }
+                if (tasa_punto_rep > 0){
+                    Tpunto = tasa_punto_rep;
+                }
+                if (tasa_trans_rep > 0){
+                    Ttrans = tasa_trans_rep
+                }
+                if (tasa_efectivo_rep > 0){
+                    Tbolivar = tasa_efectivo_rep;
+                }
 
                 TtransToDolarSis = MtransSistema / Ttrans;
 
@@ -890,6 +934,25 @@ $(document).ready(function() {
         });
 
         $("#cantidad_trans_rep").keyup(function() {
+            DMontoTransRep();
+        });
+        $("#tasa_dolar_rep").keyup(function() {
+            DMontoDolarRep();
+        });
+
+        $("#tasa_peso_rep").keyup(function() {
+            DMontoPesoRep();
+        });
+
+        $("#tasa_efectivo_rep").keyup(function() {
+            DMontoBolivarRep();
+        });
+
+        $("#tasa_punto_rep").keyup(function() {
+            DMontoPuntoRep();
+        });
+
+        $("#tasa_trans_rep").keyup(function() {
             DMontoTransRep();
         });
 });

@@ -10,6 +10,7 @@ class PagoServicio extends Model
         'Divisa',
         'MontoDivisa',
         'TasaTiket',
+        'TasaRecived',
         'MontoDolar',
         'Vueltos',
         'servicio_id',

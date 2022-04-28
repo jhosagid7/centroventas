@@ -192,6 +192,7 @@
         $("#contado").click(function(){
             var total = $("#total_pago").val();
             // console.log('total pago: ' + total);
+            $("#deuda_real").val(numDecimal(total));
             $("#total_compra").val(numDecimal(total));
             $("#total").html("$. " + numDecimal(total));
             $("#total_sistema_reg_input").val(numDecimal(total));
@@ -345,6 +346,7 @@ return false;
 
     var tsri      = $("#total_sistema_reg_input").val();
     $("#total_sistema_reg").html(numDecimal(tsri));
+
         /* Sumar dos números. */
         function sumar() {
                 // alert('suma');
@@ -414,184 +416,388 @@ return false;
 
 
                 }
-        $(document).ready(function() {
+                $(document).ready(function() {
 
-            DMontoDolarRep();
-            DMontoPesoRep();
-            DMontoBolivarRep();
-            DMontoPuntoRep();
-            DMontoTransRep();
+DMontoDolarRep();
+DMontoPesoRep();
+DMontoBolivarRep();
+DMontoPuntoRep();
+DMontoTransRep();
 
-                function DMontoDolarRep(){
+$("#descuento").keyup(function() {
+        let descuento = $("#descuento").val();
+        let aumento = $("#aumento").val();
+        aumento = parseFloat(aumento);
+        let total_sistema_reg_input = $("#total_sistema_reg_input").val();
+        let total_sistema_reg = $("#total_sistema_reg").html();
 
-                        MdolarSaldo      = $("#saldo_banco_dolar").val();
-                        Mdolar      = $("#cantidad_dolar_rep").val();
-                        MdolarSistema       = $("#dolar_sistema").val();
+        descuento = parseFloat(descuento);
+        total_sistema_reg_input = parseFloat(total_sistema_reg_input);
+        total_sistema_reg = parseFloat(total_sistema_reg);
 
-                        Tdolar      = $("#TasaDolar").val();
+        if(descuento > 0) {
+            $("#aumento").val('');
+            $('#total_aumento_reg').html(numDecimal(0.00));
+            $('#total_aumento_reg_input').val(numDecimal(0.00));
+            $('#total_descuento_reg').html(numDecimal(descuento));
+            $('#total_descuento_reg_input').val(numDecimal(descuento));
 
-                        Tpeso       = $("#TasaPeso").val();
-                        Tbolivar    = $("#TasaBolivar").val();
-                        Tpunto      = $("#TasaPunto").val();
-                        Ttrans      = $("#TasaTrans").val();
+            $("#total_sistema_reg_input").val(numDecimal(total_sistema_reg - descuento));
+            $("#total_pago_sistema_reg").html(numDecimal(total_sistema_reg - descuento));
+        }else{
+            $('#total_descuento_reg').html(numDecimal(0.00));
+            $('#total_descuento_reg_input').val(numDecimal(0.00));
+            $("#total_sistema_reg_input").val(numDecimal(total_sistema_reg));
+            $("#total_pago_sistema_reg").html(numDecimal(total_sistema_reg));
+        }
+        sumar();
 
-                        TdolarToDolarSis = MdolarSistema / Tdolar;
+            resta();
+    });
 
-                        DsupTotal = Mdolar * Tdolar;
+    $("#aumento").keyup(function() {
 
-                        DsupTotalDolar = DsupTotal * Tdolar;
-                        $("#dif_moneda_dolar_to_tasa_input").val(numDecimal(DsupTotalDolar));
-                        $("#saldo_banco_dolar_debitado").html(numDecimal(DsupTotalDolar));
-                        $("#dif_moneda_dolar_to_tasa").html(numDecimal(DsupTotalDolar - MdolarSistema));
-                        $("#total_dolar_dif").val(numDecimal(DsupTotalDolar - MdolarSistema));
-                        $("#total_dolar").val(DsupTotalDolar);
-                        $("#dif_moneda_dolar_to_dolar_input").val(numDecimal(DsupTotal));
-                        $("#dif_moneda_dolar_to_dolar").html(numDecimal(DsupTotal - TdolarToDolarSis));
-                        $("#saldo_banco_dolar_resta").html(numDecimal(MdolarSaldo - DsupTotal));
+        let aumento = $("#aumento").val();
+        let total_sistema_reg_input = $("#total_sistema_reg_input").val();
+        let total_sistema_reg = $("#total_sistema_reg").html();
 
-                        sumar();
+        total_sistema_reg = parseFloat(total_sistema_reg);
+        aumento = parseFloat(aumento);
+        total_sistema_reg_input = parseFloat(total_sistema_reg_input);
 
-                        resta();
+        if(aumento > 0) {
+            $("#descuento").val('');
+            $('#total_descuento_reg').html(numDecimal(0.00));
+            $('#total_descuento_reg_input').val(numDecimal(0.00));
+            total_descuento_reg_input
+            $('#total_aumento_reg').html(numDecimal(aumento));
+            $('#total_aumento_reg_input').val(numDecimal(aumento));
 
-                    }
+            $("#total_sistema_reg_input").val(numDecimal(total_sistema_reg + aumento));
+            $("#total_pago_sistema_reg").html(numDecimal(total_sistema_reg + aumento));
+        }else{
+            $('#total_aumento_reg').html(numDecimal(0.00));
+            $('#total_aumento_reg_input').val(numDecimal(0.00));
+            $("#total_sistema_reg_input").val(numDecimal(total_sistema_reg));
+            $("#total_pago_sistema_reg").html(numDecimal(total_sistema_reg));
+        }
+        sumar();
 
-                    function DMontoPesoRep(){
+            resta();
+    });
 
-                        MpesoSaldo      = $("#saldo_banco_peso").val();
-                        Mpeso       = $("#cantidad_peso_rep").val();
-                        MpesoSistema       = $("#peso_sistema").val();
-                        Tdolar      = $("#TasaDolar").val();
-                        Tpeso       = $("#TasaPeso").val();
-                        Tbolivar    = $("#TasaBolivar").val();
-                        Tpunto      = $("#TasaPunto").val();
-                        Ttrans      = $("#TasaTrans").val();
+    function DMontoDolarRep(){
 
-                        TpesoToDolarSis = MpesoSistema / Tpeso;
-
-                        PsupTotal = Mpeso / Tpeso;
-                        PsupTotalDolar = PsupTotal * Tpeso;
-                        $("#dif_moneda_peso_to_tasa_input").val(numDecimal(PsupTotalDolar));
-                        $("#saldo_banco_peso_debitado").html(numDecimal(PsupTotalDolar));
-                        $("#dif_moneda_peso_to_tasa").html(numDecimal(PsupTotalDolar - MpesoSistema));
-                        $("#total_peso_dif").val(numDecimal(PsupTotalDolar - MpesoSistema));
-                        $("#total_peso").val(numDecimal(PsupTotalDolar));
-                        $("#dif_moneda_peso_to_dolar_input").val(numDecimal(PsupTotal));
-                        $("#dif_moneda_peso_to_dolar").html(numDecimal(PsupTotal - TpesoToDolarSis));
-                        $("#saldo_banco_peso_resta").html(numDecimal(MpesoSaldo - PsupTotalDolar));
-                        console.log(MpesoSaldo + ' ' + PsupTotal + ' ' + numDecimal(MpesoSaldo - PsupTotalDolar))
-                        sumar();
-                        resta();
-
-                    }
-
-                    function DMontoBolivarRep(){
-                        MbolivarSaldo      = $("#saldo_banco_bolivar").val();
-                        Mbolivar = $("#cantidad_efectivo_rep").val();
-                        MbolivarSistema       = $("#efectivo_sistema").val();
-                        Tdolar   = $("#TasaDolar").val();
-                        Tpeso    = $("#TasaPeso").val();
-                        Tbolivar = $("#TasaBolivar").val();
-                        Tpunto   = $("#TasaPunto").val();
-                        Ttrans   = $("#TasaTrans").val();
-
-                        TbolivarToDolarSis = MbolivarSistema / Tbolivar;
+            MdolarSaldo      = $("#saldo_banco_dolar").val();
+            Mdolar      = $("#cantidad_dolar_rep").val();
+            MdolarSistema       = $("#dolar_sistema").val();
 
 
-                        BsupTotal = Mbolivar / Tbolivar;
-                        BsupTotalDolar = BsupTotal * Tbolivar;
-                        $("#dif_moneda_efectivo_to_tasa_input").val(numDecimal(BsupTotalDolar));
-                        $("#saldo_banco_bolivar_debitado").html(numDecimal(BsupTotalDolar));
-                        $("#saldo_banco_bolivar_debitado").val(numDecimal(BsupTotalDolar));
-                        $("#dif_moneda_efectivo_to_tasa").html(numDecimal(BsupTotalDolar - MbolivarSistema));
-                        $("#total_bolivar_dif").val(numDecimal(BsupTotalDolar - MbolivarSistema));
-                        $("#total_bolivar").val(numDecimal(BsupTotalDolar));
-                        $("#dif_moneda_efectivo_to_dolar_input").val(numDecimal(BsupTotal));
-                        $("#dif_moneda_efectivo_to_dolar").html(numDecimal(BsupTotal - TbolivarToDolarSis));
-                        $("#saldo_banco_efectivo_resta").html(numDecimal(MbolivarSaldo - BsupTotalDolar));
+            Tdolar      = $("#TasaDolar").val();
 
-                        sumar();
-                        resta();
+            Tpeso       = $("#TasaPeso").val();
+            Tbolivar    = $("#TasaBolivar").val();
+            Tpunto      = $("#TasaPunto").val();
+            Ttrans      = $("#TasaTrans").val();
 
-                    }
+            let tasa_dolar_rep = $("#tasa_dolar_rep").val();
+            let tasa_peso_rep = $("#tasa_peso_rep").val();
+            let tasa_punto_rep = $("#tasa_punto_rep").val();
+            let tasa_trans_rep = $("#tasa_trans_rep").val();
+            let tasa_efectivo_rep = $("#tasa_efectivo_rep").val();
 
-                    function DMontoPuntoRep(){
-                        MpuntoSaldo      = $("#saldo_banco_punto").val();
-                        Mpunto = $("#cantidad_punto_rep").val();
-                        MpuntoSistema       = $("#punto_sistema").val();
-                        Tdolar   = $("#TasaDolar").val();
-                        Tpeso    = $("#TasaPeso").val();
-                        Tbolivar = $("#TasaBolivar").val();
-                        Tpunto   = $("#TasaPunto").val();
-                        Ttrans   = $("#TasaTrans").val();
-
-                        TpuntoToDolarSis = MpuntoSistema / Tpunto;
-
-
-                        PTsupTotal = Mpunto / Tbolivar;
-                        PTsupTotalDolar = PTsupTotal * Tpunto;
-                        $("#dif_moneda_punto_to_tasa_input").val(numDecimal(PTsupTotalDolar));
-                        $("#saldo_banco_punto_debitado").html(numDecimal(PTsupTotalDolar));
-                        $("#dif_moneda_punto_to_tasa").html(numDecimal(PTsupTotalDolar - MpuntoSistema));
-                        $("#total_punto_dif").val(numDecimal(PTsupTotalDolar - MpuntoSistema));
-                        $("#total_punto").val(numDecimal(PTsupTotalDolar));
-                        $("#dif_moneda_punto_to_dolar_input").val(numDecimal(PTsupTotal));
-                        $("#dif_moneda_punto_to_dolar").html(numDecimal(PTsupTotal - TpuntoToDolarSis));
-                        $("#saldo_banco_punto_resta").html(numDecimal(MpuntoSaldo - PTsupTotalDolar));
-                        sumar();
-                        resta();
-
-                    }
-
-                    function DMontoTransRep(){
-                        MtransSaldo      = $("#saldo_banco_transferencia").val();
-                        Mtrans = $("#cantidad_trans_rep").val();
-                        MtransSistema       = $("#trans_sistema").val();
-                        Tdolar   = $("#TasaDolar").val();
-                        Tpeso    = $("#TasaPeso").val();
-                        Tbolivar = $("#TasaBolivar").val();
-                        Tpunto   = $("#TasaPunto").val();
-                        Ttrans   = $("#TasaTrans").val();
-
-                        TtransToDolarSis = MtransSistema / Ttrans;
+            if (tasa_dolar_rep > 0){
+                Tdolar = tasa_dolar_rep;
+            }
+            if (tasa_peso_rep > 0){
+                Tpeso = tasa_peso_rep;
+            }
+            if (tasa_punto_rep > 0){
+                Tpunto = tasa_punto_rep;
+            }
+            if (tasa_trans_rep > 0){
+                Ttrans = tasa_trans_rep
+            }
+            if (tasa_efectivo_rep > 0){
+                Tbolivar = tasa_efectivo_rep;
+            }
 
 
-                        TsupTotal = Mtrans / Ttrans;
-                        TsupTotalDolar = TsupTotal * Ttrans;
-                        $("#dif_moneda_trans_to_tasa_input").val(numDecimal(TsupTotalDolar));
-                        $("#saldo_banco_transferencia_debitado").html(numDecimal(TsupTotalDolar));
-                        $("#dif_moneda_trans_to_tasa").html(numDecimal(TsupTotalDolar - MtransSistema));
-                        $("#total_trans_dif").val(numDecimal(TsupTotalDolar - MtransSistema));
-                        $("#total_trans").val(numDecimal(TsupTotalDolar));
-                        $("#dif_moneda_trans_to_dolar_input").val(numDecimal(TsupTotal));
-                        $("#dif_moneda_trans_to_dolar").html(numDecimal(TsupTotal - TtransToDolarSis));
-                        $("#saldo_banco_trans_resta").html(numDecimal(MtransSaldo - TsupTotalDolar));
-                        console.log(MtransSaldo + ' ' + TsupTotalDolar + ' ' + numDecimal(MtransSaldo - TsupTotalDolar))
-                        sumar();
-                        resta();
 
-                    }
+            TdolarToDolarSis = MdolarSistema / Tdolar;
+
+            DsupTotal = Mdolar * Tdolar;
+
+            DsupTotalDolar = DsupTotal * Tdolar;
+            $("#dif_moneda_dolar_to_tasa_input").val(numDecimal(DsupTotalDolar));
+            $("#saldo_banco_dolar_debitado").html(numDecimal(DsupTotalDolar));
+            $("#dif_moneda_dolar_to_tasa").html(numDecimal(DsupTotalDolar - MdolarSistema));
+            $("#total_dolar_dif").val(numDecimal(DsupTotalDolar - MdolarSistema));
+            $("#total_dolar").val(DsupTotalDolar);
+            $("#dif_moneda_dolar_to_dolar_input").val(numDecimal(DsupTotal));
+            $("#dif_moneda_dolar_to_dolar").html(numDecimal(DsupTotal - TdolarToDolarSis));
+            $("#saldo_banco_dolar_resta").html(numDecimal(MdolarSaldo - DsupTotal));
+
+            sumar();
+
+            resta();
+
+        }
+
+        function DMontoPesoRep(){
+
+            MpesoSaldo      = $("#saldo_banco_peso").val();
+            Mpeso       = $("#cantidad_peso_rep").val();
+            MpesoSistema       = $("#peso_sistema").val();
+            Tdolar      = $("#TasaDolar").val();
+            Tpeso       = $("#TasaPeso").val();
+            Tbolivar    = $("#TasaBolivar").val();
+            Tpunto      = $("#TasaPunto").val();
+            Ttrans      = $("#TasaTrans").val();
+
+            let tasa_dolar_rep = $("#tasa_dolar_rep").val();
+            let tasa_peso_rep = $("#tasa_peso_rep").val();
+            let tasa_punto_rep = $("#tasa_punto_rep").val();
+            let tasa_trans_rep = $("#tasa_trans_rep").val();
+            let tasa_efectivo_rep = $("#tasa_efectivo_rep").val();
+
+            if (tasa_dolar_rep > 0){
+                Tdolar = tasa_dolar_rep;
+            }
+            if (tasa_peso_rep > 0){
+                Tpeso = tasa_peso_rep;
+            }
+            if (tasa_punto_rep > 0){
+                Tpunto = tasa_punto_rep;
+            }
+            if (tasa_trans_rep > 0){
+                Ttrans = tasa_trans_rep
+            }
+            if (tasa_efectivo_rep > 0){
+                Tbolivar = tasa_efectivo_rep;
+            }
+
+            TpesoToDolarSis = MpesoSistema / Tpeso;
+
+            PsupTotal = Mpeso / Tpeso;
+            PsupTotalDolar = PsupTotal * Tpeso;
+            $("#dif_moneda_peso_to_tasa_input").val(numDecimal(PsupTotalDolar));
+            $("#saldo_banco_peso_debitado").html(numDecimal(PsupTotalDolar));
+            $("#dif_moneda_peso_to_tasa").html(numDecimal(PsupTotalDolar - MpesoSistema));
+            $("#total_peso_dif").val(numDecimal(PsupTotalDolar - MpesoSistema));
+            $("#total_peso").val(numDecimal(PsupTotalDolar));
+            $("#dif_moneda_peso_to_dolar_input").val(numDecimal(PsupTotal));
+            $("#dif_moneda_peso_to_dolar").html(numDecimal(PsupTotal - TpesoToDolarSis));
+            $("#saldo_banco_peso_resta").html(numDecimal(MpesoSaldo - PsupTotalDolar));
+            console.log(MpesoSaldo + ' ' + PsupTotal + ' ' + numDecimal(MpesoSaldo - PsupTotalDolar))
+            sumar();
+            resta();
+
+        }
+
+        function DMontoBolivarRep(){
+            MbolivarSaldo      = $("#saldo_banco_bolivar").val();
+            Mbolivar = $("#cantidad_efectivo_rep").val();
+            MbolivarSistema       = $("#efectivo_sistema").val();
+            Tdolar   = $("#TasaDolar").val();
+            Tpeso    = $("#TasaPeso").val();
+            Tbolivar = $("#TasaBolivar").val();
+            Tpunto   = $("#TasaPunto").val();
+            Ttrans   = $("#TasaTrans").val();
+
+            let tasa_dolar_rep = $("#tasa_dolar_rep").val();
+            let tasa_peso_rep = $("#tasa_peso_rep").val();
+            let tasa_punto_rep = $("#tasa_punto_rep").val();
+            let tasa_trans_rep = $("#tasa_trans_rep").val();
+            let tasa_efectivo_rep = $("#tasa_efectivo_rep").val();
+
+            if (tasa_dolar_rep > 0){
+                Tdolar = tasa_dolar_rep;
+            }
+            if (tasa_peso_rep > 0){
+                Tpeso = tasa_peso_rep;
+            }
+            if (tasa_punto_rep > 0){
+                Tpunto = tasa_punto_rep;
+            }
+            if (tasa_trans_rep > 0){
+                Ttrans = tasa_trans_rep
+            }
+            if (tasa_efectivo_rep > 0){
+                Tbolivar = tasa_efectivo_rep;
+            }
+
+            TbolivarToDolarSis = MbolivarSistema / Tbolivar;
 
 
-                $("#cantidad_dolar_rep").keyup(function() {
-                    DMontoDolarRep();
-                });
+            BsupTotal = Mbolivar / Tbolivar;
+            BsupTotalDolar = BsupTotal * Tbolivar;
+            $("#dif_moneda_efectivo_to_tasa_input").val(numDecimal(BsupTotalDolar));
+            $("#saldo_banco_bolivar_debitado").html(numDecimal(BsupTotalDolar));
+            $("#saldo_banco_bolivar_debitado").val(numDecimal(BsupTotalDolar));
+            $("#dif_moneda_efectivo_to_tasa").html(numDecimal(BsupTotalDolar - MbolivarSistema));
+            $("#total_bolivar_dif").val(numDecimal(BsupTotalDolar - MbolivarSistema));
+            $("#total_bolivar").val(numDecimal(BsupTotalDolar));
+            $("#dif_moneda_efectivo_to_dolar_input").val(numDecimal(BsupTotal));
+            $("#dif_moneda_efectivo_to_dolar").html(numDecimal(BsupTotal - TbolivarToDolarSis));
+            $("#saldo_banco_efectivo_resta").html(numDecimal(MbolivarSaldo - BsupTotalDolar));
 
-                $("#cantidad_peso_rep").keyup(function() {
-                    DMontoPesoRep();
-                });
+            sumar();
+            resta();
 
-                $("#cantidad_efectivo_rep").keyup(function() {
-                    DMontoBolivarRep();
-                });
+        }
 
-                $("#cantidad_punto_rep").keyup(function() {
-                    DMontoPuntoRep();
-                });
+        function DMontoPuntoRep(){
+            MpuntoSaldo      = $("#saldo_banco_punto").val();
+            Mpunto = $("#cantidad_punto_rep").val();
+            MpuntoSistema       = $("#punto_sistema").val();
+            Tdolar   = $("#TasaDolar").val();
+            Tpeso    = $("#TasaPeso").val();
+            Tbolivar = $("#TasaBolivar").val();
+            Tpunto   = $("#TasaPunto").val();
+            Ttrans   = $("#TasaTrans").val();
 
-                $("#cantidad_trans_rep").keyup(function() {
-                    DMontoTransRep();
-                });
-        });
+            let tasa_dolar_rep = $("#tasa_dolar_rep").val();
+            let tasa_peso_rep = $("#tasa_peso_rep").val();
+            let tasa_punto_rep = $("#tasa_punto_rep").val();
+            let tasa_trans_rep = $("#tasa_trans_rep").val();
+            let tasa_efectivo_rep = $("#tasa_efectivo_rep").val();
+
+            if (tasa_dolar_rep > 0){
+                Tdolar = tasa_dolar_rep;
+            }
+            if (tasa_peso_rep > 0){
+                Tpeso = tasa_peso_rep;
+            }
+            if (tasa_punto_rep > 0){
+                Tpunto = tasa_punto_rep;
+            }
+            if (tasa_trans_rep > 0){
+                Ttrans = tasa_trans_rep
+            }
+            if (tasa_efectivo_rep > 0){
+                Tbolivar = tasa_efectivo_rep;
+            }
+
+            TpuntoToDolarSis = MpuntoSistema / Tpunto;
+
+
+            PTsupTotal = Mpunto / Tpunto;
+            PTsupTotalDolar = PTsupTotal * Tpunto;
+            $("#dif_moneda_punto_to_tasa_input").val(numDecimal(PTsupTotalDolar));
+            $("#saldo_banco_punto_debitado").html(numDecimal(PTsupTotalDolar));
+            $("#dif_moneda_punto_to_tasa").html(numDecimal(PTsupTotalDolar - MpuntoSistema));
+            $("#total_punto_dif").val(numDecimal(PTsupTotalDolar - MpuntoSistema));
+            $("#total_punto").val(numDecimal(PTsupTotalDolar));
+            $("#dif_moneda_punto_to_dolar_input").val(numDecimal(PTsupTotal));
+            $("#dif_moneda_punto_to_dolar").html(numDecimal(PTsupTotal - TpuntoToDolarSis));
+            $("#saldo_banco_punto_resta").html(numDecimal(MpuntoSaldo - PTsupTotalDolar));
+            sumar();
+            resta();
+
+        }
+
+        function DMontoTransRep(){
+            MtransSaldo      = $("#saldo_banco_transferencia").val();
+            Mtrans = $("#cantidad_trans_rep").val();
+            MtransSistema       = $("#trans_sistema").val();
+            Tdolar   = $("#TasaDolar").val();
+            Tpeso    = $("#TasaPeso").val();
+            Tbolivar = $("#TasaBolivar").val();
+            Tpunto   = $("#TasaPunto").val();
+            Ttrans   = $("#TasaTrans").val();
+
+            let tasa_dolar_rep = $("#tasa_dolar_rep").val();
+            let tasa_peso_rep = $("#tasa_peso_rep").val();
+            let tasa_punto_rep = $("#tasa_punto_rep").val();
+            let tasa_trans_rep = $("#tasa_trans_rep").val();
+            let tasa_efectivo_rep = $("#tasa_efectivo_rep").val();
+
+            if (tasa_dolar_rep > 0){
+                Tdolar = tasa_dolar_rep;
+            }
+            if (tasa_peso_rep > 0){
+                Tpeso = tasa_peso_rep;
+            }
+            if (tasa_punto_rep > 0){
+                Tpunto = tasa_punto_rep;
+            }
+            if (tasa_trans_rep > 0){
+                Ttrans = tasa_trans_rep
+            }
+            if (tasa_efectivo_rep > 0){
+                Tbolivar = tasa_efectivo_rep;
+            }
+
+            TtransToDolarSis = MtransSistema / Ttrans;
+
+
+            TsupTotal = Mtrans / Ttrans;
+            TsupTotalDolar = TsupTotal * Ttrans;
+            $("#dif_moneda_trans_to_tasa_input").val(numDecimal(TsupTotalDolar));
+            $("#saldo_banco_transferencia_debitado").html(numDecimal(TsupTotalDolar));
+            $("#dif_moneda_trans_to_tasa").html(numDecimal(TsupTotalDolar - MtransSistema));
+            $("#total_trans_dif").val(numDecimal(TsupTotalDolar - MtransSistema));
+            $("#total_trans").val(numDecimal(TsupTotalDolar));
+            $("#dif_moneda_trans_to_dolar_input").val(numDecimal(TsupTotal));
+            $("#dif_moneda_trans_to_dolar").html(numDecimal(TsupTotal - TtransToDolarSis));
+            $("#saldo_banco_trans_resta").html(numDecimal(MtransSaldo - TsupTotalDolar));
+            console.log(MtransSaldo + ' ' + TsupTotalDolar + ' ' + numDecimal(MtransSaldo - TsupTotalDolar))
+            sumar();
+            resta();
+
+        }
+
+
+    $("#cantidad_dolar_rep").keyup(function() {
+
+        DMontoDolarRep();
+    });
+
+    $("#cantidad_peso_rep").keyup(function() {
+
+        DMontoPesoRep();
+    });
+
+    $("#cantidad_efectivo_rep").keyup(function() {
+
+        DMontoBolivarRep();
+    });
+
+    $("#cantidad_punto_rep").keyup(function() {
+
+        DMontoPuntoRep();
+    });
+
+    $("#cantidad_trans_rep").keyup(function() {
+
+        DMontoTransRep();
+    });
+    $("#tasa_dolar_rep").keyup(function() {
+
+        DMontoDolarRep();
+    });
+
+    $("#tasa_peso_rep").keyup(function() {
+
+        DMontoPesoRep();
+    });
+
+    $("#tasa_efectivo_rep").keyup(function() {
+
+        DMontoBolivarRep();
+    });
+
+    $("#tasa_punto_rep").keyup(function() {
+
+        DMontoPuntoRep();
+    });
+
+    $("#tasa_trans_rep").keyup(function() {
+
+        DMontoTransRep();
+    });
+});
     </script>
 @endpush
 @endsection

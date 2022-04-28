@@ -8,12 +8,14 @@ use App\Venta;
 use App\Articulo;
 use Carbon\Carbon;
 use App\Sessioncaja;
+use App\Transaccion;
 use App\Contabilidad;
 use App\ControlStock;
 use App\Denominacion;
+use App\ClienteCredito;
 use App\SaldosMovimiento;
-use App\Transaccion;
 use Illuminate\Http\Request;
+use App\HistorialCreditoCaja;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 
@@ -46,6 +48,49 @@ class CajaController extends Controller
         } else {
             $mostrarNuvaVenta = 0;
         }
+
+        // este codigo maneja las fechas de los creditos vencidos
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+            $creditos_vencidos = Venta::where('tipo_pago_condicion', 'Credito')->where('status', 'Pendiente')->get();
+            // return $creditos_vencidos;
+            $creditos_clientes = ClienteCredito::get();
+            if ($creditos_vencidos) {
+
+
+            foreach ($creditos_vencidos as $credVencido) {
+                $date = Carbon::now('America/Caracas');
+                $now = Carbon::parse($date);
+                $second = $credVencido->created_at;
+                $addFecha = $second->addDay($credVencido->Persona->limite_fecha);
+                // return $now . ' '. $second . ' ' . $addFecha . ' - ' . $credVencido->created_at;
+
+                if ($now->gte($addFecha)) {
+                    // return 'tiene credito vencido';
+                    $credito_id = $credVencido->id;
+                    $upCredito = Venta::findOrFail($credito_id);
+
+                    $upCredito->estado_credito = 'Vencido';
+                    $upCredito->update();
+
+                    $cliente_moroso = ClienteCredito::where('persona_id', $credVencido->persona_id)->first();
+
+                    if ($cliente_moroso->total_deuda > 0) {
+                        $cliente_moroso->estado_credito = 'Moroso';
+                        $cliente_moroso->update();
+                    }else{
+                        $cliente_moroso->estado_credito = 'Activo';
+                        $cliente_moroso->update();
+                    }
+
+                }else{
+                    // return 'no tiene credito vencido';
+                }
+
+            }
+        }
+
 
 
 
@@ -218,6 +263,8 @@ class CajaController extends Controller
                 // $cajas->ventas->personas;
                 $cajas->pago_ventas;
                 $cajas->articulo_ventas;
+                $cajas->pago_creditos;
+                $cajas->detalle_credito_ventas;
                 // $cajas->articulo_ventas->articulo;
 
         // $v = Venta::find(6);
@@ -255,7 +302,7 @@ class CajaController extends Controller
                 }
 
                 foreach ($cajas->ventas as $vent ) {
-                    if ($vent->estado == 'Aceptada') {
+                    if ($vent->estado == 'Aceptada' && $vent->tipo_pago_condicion == 'Contado') {
                     $cajas->SumaTotalVentas = $cajas->SumaTotalVentas + $vent->total_venta;
                     $cajas->SumaTotalCostoVentas = $cajas->SumaTotalCostoVentas + $vent->precio_costo;
                     $cajas->SumaTotalMargenVentas = $cajas->SumaTotalMargenVentas + $vent->margen_ganancia;
@@ -272,8 +319,133 @@ class CajaController extends Controller
                     }
                 }
 
+                /////////////////////////////////////////////
+                foreach ($cajas->pago_creditos as $pagoCredito ) {
 
-                //  return $cajas->SumaTotalDolar;
+                    if ($pagoCredito->Divisa == 'Dolar') {
+                        $cajas->SumaTotalDolarCredito = $cajas->SumaTotalDolarCredito + $pagoCredito->MontoDivisa;
+                        $cajas->SumaTotalDolarDolarCredito = $cajas->SumaTotalDolarDolarCredito + $pagoCredito->MontoDolar;
+                    }elseif ($pagoCredito->Divisa == 'Peso') {
+                        $cajas->SumaTotalPesoCredito = $cajas->SumaTotalPesoCredito + $pagoCredito->MontoDivisa;
+                        $cajas->SumaTotalPesoDolarCredito = $cajas->SumaTotalPesoDolarCredito + $pagoCredito->MontoDolar;
+                    }elseif ($pagoCredito->Divisa == 'Bolivar') {
+                        $cajas->SumaTotalBolivarCredito = $cajas->SumaTotalBolivarCredito + $pagoCredito->MontoDivisa;
+                        $cajas->SumaTotalBolivarDolarCredito = $cajas->SumaTotalBolivarDolarCredito + $pagoCredito->MontoDolar;
+                    }elseif ($pagoCredito->Divisa == 'Punto') {
+                        $cajas->SumaTotalPuntoCredito = $cajas->SumaTotalPuntoCredito + $pagoCredito->MontoDivisa;
+                        $cajas->SumaTotalPuntoDolarCredito = $cajas->SumaTotalPuntoDolarCredito + $pagoCredito->MontoDolar;
+                    }elseif ($pagoCredito->Divisa == 'Transferencia') {
+                        $cajas->SumaTotalTransferenciaCredito = $cajas->SumaTotalTransferenciaCredito + $pagoCredito->MontoDivisa;
+                        $cajas->SumaTotalTransferenciaDolarCredito = $cajas->SumaTotalTransferenciaDolarCredito + $pagoCredito->MontoDolar;
+                    }
+                    $cajas->SumaTotalCreditosPagados = $cajas->SumaTotalCreditosPagados + $pagoCredito->MontoDolar;
+
+                }
+
+                // $creditoPagadosCaja = []; //  return $cajas->pago_creditos[1]->venta->articulo_ventas;
+
+                $allCreditosPagados = Venta::where('caja_id',$cajas->id)->where('estado','Aceptada')->where('tipo_pago_condicion','Credito')->where('status','Pagado')->get();
+                //  return $cajas->pago_creditos[1]->venta->articulo_ventas;
+                foreach ($cajas->ventas as $ventCredito ) {
+                    if ($ventCredito->estado == 'Aceptada' && $ventCredito->tipo_pago_condicion == 'Credito' && $ventCredito->status == 'Pagado') {
+                    $cajas->SumaTotalVentasCreditoPagados = $cajas->SumaTotalVentasCreditoPagados + $ventCredito->total_venta;
+                    $cajas->SumaTotalCostoVentasCreditoPagados = $cajas->SumaTotalCostoVentasCreditoPagados + $ventCredito->precio_costo;
+                    $cajas->SumaTotalMargenVentasCreditoPagados = $cajas->SumaTotalMargenVentasCreditoPagados + $ventCredito->margen_ganancia;
+                    $cajas->SumaTotalUtilidadVentasCreditoPagados = $cajas->SumaTotalUtilidadVentasCreditoPagados + $ventCredito->ganancia_neta;
+
+                    }
+                }
+                $nombreCredito = [];
+                foreach ($cajas->articulo_ventas as $art_vent_credito ) {
+                    if ($art_vent_credito->venta->estado == 'Aceptada' && $art_vent_credito->venta->tipo_pago_condicion == 'Credito') {
+                        $nombreCredito[] = Articulo::find($art_vent_credito->articulo_id);
+                        $cajas->nombreArticulosCredito = $nombreCredito;
+                        $cajas->SumaArticulosVendidosCredito = $cajas->SumaArticulosVendidosCredito + $art_vent_credito->cantidad;
+                    }
+                }
+
+                foreach ($cajas->ventas as $ventCredito ) {
+                    if ($ventCredito->estado == 'Aceptada' && $ventCredito->tipo_pago_condicion == 'Credito') {
+                    $cajas->SumaTotalVentasCredito = $cajas->SumaTotalVentasCredito + $ventCredito->total_venta;
+                    $cajas->SumaTotalCostoVentasCredito = $cajas->SumaTotalCostoVentasCredito + $ventCredito->precio_costo;
+                    $cajas->SumaTotalMargenVentasCredito = $cajas->SumaTotalMargenVentasCredito + $ventCredito->margen_ganancia;
+                    $cajas->SumaTotalUtilidadVentasCredito = $cajas->SumaTotalUtilidadVentasCredito + $ventCredito->ganancia_neta;
+                    $cajas->SumaTotalCantidadVentasCredito = $cajas->SumaTotalCantidadVentasCredito + 1;
+                    }
+                }
+
+                //GESTIONAR DETALLE CREDITOS
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+            if ($cajas->estado == 'Cerrada') {
+
+                $historialCreditosCaja = HistorialCreditoCaja::where('caja_id', $id)->first();
+                if($historialCreditosCaja){
+                    // return $historialCreditosCaja;
+                    $cajas->SumaTotalCantidadCreditosVigentes = $historialCreditosCaja->hist_creditos_vigentes;
+                    $cajas->SumaTotalCantidadCreditosVencidos = $historialCreditosCaja->hist_creditos_vencidos;
+                    $cajas->SumaTotalCantidadVentasCreditoPagados = $historialCreditosCaja->hist_creditos_pagados;
+                    $cajas->hist_creditos_nuevos = $historialCreditosCaja->hist_creditos_nuevos;
+                    $cajas->hist_total_creditos = $historialCreditosCaja->hist_total_creditos;
+                }
+
+            }else{
+                $g = 0;
+                foreach ($cajas->pago_creditos as $value) {
+                    // return $value;
+                    $g ++;
+
+                    $cajas->SumaTotalCantidadVentasCreditoPagados = $cajas->SumaTotalCantidadVentasCreditoPagados + 1;
+                }
+                // return $g;
+                $cajas->SumaTotalCantidadCreditosVigentes = Venta::where('estado_credito','Vigente')->count();
+                $cajas->SumaTotalCantidadCreditosVencidos = Venta::where('estado_credito','Vencido')->count();
+            }
+
+
+
+
+            $creditos_vencidos = Venta::where('tipo_pago_condicion', 'Credito')->where('status', 'Pendiente')->get();
+            // return $creditos_vencidos;
+            $creditos_clientes = ClienteCredito::get();
+            if ($creditos_vencidos) {
+
+
+            foreach ($creditos_vencidos as $credVencido) {
+                $date = Carbon::now('America/Caracas');
+                $now = Carbon::parse($date);
+                $second = $credVencido->created_at;
+                $addFecha = $second->addDay($credVencido->Persona->limite_fecha);
+                // return $now . ' '. $second . ' ' . $addFecha . ' - ' . $credVencido->created_at;
+
+                if ($now->gte($addFecha)) {
+                    // return 'tiene credito vencido';
+                    $credito_id = $credVencido->id;
+                    $upCredito = Venta::findOrFail($credito_id);
+
+                    $upCredito->estado_credito = 'Vencido';
+                    $upCredito->update();
+
+                    $cliente_moroso = ClienteCredito::where('persona_id', $credVencido->persona_id)->first();
+
+                    if ($cliente_moroso->total_deuda > 0) {
+                        $cliente_moroso->estado_credito = 'Moroso';
+                        $cliente_moroso->update();
+                    }else{
+                        $cliente_moroso->estado_credito = 'Activo';
+                        $cliente_moroso->update();
+                    }
+
+                }else{
+                    // return 'no tiene credito vencido';
+                }
+
+            }
+        }
+
+
+                //  return $cajas->pago_creditos[1]->venta->articulo_ventas;
         return view('cajas.caja.show', compact('title','cajas', 'caja','denominacion_dolar', 'denominacion_peso' ,'denominacion_bolivar','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo'))->with($mensaje);
     }
 
@@ -369,7 +541,24 @@ class CajaController extends Controller
                 $session_id->update();
 
 
+                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                //Guardamos registros en la tabla historialcreditoscaja
+                //Save the data in the table historialCreditosCaja
 
+                $historialCreditosCaja = new HistorialCreditoCaja();
+                $historialCreditosCaja->hist_creditos_vigentes = $request->get('hist_creditos_vigentes');
+                $historialCreditosCaja->hist_creditos_vencidos = $request->get('hist_creditos_vencidos');
+                $historialCreditosCaja->hist_creditos_pagados = $request->get('hist_creditos_pagados');
+                $historialCreditosCaja->hist_creditos_nuevos = $request->get('hist_creditos_nuevos');
+                $historialCreditosCaja->hist_total_creditos = $request->get('hist_total_creditos');
+                $historialCreditosCaja->user_id = $request->get('idusuario');
+                $historialCreditosCaja->caja_id = $caja_id;
+                $historialCreditosCaja->save();
+
+                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                //when we close the box we finiched the stock
 
                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -527,8 +716,8 @@ class CajaController extends Controller
                 }
 
                 if (!empty($monto_trans_cierre) && $monto_trans_cierre > 0) {
-                    $correlativo_trans = SaldosMovimiento::where('cuenta_id', 5)->count();
-                    $saldo_trans = SaldosMovimiento::where('cuenta_id', 5)->latest('id')->first();
+                    $correlativo_trans = SaldosMovimiento::where('cuenta_id', 4)->count();
+                    $saldo_trans = SaldosMovimiento::where('cuenta_id', 4)->latest('id')->first();
                     if($saldo_trans){
                         $saldo_trans = $saldo_trans->saldo;
                     }else{
@@ -541,11 +730,13 @@ class CajaController extends Controller
                     $saldos_movimientos->debe           = $monto_trans_cierre;
                     $saldos_movimientos->haber          = 0;
                     $saldos_movimientos->saldo          = $saldo_trans + $monto_trans_cierre;
-                    $saldos_movimientos->cuenta_id      = 5;
+                    $saldos_movimientos->cuenta_id      = 4;
                     $saldos_movimientos->transaccion_id = $transaccion->id;
                     $saldos_movimientos->save();
                 }
             }
+
+
 
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

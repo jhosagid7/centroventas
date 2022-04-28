@@ -18,7 +18,7 @@ class CreateDetalleCreditoVentasTable extends Migration
             $table->foreignId('venta_id')->references('id')->on('ventas')->onDelete('cascade');
             $table->foreignId('cliente')->references('id')->on('personas');
             $table->foreignId('operador')->references('id')->on('users');
-            $table->foreignId('caja')->references('id')->on('cajas');
+            $table->foreignId('caja_id')->references('id')->on('cajas');
             $table->decimal('moto', 25, 3)->nullable();
             $table->decimal('abono', 25, 3)->nullable();
             $table->decimal('resta', 25, 3)->nullable();

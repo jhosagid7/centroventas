@@ -82,6 +82,43 @@ class VentaController extends Controller
     public function create()
     {
 
+        $creditos_vencidos = Venta::where('tipo_pago_condicion', 'Credito')->where('status', 'Pendiente')->get();
+            // return $creditos_vencidos;
+            $creditos_clientes = ClienteCredito::get();
+            if ($creditos_vencidos) {
+
+
+            foreach ($creditos_vencidos as $credVencido) {
+                $date = Carbon::now('America/Caracas');
+                $now = Carbon::parse($date);
+                $second = $credVencido->created_at;
+                $addFecha = $second->addDay($credVencido->Persona->limite_fecha);
+                // return $now . ' '. $second . ' ' . $addFecha . ' - ' . $credVencido->created_at;
+
+                if ($now->gte($addFecha)) {
+                    // return 'tiene credito vencido';
+                    $credito_id = $credVencido->id;
+                    $upCredito = Venta::findOrFail($credito_id);
+
+                    $upCredito->estado_credito = 'Vencido';
+                    $upCredito->update();
+
+                    $cliente_moroso = ClienteCredito::where('persona_id', $credVencido->persona_id)->first();
+
+                    if ($cliente_moroso->total_deuda > 0) {
+                        $cliente_moroso->estado_credito = 'Moroso';
+                        $cliente_moroso->update();
+                    }else{
+                        $cliente_moroso->estado_credito = 'Activo';
+                        $cliente_moroso->update();
+                    }
+
+                }else{
+                    // return 'no tiene credito vencido';
+                }
+
+            }
+        }
 
         Sessioncaja::crearsession();
         $tasa = Tasa::find(1);
@@ -102,7 +139,7 @@ class VentaController extends Controller
 
                 if($Caja->user_id == Auth::id()){
                     $title='Nueva venta';
-                    $personas = DB::table('personas')->where('tipo_persona', '=', 'Cliente')->get();
+                    $clientes = DB::table('personas')->where('tipo_persona', '=', 'Cliente')->get();
                     $tasaDolar = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Dolar')->first();
                     $tasaPeso = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Peso')->first();
                     $tasaTransferenciaPunto = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Transferencia_Punto')->first();
@@ -196,7 +233,7 @@ class VentaController extends Controller
                     //  return $ventas;
                     //dd($ventas);
 
-                    return view('ventas.venta.create', compact('cajas','num_comprobante','serie_comprobante','caja', 'ventas','title','personas','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo','articulos'));
+                    return view('ventas.venta.create', compact('cajas','num_comprobante','serie_comprobante','caja', 'ventas','title','clientes','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo','articulos'));
                 }else{
                     return redirect()
                     ->route('caja.index')
@@ -223,9 +260,13 @@ class VentaController extends Controller
             if ($request->get('credt') == 1){
                 $tipo_pago_condicion = 'Credito';
                 $status = 'Pendiente';
+                $estado_credito = 'Vigente';
+                $total_venta = $request->get('total_credito');
             }else{
                 $tipo_pago_condicion = 'Contado';
                 $status = 'Pagado';
+                $estado_credito = 'Pagado';
+                $total_venta = $request->get('total_venta');
             }
 
 
@@ -245,13 +286,14 @@ class VentaController extends Controller
 
                 $cont = $cont+1;
             }
+            // return $precio_costo_final;
 
             // return $precio_costo_final;
-            $utilidad = $request->get('precio_costo') - $precio_costo_final;
+            $utilidad = $request->get('total_venta') - $precio_costo_final;
 
 
 
-            $margen_gananacia = $utilidad / $request->get('precio_costo');
+            $margen_gananacia = $utilidad / $request->get('total_venta');
             // dd($margen_gananacia);
 
             $venta = new Venta;
@@ -274,41 +316,48 @@ class VentaController extends Controller
             $venta->num_Trans = $request->get('num_Trans');
             $venta->precio_costo = $precio_costo_final;
             $venta->margen_ganancia = $margen_gananacia;
-            $venta->total_venta = $request->get('total_venta');
+            $venta->total_venta = $total_venta;
             $venta->ganancia_neta = $utilidad;
             $venta->estado = 'Aceptada';
             $venta->tipo_pago_condicion = $tipo_pago_condicion;
             $venta->status = $status;
+            $venta->estado_credito = $estado_credito;
             $venta->persona_id = $request->get('idcliente');
             $venta->caja_id = $request->get('caja_id');
             $venta->save();
 
             $UserName = $request->user()->name;
             $UserId = $request->user()->id;
-            $caja =  Sessioncaja::where('estado', 'Abierta')->orderBy('id', 'desc')->first();
+            // $caja =  Sessioncaja::where('estado', 'Abierta')->orderBy('id', 'desc')->first();
 
             if ($tipo_pago_condicion == 'Credito'){
 
                 if($request->get('idcliente')){
                     $cliente = Persona::findOrFail($request->get('idcliente'));
-
+                    // return $cliente->limite_fecha;
                     $isDeuda = ClienteCredito::where('persona_id', $cliente->id)->first();
 
                     if(isset($isDeuda)){
                         // return $isDeuda->total_factura;
                         $clienteCredito = ClienteCredito::findOrFail($isDeuda->id);
                         $clienteCredito->total_factura += 1;
-                        $clienteCredito->total_deuda += $request->get('precio_costo');
+                        $clienteCredito->total_deuda += $request->get('total_venta');
                         $clienteCredito->update();
                     }else{
+
+
+                        $date = Carbon::now('America/Caracas');
+                        $endDate = $date->addDay($cliente->limite_fecha);
+
+
                         $clienteCredito = New ClienteCredito();
                         $clienteCredito->nombre_cliente = $cliente->nombre;
                         $clienteCredito->cedula_cliente = $cliente->num_documento;
                         $clienteCredito->direccion_cliente = $cliente->direccion;
                         $clienteCredito->telefono_cliente = $cliente->telefono;
                         $clienteCredito->total_factura = 1;
-                        $clienteCredito->total_deuda = $request->get('precio_costo');
-                        // $clienteCredito->fecha_limite_pago = $request->get('total');
+                        $clienteCredito->total_deuda = $request->get('total_venta');
+                        $clienteCredito->fecha_limite_pago = $endDate;
                         $clienteCredito->estado_credito = 'Activo';
                         $clienteCredito->persona_id = $cliente->id;
                         $clienteCredito->user_id = $UserId;
@@ -327,10 +376,10 @@ class VentaController extends Controller
                     $detalleCredito->venta_id = $venta->id;
                     $detalleCredito->cliente = $request->get('idcliente');
                     $detalleCredito->operador = $UserId;
-                    $detalleCredito->caja = $caja->id;
-                    $detalleCredito->moto = $request->get('precio_costo');
+                    $detalleCredito->caja_id = $request->get('caja_id');;
+                    $detalleCredito->moto = $request->get('total_venta');
                     $detalleCredito->abono = 0;
-                    $detalleCredito->resta = $request->get('precio_costo');
+                    $detalleCredito->resta = $request->get('total_venta');
                     $detalleCredito->descuento = 0;
                     $detalleCredito->incremento = 0;
                     $detalleCredito->observaciones = $request->get('Observaciones');
@@ -363,7 +412,7 @@ class VentaController extends Controller
 
                 $descuento = $request->get('descuento');
                 $articulo_id = $request->get('idarticulo');
-
+                // return $articulo_id;
                 //creamos un contador
                 $cont = 0;
 
@@ -444,6 +493,7 @@ class VentaController extends Controller
 
                 $descuento = $request->get('descuento');
                 $articulo_id = $request->get('idarticulo');
+                // return $articulo_id;
 
                 //creamos un contador
                 $cont = 0;

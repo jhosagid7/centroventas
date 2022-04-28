@@ -1,19 +1,7 @@
 @extends ('layouts.admin3')
 @section('contenido')
 
-<!-- Default box -->
-<!-- Content Header (Page header) -->
-    {{-- <section class="content-header">
-      <h1>
-        <!--Blank page-->
-        <small>it all starts here</small>
-      </h1>
-      <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li><a href="#">Examples</a></li>
-        <li class="active">Blank page</li>
-      </ol>
-    </section> --}}
+
 
     <!-- Main content -->
     <section class="content">
@@ -40,29 +28,31 @@
 
     <div class="row">
         <div class="col-lg-6">
-            <h3>Nueva Categoría para Pagos de Servicios</h3>
+            <h3>Editar Categoría para Pago de Servicios: {{$categoria->nombre}}</h3>
             @include('custom.message')
 
 
-            <form action="{{ route('categoria.store')}}" method="POST" autocomplete="off">
 
-            @csrf
+            <form action="{{ route('categorias.update', $categoria->id)}}" enctype="multipart/form-data" method="POST" autocomplete="off" role="buscar">
+                @csrf
+                @method('PUT')
+
             <div class="form-group">
                 <label for="nombre">Nombre</label>
-                <input required type="text" name="nombre" class="form-control form-control-sm mayusculas" placeholder="Nombre...">
+                <input required type="text" name="nombre" class="form-control form-control-sm mayuscula" value="{{ $categoria->nombre }}" placeholder="Nombre...">
             </div>
 
             <div class="form-group">
                 <label for="descripcion">Descripcion</label>
-                <input required type="text" name="descripcion" class="form-control form-control-sm mayusculas" placeholder="Descripcion...">
+                <input required type="text" name="descripcion" class="form-control form-control-sm mayuscula" value="{{ $categoria->descripcion }}" placeholder="Descripcion...">
             </div>
 
             <div class="form-group">
                 <button class="btn btn-primary" type="submit">Guardar</button>
-                <a class="btn btn-danger" href="{{route('categoria.index')}}">{{__('Back')}}</a>
+                <a class="btn btn-danger" href="{{route('categorias.index')}}">{{__('Back')}}</a>
             </div>
-
             </form>
+
         </div>
     </div>
 
@@ -75,20 +65,5 @@
 <!-- /.box-footer-->
 </div>
 <!-- /.box -->
-@push('sciptsMain')
-  <script>
-$(document).ready(function() {
-// Funcion JavaScript para la conversion a mayusculas
-$(function() {
-            $('.mayusculas').on('input', function() {
-                this.value = this.value.toUpperCase();
-            });
-        });
 
-});
-
-
-
-</script>
-@endpush
 @endsection

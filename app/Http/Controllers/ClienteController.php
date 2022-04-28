@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
-use App\Persona;
-use App\Http\Requests;
-use App\Http\Requests\PersonaFormRequest;
-use Illuminate\Support\Facades\Redirect;
 use DB;
+
+use App\Venta;
+use App\Persona;
+use Carbon\Carbon;
+use App\Http\Requests;
+use App\ClienteCredito;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
+use App\Http\Requests\PersonaFormRequest;
 
 class ClienteController extends Controller
 {
@@ -63,6 +66,10 @@ class ClienteController extends Controller
 
         $persona->save();
 
+
+
+
+
         return Redirect::to('ventas/cliente')->with('status_success', 'El Cliente fué registrado exitosamente');
     }
     public function show($id)
@@ -71,10 +78,66 @@ class ClienteController extends Controller
     }
     public function edit($id)
     {
-        return view("ventas.persona.edit", ["persona" => Persona::findOrFail($id)]);
+        $persona = Persona::findOrFail($id);
+        if($persona){
+
+            $persona_credito = ClienteCredito::where('persona_id', $id)->first();
+            if($persona_credito){
+                $persona->cliente_creditos = $persona->cliente_creditos[0]->estado_credito;
+
+                $creditos_vencidos = Venta::where('tipo_pago_condicion', 'Credito')->where('status', 'Pendiente')->where('persona_id', $id)->get();
+                // return $creditos_vencidos;
+                if ($creditos_vencidos) {
+
+
+                    foreach ($creditos_vencidos as $credVencido) {
+                        $date = Carbon::now('America/Caracas');
+                        $now = Carbon::parse($date);
+                        $second = $credVencido->created_at;
+                        $addFecha = $second->addDay($credVencido->Persona->limite_fecha);
+                        // return $now . ' '. $second . ' ' . $addFecha . ' - ' . $credVencido->created_at;
+
+                        if ($now->gte($addFecha)) {
+                            // return 'tiene credito vencido';
+                            $credito_id = $credVencido->id;
+                            $upCredito = Venta::findOrFail($credito_id);
+
+                            $upCredito->estado_credito = 'Vencido';
+                            $upCredito->update();
+
+                            $cliente_moroso = ClienteCredito::where('persona_id', $credVencido->persona_id)->first();
+
+                            if ($cliente_moroso->total_deuda > 0) {
+                                $cliente_moroso->estado_credito = 'Moroso';
+                                $cliente_moroso->update();
+
+                                $persona->credito_vencido = 1;
+                            }else{
+                                $cliente_moroso->estado_credito = 'Activo';
+                                $cliente_moroso->update();
+
+                                $persona->credito_vencido = 0;
+                            }
+
+                        }
+
+                    }
+                }
+            }else{
+                $persona->cliente_creditos = 'No tiene credito';
+                $persona->credito_vencido = 'No aplica';
+            }
+
+
+        }
+
+
+        // return $p->cliente_creditos[0]->estado_credito;
+        return view("ventas.persona.edit", compact('persona'));
     }
     public function update(PersonaFormRequest $request, $id)
     {
+        // return $request;
         $persona = Persona::findOrFail($id);
         $persona->nombre = $request->get('nombre');
         $persona->tipo_documento = $request->get('tipo_documento');
@@ -95,6 +158,13 @@ class ClienteController extends Controller
         // }
 
         $persona->update();
+
+        if($request->get('facturas_vencidas_comparar') != 'No tiene credito'){
+            // return 'se puede guardar';
+            $cliente = ClienteCredito::where('persona_id', $id)->first();
+            $cliente->estado_credito = $request->get('estado_credito');
+            $cliente->update();
+        }
 
         return Redirect::to('ventas/cliente')->with('status_success', 'El Cliente fué Actualizado exitosamente');
     }

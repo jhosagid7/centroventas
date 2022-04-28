@@ -394,6 +394,8 @@
                 @can('haveaccess', 'reporte.index')
                 <li><a href="{{asset('reporte-general')}}"><i class="fa fa-desktop"></i> Reporte General</a></li>
                 <li><a href="{{asset('reporte-ingreso')}}"><i class="fa fa-desktop"></i> Reporte General Compras</a></li>
+                <li><a href="{{asset('reporte-ingreso-creditos')}}"><i class="fa fa-desktop"></i> Reporte Compras Creditos </a></li>
+                <li><a href="{{asset('reporte-credito-clientes')}}"><i class="fa fa-desktop"></i> Reporte Creditos Clientes </a></li>
                 @endcan
             </ul>
         </li>
@@ -413,24 +415,7 @@
                 @can('haveaccess', 'user.index')
                 <li><a href="{{route('user.index')}}"><i class="fa fa-desktop"></i> User</a></li>
                 @endcan
-                @can('haveaccess', 'menu.transactions')
-            <li class="treeview">
-                <a href="#"><i class="fa fa-exchange"></i> Pagos Operativos
-                <span class="pull-right-container">
-                    <i class="fa fa-angle-left pull-right"></i>
-                </span>
-                </a>
-                <ul class="treeview-menu">
-                    @can('haveaccess', 'transferencia.index')
-                    <li><a href="{{asset('pagos/categoria')}}"><i class="fa fa-cubes"></i> Categoría</a></li>
-                    @endcan
-                    @can('haveaccess', 'cargos.index')
-                    <li><a href="{{asset('pagos/tipo')}}"><i class="fa fa-truck"></i> Acreedores</a></li>
-                    @endcan
 
-                </ul>
-            </li>
-            @endcan
             </ul>
         </li>
         @endcan
@@ -443,12 +428,28 @@
           </span>
         </a>
           <ul class="treeview-menu">
+            @can('haveaccess', 'menu.transactions')
+            <li class="treeview">
+                <a href="#"><i class="fa fa-exchange"></i> Confg. Pagos Operativos
+                <span class="pull-right-container">
+                    <i class="fa fa-angle-left pull-right"></i>
+                </span>
+                </a>
+                <ul class="treeview-menu">
+                    @can('haveaccess', 'cargos.index')
+                    <li><a href="{{asset('pagos/categorias')}}"><i class="fa fa-cubes"></i> Categoría</a></li>
+                    @endcan
+                    @can('haveaccess', 'cargos.index')
+                    <li><a href="{{asset('pagos/tipo')}}"><i class="fa fa-truck"></i> Acreedores</a></li>
+                    @endcan
+
+                </ul>
+            </li>
+            @endcan
               @can('haveaccess', 'proveedore.index')
               <li><a href="{{asset('pagos/servicios')}}"><i class="fa fa-truck"></i> Pagar</a></li>
               @endcan
-              @can('haveaccess', 'ingreso.index')
-              <li><a href="{{asset('pagos/tipo')}}"><i class="fa fa-sign-in"></i> Pagos realizados</a></li>
-              @endcan
+
           </ul>
 
       </li>

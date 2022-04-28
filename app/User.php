@@ -58,6 +58,10 @@ class User extends Authenticatable
         return $this->hasMany(Ingreso::class);
     }
 
+    public function cliente_creditos(){
+        return $this->hasMany(ClienteCredito::class);
+    }
+
 
     public function persona(){
         return $this->hasOneThrough(Persona::class, Ingreso::class);
@@ -72,6 +76,10 @@ class User extends Authenticatable
     public function scopeOperador($query, $operador){
         if($operador)
         return $query->where('user_id', '=', "$operador");
+    }
+
+    public function historial_creditos(){
+        return $this->hasMany(HistorialCreditoCaja::class);
     }
 
 }

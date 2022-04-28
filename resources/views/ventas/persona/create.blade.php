@@ -156,6 +156,20 @@
                                         </label></div>
                                         </td>
                                     </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                                <div class="form-group">
+                                                    <label for="estado_credito">Estado credito</label>
+                                                    <select required class="form-control" name="estado_credito">
+                                                        <option value="Activo">Activo</option>
+                                                        <option value="Moroso">Moroso</option>
+                                                    </select>
+
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
 
 
                                 </tbody>

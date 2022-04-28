@@ -21,11 +21,11 @@
                 <input id="total_trans_dif" name="total_trans_dif" type="hidden" value="0">
                 <input name="idusuario" type="hidden" value="{{Auth::user()->id}}">
                 {{-- cargadmos el historial de los creditos para que no se modifiquen cuando hagan un pago despues de cerrar la caja --}}
-                {{-- <input name="hist_creditos_vigentes" type="hidden" value="{{ $cajas->SumaTotalCantidadCreditosVigentes ?? '0' }}">
+                <input name="hist_creditos_vigentes" type="hidden" value="{{ $cajas->SumaTotalCantidadCreditosVigentes ?? '0' }}">
                 <input name="hist_creditos_vencidos" type="hidden" value="{{ $cajas->SumaTotalCantidadCreditosVencidos ?? '0' }}">
-                <input name="hist_creditos_pagados" type="hidden" value="{{$cajas->SumaTotalCantidadCreditosPagadosTotales ?? '0'}}">
-                <input name="hist_creditos_nuevos" type="hidden" value="{{ $cajas->SumaTotalCantidadServiciosPorPagar + $cajas->SumaTotalCantidadVentasCredito ?? '0' }}">
-                <input name="hist_total_creditos" type="hidden" value="{{$cajas->SumaTotalCantidadCreditosVigentes + $cajas->SumaTotalCantidadCreditosVencidos + $cajas->SumaTotalCantidadCreditosPagadosTotales ?? '0'}}"> --}}
+                <input name="hist_creditos_pagados" type="hidden" value="{{$cajas->SumaTotalCantidadVentasCreditoPagados ?? '0'}}">
+                <input name="hist_creditos_nuevos" type="hidden" value="{{ $cajas->SumaTotalCantidadVentasCredito ?? '0' }}">
+                <input name="hist_total_creditos" type="hidden" value="{{$cajas->SumaTotalCantidadCreditosVigentes + $cajas->SumaTotalCantidadCreditosVencidos + $cajas->SumaTotalCantidadVentasCreditoPagados ?? '0'}}">
                 <input name="stock_cierre_operador" type="hidden" value="">
                 <input name="observacionesStock" type="hidden" value="">
 
@@ -107,11 +107,8 @@
                                         <div class="description-block border-right">
 
                                             <h5 class="description-header">Bs. {{ number_format(floatval($caja->monto_trans),2,',','.') ?? ' 0,00' }}</h5>
-                                            {{-- <h5 class="description-header">Bs. {{ number_format($cajas->SumaVueltosPendientesTransferenciaDivisa,2,',','.') ?? ' 0,00' }}</h5> --}}
                                             <span class="description-text">TRANS</span>
-                                            {{-- <input type="hidden" name="trans_sistema" id="trans_sistema" value="{{(($cajas->SumaTotalTransferenciaCredConsumo + $cajas->SumaTotalTransferenciaCredServicio) + ($cajas->SumaVueltosExcedenteNuevoTransferenciaDivisa) + ($cajas->SumaTotalTransferenciaServ + $cajas->SumaTotalTransferencia) + ($cajas->SumaVueltosDevueltosTransferenciaDivisa + $cajas->SumaTotalTransferenciaServDflotante + $cajas->SumaVueltosPagarOficinaTransferenciaDivisa) - $cajas->SumaTotalTransferenciaVueltos) ?? '00'}}"> --}}
                                         </div>
-                                        <!-- /.description-block -->
                                     </div>
                                     <!-- /.col -->
 
@@ -141,8 +138,8 @@
                                             <span class="description-percentage text-green"><i
                                                     class="fa fa-caret-up"></i>
                                                 {{ $tasaDolar->porcentaje_ganancia ?? ''}}%</span>
-                                            <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaTotalDolar),2,',','.') ?? ' 0,00' }}</h5>
-                                            <span class="description-text">DOLAR</span><input type="hidden" name="dolar_sistema" id="dolar_sistema" value="{{ floatval($cajas->SumaTotalDolar) ?? ' 0,00' }}">
+                                            <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaTotalDolar + $cajas->SumaTotalDolarCredito),2,',','.') ?? ' 0,00' }}</h5>
+                                            <span class="description-text">DOLAR</span><input type="hidden" name="dolar_sistema" id="dolar_sistema" value="{{ floatval($cajas->SumaTotalDolar + $cajas->SumaTotalDolarCredito) ?? ' 0,00' }}">
                                         </div>
                                         <!-- /.description-block -->
                                     </div>
@@ -152,8 +149,8 @@
                                             <span class="description-percentage text-yellow"><i
                                                     class="fa fa-caret-left"></i>
                                                 {{ $tasaPeso->porcentaje_ganancia  ?? ''}}%</span>
-                                            <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaTotalPeso),2,',','.') ?? ' 0,00' }}</h5>
-                                            <span class="description-text">PESO</span><input type="hidden" name="peso_sistema" id="peso_sistema" value="{{floatval($cajas->SumaTotalPeso) ?? '00'}}">
+                                            <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaTotalPeso + $cajas->SumaTotalPesoCredito),2,',','.') ?? ' 0,00' }}</h5>
+                                            <span class="description-text">PESO</span><input type="hidden" name="peso_sistema" id="peso_sistema" value="{{floatval($cajas->SumaTotalPeso + $cajas->SumaTotalPesoCredito) ?? '00'}}">
                                         </div>
                                         <!-- /.description-block -->
                                     </div>
@@ -163,8 +160,8 @@
                                             <span class="description-percentage text-green"><i
                                                     class="fa fa-caret-up"></i>
                                                 {{ $tasaTransferenciaPunto->porcentaje_ganancia  ?? ''}}%</span>
-                                            <h5 class="description-header">Bs. {{ number_format(floatval($cajas->SumaTotalPunto),2,',','.') ?? ' 0,00' }}</h5>
-                                            <span class="description-text">PUNTO</span><input type="hidden" name="punto_sistema" id="punto_sistema" value="{{floatval($cajas->SumaTotalPunto) ?? '00'}}">
+                                            <h5 class="description-header">Bs. {{ number_format(floatval($cajas->SumaTotalPunto + $cajas->SumaTotalPuntoCredito),2,',','.') ?? ' 0,00' }}</h5>
+                                            <span class="description-text">PUNTO</span><input type="hidden" name="punto_sistema" id="punto_sistema" value="{{floatval($cajas->SumaTotalPunto + $cajas->SumaTotalPuntoCredito) ?? '00'}}">
                                         </div>
                                         <!-- /.description-block -->
                                     </div>
@@ -175,8 +172,8 @@
                                             <span class="description-percentage text-green"><i
                                                     class="fa fa-caret-up"></i>
                                                 {{ $tasaTransferenciaPunto->porcentaje_ganancia }}%</span>
-                                            <h5 class="description-header">Bs. {{ number_format(floatval($cajas->SumaTotalTransferencia),2,',','.') ?? ' 0,00' }}</h5>
-                                            <span class="description-text">TRANS</span><input type="hidden" name="trans_sistema" id="trans_sistema" value="{{floatval($cajas->SumaTotalTransferencia) ?? '00'}}">
+                                            <h5 class="description-header">Bs. {{ number_format(floatval($cajas->SumaTotalTransferencia + $cajas->SumaTotalTransferenciaCredito),2,',','.') ?? ' 0,00' }}</h5>
+                                            <span class="description-text">TRANS</span><input type="hidden" name="trans_sistema" id="trans_sistema" value="{{floatval($cajas->SumaTotalTransferencia + $cajas->SumaTotalTransferenciaCredito) ?? '00'}}">
                                         </div>
                                         <!-- /.description-block -->
                                     </div>
@@ -187,8 +184,8 @@
                                             <span class="description-percentage text-red"><i
                                                     class="fa fa-caret-down"></i>
                                                 {{ $tasaEfectivo->porcentaje_ganancia }}%</span>
-                                            <h5 class="description-header">Bs. {{ number_format(floatval($cajas->SumaTotalBolivar),2,',','.') ?? ' 0,00' }}</h5>
-                                            <span class="description-text">EFECTIVO</span><input type="hidden" name="efectivo_sistema" id="efectivo_sistema" value="{{floatval($cajas->SumaTotalBolivar) ?? '00'}}">
+                                            <h5 class="description-header">Bs. {{ number_format(floatval($cajas->SumaTotalBolivar + $cajas->SumaTotalBolivarCredito),2,',','.') ?? ' 0,00' }}</h5>
+                                            <span class="description-text">EFECTIVO</span><input type="hidden" name="efectivo_sistema" id="efectivo_sistema" value="{{floatval($cajas->SumaTotalBolivar + $cajas->SumaTotalBolivarCredito) ?? '00'}}">
                                         </div>
                                         <!-- /.description-block -->
                                     </div>
@@ -254,7 +251,7 @@
                                     @endphp --}}
                                     <tr>
                                         <td colspan="3"><h4><strong class="text-blue">Registrado por Sistema </strong></h4></td>
-                                        <td><h4><b id="total_sistema_reg">0.00</b></h4><input type="hidden" name="total_sistema_reg_input" id="total_sistema_reg_input" value="{{(($cajas->SumaTotalDolarDolar + $cajas->SumaTotalPesoDolar) + ($cajas->SumaTotalPuntoDolar + $cajas->SumaTotalTransferenciaDolar + $cajas->SumaTotalBolivarDolar)) ?? '0.00'}}"></td>
+                                        <td><h4><b id="total_sistema_reg">0.00</b></h4><input type="hidden" name="total_sistema_reg_input" id="total_sistema_reg_input" value="{{(($cajas->SumaTotalDolarDolar + $cajas->SumaTotalDolarDolarCredito + $cajas->SumaTotalPesoDolar + $cajas->SumaTotalPesoDolarCredito) + ($cajas->SumaTotalPuntoDolar +$cajas->SumaTotalPuntoDolarCredito + $cajas->SumaTotalTransferenciaDolar + $cajas->SumaTotalTransferenciaDolarCredito + $cajas->SumaTotalBolivarDolar + $cajas->SumaTotalBolivarDolarCredito)) ?? '0.00'}}"></td>
 
 
                                     </tr>

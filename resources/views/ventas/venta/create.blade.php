@@ -421,15 +421,21 @@
                             <input id="precio_costo_unidad" name="precio_costo_unidad" type="hidden" value="">
                             <input id="precio_costo" name="precio_costo" type="hidden" value="">
                             <input id="tipo_pago" name="tipo_pago" type="hidden" value="">
+                            <input name="limite_fecha" id="limite_fecha" type="hidden">
+                            <input name="limite_monto" id="limite_monto" type="hidden">
+                            <input type="hidden" name="total_credito_pendiente" id="total_credito_pendiente">
+                            <input type="hidden" name="estado_credito" value="" id="estado_credito">
+                            <input type="hidden" name="idcliente" value="2" id="idcliente">
+                            <input type="hidden" name="isCredito" id="isCredito">
                         <input id="caja_id" name="caja_id" type="hidden" value="{{$caja->id}}">
                             <div class="row">
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="form-group">
                                         <label for="cliente">Cliente</label>
-                                        <select name="idcliente" id="idcliente" class="form-control selectpicker"
+                                        <select name="dataCliente" id="dataCliente" class="form-control selectpicker"
                                             data-live-search="true">
-                                            @foreach ($personas as $persona)
-                                                <option value="{{ $persona->id }}">{{ $persona->nombre }}</option>
+                                            @foreach ($clientes as $cliente)
+                                            <option value="{{ $cliente->id }}_{{ $cliente->nombre }}_{{ $cliente->num_documento }}_{{ $cliente->direccion }}_{{ $cliente->isCortesia }}_{{ $cliente->isCredito }}_{{ $cliente->telefono }}_{{ $cliente->limite_fecha }}_{{ $cliente->limite_monto }}_<?php $deuda_cliente = "App\ClienteCredito"::where('persona_id',$cliente->id)->select('total_deuda')->first(); ?>{{$deuda_cliente['total_deuda']}}_<?php $estado_credito = "App\ClienteCredito"::where('persona_id',$cliente->id)->select('estado_credito')->first(); ?>{{$estado_credito['estado_credito']}}">{{ $cliente->nombre }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -669,7 +675,7 @@
                                                                             name="total_ventatp" id="total_ventatp"><input
                                                                             type="hidden" name="total_ventam"
                                                                             id="total_ventam"><input type="hidden"
-                                                                            name="total_ventae" id="total_ventae">
+                                                                            name="total_ventae" id="total_ventae"><input type="hidden" name="total_credito" id="total_credito">
                                                                         <th></th>
                                                                     </tfoot>
                                                                     <tbody>
@@ -706,7 +712,7 @@
                                                                 </div>
                                                                 <div
                                                                     class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
-                                                                    <button id="credito" class="btn btn-warning" type="submit">Credito</button>
+                                                                    <button id="credito" class="btn btn-sm btn-block col-lg-pull-2 btn-warning submit-prevent-button" type="submit">Credito</button>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -907,12 +913,143 @@
     @push('sciptsMain')
         <script>
             $(document).ready(function() {
-                $("#credito").click(function(){
-                    alert("credito")
-                    $('#credt').val(1);
-                    $('#contd').val(0);
-                    // alert('credito');
+
+                $('#credito').hide();
+                $("#dataCliente").on("change", function () {
+
+                    let cliente = document.getElementById('dataCliente').value;
+                    cliente = cliente.split("_");
+                    alert('cliente_id: ' + cliente[0]  + ' nombre:  ' + cliente[1]  + ' isCredito: ' + cliente[5]  + ' limite_fecha: ' + cliente[7]  + ' limite_monto: ' + cliente[8]  + ' total_credito_pendiente: ' + cliente[9]  + ' estado_credito: ' + cliente[10]  + ' total_credito_disponible: ' + (cliente[8] - cliente[9]))
+                    $("#idcliente").val(cliente[0]);
+                    $("#nombre").val(cliente[1]);
+                    $("#num_documento").val(cliente[2]);
+                    $("#direccion").val(cliente[3]);
+                    // var  isCortesia = cliente[4];
+                    // var isCredito = cliente[5];
+                    $("#isCredito").val(cliente[5]);
+                    $("#telefono").val(cliente[6]);
+                    $("#limite_fecha").val(cliente[7]);
+                    $("#limite_monto").val(cliente[8]);
+                    $("#total_credito_pendiente").val(cliente[9]);
+                    $("#estado_credito").val(cliente[10]);
+
+                    // alert(datosArticulo[9]);
+
+                    let deuda_credito_pendiente = $("#total_credito_pendiente").val();
+                    // alert(deuda_credito_pendiente);
+                    let limite_fecha_credito = $("#limite_fecha").val();
+                    let limite_monto_credito = $("#limite_monto").val();
+                    let credito_disponible = 0;
+
+                    if (deuda_credito_pendiente) {
+                        credito_disponible = limite_monto_credito - deuda_credito_pendiente;
+                    }else{
+                        credito_disponible = limite_monto_credito;
+                    }
+
+                    let dispCredito = credito_disponible;
+
+                    $("#dispCreditoShow").html('$'+dispCredito);
+
+                    let isCredito = $('#isCredito').val();
+                    let Rd    = document.getElementById('RestaDolar').value;
+                    if(isCredito > 0 && Rd > 0){
+                        $('#credito').show("linear"); //Boton Procesar Creditos QR
+                    }else{
+                        $('#credito').hide("linear");
+                    }
+
                 });
+
+
+
+                // $("#credito").click(function(){
+                //     alert("credito")
+                //     $('#credt').val(1);
+                //     $('#contd').val(0);
+
+                //     let Rd    = document.getElementById('RestaDolar').value;
+                //     $("#DMontoDolar").val(Rd);
+                //     $("#total_venta").val(Rd);
+                //     DMontoDolar();
+                    // const Resta     = document.getElementById('RestaTtotal');
+                    // alert('credito');
+                // });
+
+            $("#credito").on('click', function() {
+                event.preventDefault();
+                let id_cliente = $("#idcliente").val();
+                if (id_cliente == ''){
+                    alert('Debe seleccionar un cliente.')
+                }
+                $('#credt').val(1);
+                $('#contd').val(0);
+
+                let Rd    = document.getElementById('RestaDolar').value;
+
+                $("#DMontoDolar").val(Rd);
+                $("#total_venta").val(Rd);
+                DMontoDolar();
+
+                let estado_credito = $("#estado_credito").val();
+                if (estado_credito == 'Moroso') {
+                    alert('Cliente se encuentra suspendido por Incumplimiento de pago! Favor pasar por Oficina a realizar el respectivo pago...');
+                } else {
+                    // addHabitacion();
+                    $("#monto_dejado").val(0);
+                    $('#modo_pago').val('credito');
+                    $("#total_venta").val(numDecimal(total_d));
+                    $("#total_costo").val(numDecimal(total_d));
+                    let costo = total_d;
+                    // alert('total costo '+costo);
+                    let deuda_credito_pendiente = $("#total_credito_pendiente").val();
+                    // alert(deuda_credito_pendiente);
+                    let limite_fecha_credito = $("#limite_fecha").val();
+                    let limite_monto_credito = $("#limite_monto").val();
+                    // alert(limite_monto_credito);
+
+                    if (deuda_credito_pendiente) {
+                        let credito_disponible = limite_monto_credito - deuda_credito_pendiente;
+                        // alert('si hay deuda pendiente y el limite es de '+limite_monto_credito+ ' y el credito disponible es de '+credito_disponible);
+
+                        if (credito_disponible > 0) {
+                            // alert('es mayor puede continuar costo '+ costo);
+                            let credito_disponible_total_operacion = credito_disponible - costo;
+
+                            if (credito_disponible_total_operacion >= 0) {
+                                // alert('puede seguir');
+                                $("#form1").submit();
+                            }else{
+                                alert('El credito disponible supera el monto a pagar... Credito disponible es de: $'+credito_disponible+ ' Costo de la Venta es de: $'+costo);
+                            }
+
+                        }else{
+                            alert('El cliente no tiene Credito... '+credito_disponible);
+                        }
+                    } else {
+                        // alert('no hay deuda pendiente');
+                        let credito_disponible = limite_monto_credito;
+                        // alert('si hay deuda pendiente y el limite es de '+limite_monto_credito+ ' y el credito disponible es de '+credito_disponible);
+
+                        if (credito_disponible > 0) {
+                            // alert('es mayor puede continuar costo '+ costo);
+                            let credito_disponible_total_operacion = credito_disponible - costo;
+
+                            if (credito_disponible_total_operacion >= 0) {
+                                // alert('puede seguir');
+                                $("#form1").submit();
+                            }else{
+                                alert('El credito disponible no supera el monto a pagar... Credito disponible es de: $'+credito_disponible+ ' Costo de la Venta es de: $'+costo);
+                            }
+
+                        }else{
+                            alert('El cliente no tiene Credito...');
+                        }
+                    }
+
+
+                }
+            });
                 var dataTable = $('#ven').dataTable({
                     "language": {
                         "info": "_TOTAL_ registros",
@@ -1014,7 +1151,15 @@
 
             $(document).ready(function() {
                 $("#enviar").on('click', function() {
+                    event.preventDefault();
+                    let id_cliente = $("#idcliente").val();
+                    if (id_cliente == ''){
+                        alert('Debe seleccionar un cliente.')
+                    }else{
+                        $('#credt').val(0);
                     $("#form1").submit();
+                    }
+
                 });
 
                 $("#cargarDolar").on('click', function() {
@@ -2055,6 +2200,7 @@
                         $("#total_ventatp").val(numDecimal(total_tp));
                         $("#total_ventam").val(numDecimal(total_m));
                         $("#total_ventae").val(numDecimal(total_e));
+                        $("#total_credito").val(numDecimal(total));
 
                         console.log('>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<');
                         console.log(entrada.id)
@@ -2143,6 +2289,7 @@
                         $("#DMontoPunto").keyup();
                         $("#DMontoTrans").keyup();
                         $('#gestionpago').hide("linear");
+
                     } else {
                         alert('La cantidad a vender supera el stock...!');
                         $("#jcantidad").val('');
@@ -2235,12 +2382,21 @@
                     $('#bt_addTP').show("linear");
                     $('#bt_addM').show("linear");
                     $('#bt_addE').show("linear");
+
+                    let isCredito = $('#isCredito').val();
+                    if(isCredito){
+                        $('#credito').show("linear"); //Boton Procesar Creditos QR
+                    }else{
+                        $('#credito').hide("linear");
+                    }
+
                 } else {
                     $('#bt_addD').hide("linear");
                     $('#bt_addP').hide("linear");
                     $('#bt_addTP').hide("linear");
                     $('#bt_addM').hide("linear");
                     $('#bt_addE').hide("linear");
+                    $('#credito').hide("linear");
                 }
             }
 

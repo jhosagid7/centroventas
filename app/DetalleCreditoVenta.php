@@ -10,7 +10,7 @@ class DetalleCreditoVenta extends Model
         'venta_id',
         'cliente',
         'operador',
-        'caja',
+        'caja_id',
         'moto',
         'abono',
         'resta',

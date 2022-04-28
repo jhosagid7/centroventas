@@ -11,6 +11,7 @@ use App\Articulo;
 use Carbon\Carbon;
 use App\Articulo_venta;
 use Illuminate\Http\Request;
+use App\DetalleCreditoIngreso;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
@@ -197,6 +198,178 @@ class ReporteController extends Controller
         // }
 // return $ingresos;
         return view('reportes.ingresos.show', compact('detallado','fecha_inicio','fecha_fin','ingresos','fecha','estado','proveedor','operador', 'title'));
+    }
+
+    public function reportIngresosCreditosIndex(){
+
+        $title = 'Reporte General de Compras a Credito por Fechas';
+
+        $users = User::where('id', '<>', '1')->Where('id', '<>', '2')->get();
+        $proveedors = Persona::where('tipo_persona', '=', 'proveedor')->get();
+        // $ingresos = Ingreso::get()
+        // // ->name($name)
+        // //     ->codigo($codigo)
+        // //     ->venderal($venderal)
+        //     ->fecha($fecha);
+
+        // foreach ($ingresos as $ing) {
+        //     $ing->persona;
+        //     $ing->user;
+        //     foreach ($ing->articulo_ingresos as $art) {
+        //         $art->articulo;
+        //     }
+        // }
+// return $ingresos;
+        return view('reportes.ingresos.credito.index', compact('users','proveedors', 'title'));
+    }
+
+    public function reportIngresosCreditosShow(Request $request){
+        // return $request;
+        $fecha = $request->get('fecha');
+        $estado = $request->get('estado');
+        $status = $request->get('status');
+        $proveedor = $request->get('proveedor');
+        $operador = $request->get('operador');
+        $title = 'Reporte General de Compras a Creditos';
+        $fechaInicio = $request->get('fechaInicio');
+            $fechaFin = $request->get('fechaFin');
+
+            $fecha2 = $request->get('fecha2');
+
+            if($fecha2 == null){
+                $fechaData = $fecha;
+
+            }else{
+                $fechaData = $fecha2;
+            }
+
+
+        $ingresos = Ingreso::fecha($fechaData)
+        ->estado($estado)
+        ->status($status)
+        ->proveedor($proveedor)
+        ->operador($operador)
+        ->where('tipo_pago','Credito')
+        ->get();
+
+
+
+        if($fechaData){
+            list($fecha_inicio, $fecha_fin) = explode(" - ", $fechaData);
+                $fecha_inicio = Carbon::parse($fecha_inicio)->format('d-m-Y');
+                $fecha_fin = Carbon::parse($fecha_fin)->format('d-m-Y');
+
+        }
+
+        foreach ($ingresos as $ing) {
+            $detalle_credito = DetalleCreditoIngreso::where('ingreso_id','=', $ing->id)
+            ->select(DB::raw('sum(descuento) as descuento'),DB::raw('sum(incremento) as incremento'))
+            ->first();
+            // echo $detalle_credito;
+
+            if($detalle_credito){
+                $ingresos->descuento = $detalle_credito->descuento;
+                $ingresos->incremento = $detalle_credito->incremento;
+            }
+
+        }
+
+
+
+
+            $detallado = ($request->get('detallado') == 'on' ? '' : 'hidden');
+        // ->name($name)
+        //     ->codigo($codigo)
+        //     ->venderal($venderal)
+
+
+        // foreach ($ingresos as $ing) {
+        //     $ing->persona;
+        //     $ing->user;
+        //     foreach ($ing->articulo_ingresos as $art) {
+        //         $art->articulo;
+        //     }
+        // }
+// return $ingresos->incremento;
+        return view('reportes.ingresos.credito.show', compact('detallado','fecha_inicio','fecha_fin','ingresos','fecha','estado','proveedor','operador', 'title'));
+    }
+
+
+    public function reportClientesCreditosIndex(){
+
+        $title = 'Reporte General de Ventas a Credito por Fechas';
+
+        $users = User::where('id', '<>', '1')->Where('id', '<>', '2')->get();
+        $proveedors = Persona::where('tipo_persona', '=', 'Cliente')->get();
+        // $ingresos = Ingreso::get()
+        // // ->name($name)
+        // //     ->codigo($codigo)
+        // //     ->venderal($venderal)
+        //     ->fecha($fecha);
+
+        // foreach ($ingresos as $ing) {
+        //     $ing->persona;
+        //     $ing->user;
+        //     foreach ($ing->articulo_ingresos as $art) {
+        //         $art->articulo;
+        //     }
+        // }
+// return $ingresos;
+        return view('reportes.clientes.credito.index', compact('users','proveedors', 'title'));
+    }
+
+    public function reportClientesCreditosShow(Request $request){
+        // return $request;
+        $fecha = $request->get('fecha');
+        $estado = $request->get('estado');
+        $status = $request->get('status');
+        $proveedor = $request->get('proveedor');
+        $operador = $request->get('operador');
+        $title = 'Reporte General de Ventas a Credito';
+        $fechaInicio = $request->get('fechaInicio');
+            $fechaFin = $request->get('fechaFin');
+
+            $fecha2 = $request->get('fecha2');
+
+            if($fecha2 == null){
+                $fechaData = $fecha;
+
+            }else{
+                $fechaData = $fecha2;
+            }
+
+
+        $ingresos = Venta::fecha($fechaData)
+        ->estado($estado)
+        ->status($status)
+        ->proveedor($proveedor)
+        ->operador($operador)
+        ->where('tipo_pago_condicion','Credito')
+        ->get();
+
+        if($fechaData){
+            list($fecha_inicio, $fecha_fin) = explode(" - ", $fechaData);
+                $fecha_inicio = Carbon::parse($fecha_inicio)->format('d-m-Y');
+                $fecha_fin = Carbon::parse($fecha_fin)->format('d-m-Y');
+
+        }
+
+
+            $detallado = ($request->get('detallado') == 'on' ? '' : 'hidden');
+        // ->name($name)
+        //     ->codigo($codigo)
+        //     ->venderal($venderal)
+
+
+        // foreach ($ingresos as $ing) {
+        //     $ing->persona;
+        //     $ing->user;
+        //     foreach ($ing->articulo_ingresos as $art) {
+        //         $art->articulo;
+        //     }
+        // }
+// return $ingresos;
+        return view('reportes.clientes.credito.show', compact('detallado','fecha_inicio','fecha_fin','ingresos','fecha','estado','proveedor','operador', 'title'));
     }
 
     /**

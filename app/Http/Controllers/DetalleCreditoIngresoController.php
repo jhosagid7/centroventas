@@ -6,6 +6,7 @@ use App\Tasa;
 use App\Cuenta;
 use App\Ingreso;
 use App\Persona;
+use App\PagoIngreso;
 use App\Sessioncaja;
 use App\Transaccion;
 use App\CreditoIngreso;
@@ -46,7 +47,6 @@ class DetalleCreditoIngresoController extends Controller
     public function create(Request $request)
     {
         // return $request;
-        $title = 'Recivo de Credito';
         $title = 'Recivo de Credito';
         $creditos = Ingreso::where('tipo_pago', 'Credito')->where('persona_id', $request->id)->get();
         // return $creditos;
@@ -107,10 +107,19 @@ class DetalleCreditoIngresoController extends Controller
         $TasaTrans = $request->get('TasaTrans');
         $TasaBolivar = $request->get('TasaBolivar');
 
+        $tasa_dolar_rep = $request->get('tasa_dolar_rep');
+        $tasa_peso_rep = $request->get('tasa_peso_rep');
+        $tasa_punto_rep = $request->get('tasa_punto_rep');
+        $tasa_trans_rep = $request->get('tasa_trans_rep');
+        $tasa_efectivo_rep = $request->get('tasa_efectivo_rep');
+
+        $total_descuento_reg_input = $request->get('total_descuento_reg_input');
+        $total_aumento_reg_input = $request->get('total_aumento_reg_input');
+
         $creditos = DetalleCreditoIngreso::where('ingreso_id', $credito_id)->orderBy('created_at', 'desc')->first();
 
         if ($creditos->resta > 0) {
-            if($total_operador_reg_input < $creditos->resta) {
+            if($total_operador_reg_input < (($creditos->resta + $total_aumento_reg_input) - $total_descuento_reg_input)) {
                 //abonamos a la factura
                 $UserName = $request->user()->name;
                 $UserId = $request->user()->id;
@@ -121,11 +130,11 @@ class DetalleCreditoIngresoController extends Controller
                 $detalleCredito->proveedor = $creditos->proveedor;
                 $detalleCredito->operador = $UserId;
                 $detalleCredito->caja = $caja->id;
-                $detalleCredito->moto = $creditos->resta;
+                $detalleCredito->moto = (($creditos->resta + $total_aumento_reg_input) - $total_descuento_reg_input);
                 $detalleCredito->abono = $total_operador_reg_input;
-                $detalleCredito->resta = $creditos->resta - $total_operador_reg_input;
-                $detalleCredito->descuento = 0;
-                $detalleCredito->incremento = 0;
+                $detalleCredito->resta = (($creditos->resta + $total_aumento_reg_input) - $total_descuento_reg_input) - $total_operador_reg_input;
+                $detalleCredito->descuento = $total_descuento_reg_input;
+                $detalleCredito->incremento = $total_aumento_reg_input;
                 $detalleCredito->observaciones = $request->get('Observaciones');
                 $detalleCredito->save();
 
@@ -168,6 +177,29 @@ class DetalleCreditoIngresoController extends Controller
                     $saldos_movimientos->cuenta_id      = 1;
                     $saldos_movimientos->transaccion_id = $transaccion->id;
                     $saldos_movimientos->save();
+                    if($saldos_movimientos){
+                        $saldo_dolar = $request->get('dif_moneda_dolar_to_tasa_input');
+                        if($saldo_dolar){
+                            $MontoDivisa = $saldo_dolar;
+                            if($tasa_dolar_rep > 0){
+                                $Tasa = $tasa_dolar_rep;
+                            }else{
+                                $Tasa = $TasaDolar;
+                            }
+                            $MontoDolar = $saldo_dolar / $Tasa;
+                        }
+
+                        $Pago_Credito = new PagoIngreso();
+                        $Pago_Credito->Divisa = 'Dolar';
+                        $Pago_Credito->MontoDivisa = $MontoDivisa;
+                        $Pago_Credito->TasaTiket = $TasaDolar;
+                        $Pago_Credito->TasaRecived = $tasa_dolar_rep;
+                        $Pago_Credito->MontoDolar = $MontoDolar;
+                        $Pago_Credito->Vueltos = 0;
+                        $Pago_Credito->ingreso_id = $credito_id;
+                        $Pago_Credito->caja_id = $caja->id;
+                        $Pago_Credito->save();
+                    }
                 }
 
                 if (!empty($request->get('dif_moneda_peso_to_tasa_input')) && $request->get('dif_moneda_peso_to_tasa_input') > 0) {
@@ -190,6 +222,29 @@ class DetalleCreditoIngresoController extends Controller
                     $saldos_movimientos->cuenta_id      = 2;
                     $saldos_movimientos->transaccion_id = $transaccion->id;
                     $saldos_movimientos->save();
+                    if($saldos_movimientos){
+                        $saldo_peso = $request->get('dif_moneda_peso_to_tasa_input');
+                        if($saldo_peso){
+                            $MontoDivisa = $saldo_peso;
+                            if($tasa_peso_rep > 0){
+                                $Tasa = $tasa_peso_rep;
+                            }else{
+                                $Tasa = $TasaPeso;
+                            }
+                            $MontoDolar = $saldo_peso / $Tasa;
+                        }
+
+                        $Pago_Credito = new PagoIngreso();
+                        $Pago_Credito->Divisa = 'Peso';
+                        $Pago_Credito->MontoDivisa = $MontoDivisa;
+                        $Pago_Credito->TasaTiket = $TasaPeso;
+                        $Pago_Credito->TasaRecived = $tasa_peso_rep;
+                        $Pago_Credito->MontoDolar = $MontoDolar;
+                        $Pago_Credito->Vueltos = 0;
+                        $Pago_Credito->ingreso_id = $credito_id;
+                        $Pago_Credito->caja_id = $caja->id;
+                        $Pago_Credito->save();
+                    }
                 }
 
                 if (!empty($request->get('dif_moneda_efectivo_to_tasa_input')) && $request->get('dif_moneda_efectivo_to_tasa_input') > 0) {
@@ -210,6 +265,30 @@ class DetalleCreditoIngresoController extends Controller
                     $saldos_movimientos->cuenta_id      = 3;
                     $saldos_movimientos->transaccion_id = $transaccion->id;
                     $saldos_movimientos->save();
+
+                    if($saldos_movimientos){
+                        $saldo_efectivo = $request->get('dif_moneda_efectivo_to_tasa_input');
+                        if($saldo_efectivo){
+                            $MontoDivisa = $saldo_efectivo;
+                            if($tasa_efectivo_rep > 0){
+                                $Tasa = $tasa_efectivo_rep;
+                            }else{
+                                $Tasa = $TasaBolivar;
+                            }
+                            $MontoDolar = $saldo_efectivo / $Tasa;
+                        }
+
+                        $Pago_Credito = new PagoIngreso();
+                        $Pago_Credito->Divisa = 'Bolivar';
+                        $Pago_Credito->MontoDivisa = $MontoDivisa;
+                        $Pago_Credito->TasaTiket = $TasaBolivar;
+                        $Pago_Credito->TasaRecived = $tasa_efectivo_rep;
+                        $Pago_Credito->MontoDolar = $MontoDolar;
+                        $Pago_Credito->Vueltos = 0;
+                        $Pago_Credito->ingreso_id = $credito_id;
+                        $Pago_Credito->caja_id = $caja->id;
+                        $Pago_Credito->save();
+                    }
                 }
 
                 if (!empty($request->get('dif_moneda_punto_to_tasa_input')) && $request->get('dif_moneda_punto_to_tasa_input') > 0) {
@@ -230,6 +309,30 @@ class DetalleCreditoIngresoController extends Controller
                     $saldos_movimientos->cuenta_id      = 4;
                     $saldos_movimientos->transaccion_id = $transaccion->id;
                     $saldos_movimientos->save();
+
+                    if($saldos_movimientos){
+                        $saldo_punto = $request->get('dif_moneda_punto_to_tasa_input');
+                        if($saldo_punto){
+                            $MontoDivisa = $saldo_punto;
+                            if($tasa_punto_rep > 0){
+                                $Tasa = $tasa_punto_rep;
+                            }else{
+                                $Tasa = $TasaPunto;
+                            }
+                            $MontoDolar = $saldo_punto / $Tasa;
+                        }
+
+                        $Pago_Credito = new PagoIngreso();
+                        $Pago_Credito->Divisa = 'Punto';
+                        $Pago_Credito->MontoDivisa = $MontoDivisa;
+                        $Pago_Credito->TasaTiket = $TasaPunto;
+                        $Pago_Credito->TasaRecived = $tasa_punto_rep;
+                        $Pago_Credito->MontoDolar = $MontoDolar;
+                        $Pago_Credito->Vueltos = 0;
+                        $Pago_Credito->ingreso_id = $credito_id;
+                        $Pago_Credito->caja_id = $caja->id;
+                        $Pago_Credito->save();
+                    }
                 }
 
                 if (!empty($request->get('dif_moneda_trans_to_tasa_input')) && $request->get('dif_moneda_trans_to_tasa_input') > 0) {
@@ -250,6 +353,30 @@ class DetalleCreditoIngresoController extends Controller
                     $saldos_movimientos->cuenta_id      = 5;
                     $saldos_movimientos->transaccion_id = $transaccion->id;
                     $saldos_movimientos->save();
+
+                    if($saldos_movimientos){
+                        $saldo_trans = $request->get('dif_moneda_trans_to_tasa_input');
+                        if($saldo_trans){
+                            $MontoDivisa = $saldo_trans;
+                            if($tasa_trans_rep > 0){
+                                $Tasa = $tasa_trans_rep;
+                            }else{
+                                $Tasa = $TasaTrans;
+                            }
+                            $MontoDolar = $saldo_trans / $Tasa;
+                        }
+
+                        $Pago_Credito = new PagoIngreso();
+                        $Pago_Credito->Divisa = 'Transferencia';
+                        $Pago_Credito->MontoDivisa = $MontoDivisa;
+                        $Pago_Credito->TasaTiket = $TasaTrans;
+                        $Pago_Credito->TasaRecived = $tasa_trans_rep;
+                        $Pago_Credito->MontoDolar = $MontoDolar;
+                        $Pago_Credito->Vueltos = 0;
+                        $Pago_Credito->ingreso_id = $credito_id;
+                        $Pago_Credito->caja_id = $caja->id;
+                        $Pago_Credito->save();
+                    }
                 }
 
 
@@ -271,7 +398,7 @@ class DetalleCreditoIngresoController extends Controller
                 }
 
             }
-            if($total_operador_reg_input == $creditos->resta){
+            if($total_operador_reg_input == (($creditos->resta + $total_aumento_reg_input) - $total_descuento_reg_input)){
                 $UserName = $request->user()->name;
                 $UserId = $request->user()->id;
                 $caja =  Sessioncaja::where('estado', 'Abierta')->orderBy('id', 'desc')->first();
@@ -281,11 +408,11 @@ class DetalleCreditoIngresoController extends Controller
                 $detalleCredito->proveedor = $creditos->proveedor;
                 $detalleCredito->operador = $UserId;
                 $detalleCredito->caja = $caja->id;
-                $detalleCredito->moto = $creditos->resta;
+                $detalleCredito->moto = (($creditos->resta + $total_aumento_reg_input) - $total_descuento_reg_input);
                 $detalleCredito->abono = $total_operador_reg_input;
-                $detalleCredito->resta = $creditos->resta - $total_operador_reg_input;
-                $detalleCredito->descuento = 0;
-                $detalleCredito->incremento = 0;
+                $detalleCredito->resta = (($creditos->resta + $total_aumento_reg_input) - $total_descuento_reg_input) - $total_operador_reg_input;
+                $detalleCredito->descuento = $total_descuento_reg_input;
+                $detalleCredito->incremento = $total_aumento_reg_input;
                 $detalleCredito->observaciones = $request->get('Observaciones');
                 $detalleCredito->save();
 
@@ -328,6 +455,30 @@ class DetalleCreditoIngresoController extends Controller
                     $saldos_movimientos->cuenta_id      = 1;
                     $saldos_movimientos->transaccion_id = $transaccion->id;
                     $saldos_movimientos->save();
+
+                    if($saldos_movimientos){
+                        $saldo_dolar = $request->get('dif_moneda_dolar_to_tasa_input');
+                        if($saldo_dolar){
+                            $MontoDivisa = $saldo_dolar;
+                            if($tasa_dolar_rep > 0){
+                                $Tasa = $tasa_dolar_rep;
+                            }else{
+                                $Tasa = $TasaDolar;
+                            }
+                            $MontoDolar = $saldo_dolar / $Tasa;
+                        }
+
+                        $Pago_Credito = new PagoIngreso();
+                        $Pago_Credito->Divisa = 'Dolar';
+                        $Pago_Credito->MontoDivisa = $MontoDivisa;
+                        $Pago_Credito->TasaTiket = $TasaDolar;
+                        $Pago_Credito->TasaRecived = $tasa_dolar_rep;
+                        $Pago_Credito->MontoDolar = $MontoDolar;
+                        $Pago_Credito->Vueltos = 0;
+                        $Pago_Credito->ingreso_id = $credito_id;
+                        $Pago_Credito->caja_id = $caja->id;
+                        $Pago_Credito->save();
+                    }
                 }
 
                 if (!empty($request->get('dif_moneda_peso_to_tasa_input')) && $request->get('dif_moneda_peso_to_tasa_input') > 0) {
@@ -350,6 +501,30 @@ class DetalleCreditoIngresoController extends Controller
                     $saldos_movimientos->cuenta_id      = 2;
                     $saldos_movimientos->transaccion_id = $transaccion->id;
                     $saldos_movimientos->save();
+
+                    if($saldos_movimientos){
+                        $saldo_peso = $request->get('dif_moneda_peso_to_tasa_input');
+                        if($saldo_peso){
+                            $MontoDivisa = $saldo_peso;
+                            if($tasa_peso_rep > 0){
+                                $Tasa = $tasa_peso_rep;
+                            }else{
+                                $Tasa = $TasaPeso;
+                            }
+                            $MontoDolar = $saldo_peso / $Tasa;
+                        }
+
+                        $Pago_Credito = new PagoIngreso();
+                        $Pago_Credito->Divisa = 'Peso';
+                        $Pago_Credito->MontoDivisa = $MontoDivisa;
+                        $Pago_Credito->TasaTiket = $TasaPeso;
+                        $Pago_Credito->TasaRecived = $tasa_peso_rep;
+                        $Pago_Credito->MontoDolar = $MontoDolar;
+                        $Pago_Credito->Vueltos = 0;
+                        $Pago_Credito->ingreso_id = $credito_id;
+                        $Pago_Credito->caja_id = $caja->id;
+                        $Pago_Credito->save();
+                    }
                 }
 
                 if (!empty($request->get('dif_moneda_efectivo_to_tasa_input')) && $request->get('dif_moneda_efectivo_to_tasa_input') > 0) {
@@ -370,6 +545,30 @@ class DetalleCreditoIngresoController extends Controller
                     $saldos_movimientos->cuenta_id      = 3;
                     $saldos_movimientos->transaccion_id = $transaccion->id;
                     $saldos_movimientos->save();
+
+                    if($saldos_movimientos){
+                        $saldo_efectivo = $request->get('dif_moneda_efectivo_to_tasa_input');
+                        if($saldo_efectivo){
+                            $MontoDivisa = $saldo_efectivo;
+                            if($tasa_efectivo_rep > 0){
+                                $Tasa = $tasa_efectivo_rep;
+                            }else{
+                                $Tasa = $TasaBolivar;
+                            }
+                            $MontoDolar = $saldo_efectivo / $Tasa;
+                        }
+
+                        $Pago_Credito = new PagoIngreso();
+                        $Pago_Credito->Divisa = 'Bolivar';
+                        $Pago_Credito->MontoDivisa = $MontoDivisa;
+                        $Pago_Credito->TasaTiket = $TasaBolivar;
+                        $Pago_Credito->TasaRecived = $tasa_efectivo_rep;
+                        $Pago_Credito->MontoDolar = $MontoDolar;
+                        $Pago_Credito->Vueltos = 0;
+                        $Pago_Credito->ingreso_id = $credito_id;
+                        $Pago_Credito->caja_id = $caja->id;
+                        $Pago_Credito->save();
+                    }
                 }
 
                 if (!empty($request->get('dif_moneda_punto_to_tasa_input')) && $request->get('dif_moneda_punto_to_tasa_input') > 0) {
@@ -390,6 +589,30 @@ class DetalleCreditoIngresoController extends Controller
                     $saldos_movimientos->cuenta_id      = 4;
                     $saldos_movimientos->transaccion_id = $transaccion->id;
                     $saldos_movimientos->save();
+
+                    if($saldos_movimientos){
+                        $saldo_punto = $request->get('dif_moneda_punto_to_tasa_input');
+                        if($saldo_punto){
+                            $MontoDivisa = $saldo_punto;
+                            if($tasa_punto_rep > 0){
+                                $Tasa = $tasa_punto_rep;
+                            }else{
+                                $Tasa = $TasaPunto;
+                            }
+                            $MontoDolar = $saldo_punto / $Tasa;
+                        }
+
+                        $Pago_Credito = new PagoIngreso();
+                        $Pago_Credito->Divisa = 'Punto';
+                        $Pago_Credito->MontoDivisa = $MontoDivisa;
+                        $Pago_Credito->TasaTiket = $TasaPunto;
+                        $Pago_Credito->TasaRecived = $tasa_punto_rep;
+                        $Pago_Credito->MontoDolar = $MontoDolar;
+                        $Pago_Credito->Vueltos = 0;
+                        $Pago_Credito->ingreso_id = $credito_id;
+                        $Pago_Credito->caja_id = $caja->id;
+                        $Pago_Credito->save();
+                    }
                 }
 
                 if (!empty($request->get('dif_moneda_trans_to_tasa_input')) && $request->get('dif_moneda_trans_to_tasa_input') > 0) {
@@ -410,6 +633,30 @@ class DetalleCreditoIngresoController extends Controller
                     $saldos_movimientos->cuenta_id      = 5;
                     $saldos_movimientos->transaccion_id = $transaccion->id;
                     $saldos_movimientos->save();
+
+                    if($saldos_movimientos){
+                        $saldo_trans = $request->get('dif_moneda_trans_to_tasa_input');
+                        if($saldo_trans){
+                            $MontoDivisa = $saldo_trans;
+                            if($tasa_trans_rep > 0){
+                                $Tasa = $tasa_trans_rep;
+                            }else{
+                                $Tasa = $TasaTrans;
+                            }
+                            $MontoDolar = $saldo_trans / $Tasa;
+                        }
+
+                        $Pago_Credito = new PagoIngreso();
+                        $Pago_Credito->Divisa = 'Transferencia';
+                        $Pago_Credito->MontoDivisa = $MontoDivisa;
+                        $Pago_Credito->TasaTiket = $TasaTrans;
+                        $Pago_Credito->TasaRecived = $tasa_trans_rep;
+                        $Pago_Credito->MontoDolar = $MontoDolar;
+                        $Pago_Credito->Vueltos = 0;
+                        $Pago_Credito->ingreso_id = $credito_id;
+                        $Pago_Credito->caja_id = $caja->id;
+                        $Pago_Credito->save();
+                    }
                 }
 
                 if($creditos->proveedor){

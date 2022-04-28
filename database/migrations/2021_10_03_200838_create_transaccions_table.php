@@ -18,7 +18,7 @@ class CreateTransaccionsTable extends Migration
             $table->bigInteger('correlativo');
             $table->text('descripcion_op', 100);
             $table->string('codigo', 100);
-            $table->text('denominacion', 100);
+            $table->text('denominacion', 100)->nullable();
             $table->string('operador',100);
             $table->timestamps();
         });

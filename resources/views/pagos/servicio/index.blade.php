@@ -30,7 +30,7 @@
     </div>
 
 </div>
-{{-- @include('pagos.servicio.buscar') --}}
+@include('pagos.servicio.buscar')
 <div class="row">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="table-responsive">
@@ -52,14 +52,14 @@
                     @foreach ($servicios as $serv)
                     <tr>
                         <td>{{ $serv->id ?? ' ' }}</td>
-                        <td>{{ $serv->tipo_pago->nombre ?? ' ' }}</td>
                         <td>{{ $serv->categoria_pago->nombre ?? ' ' }}</td>
+                        <td>{{ $serv->tipo_pago->nombre ?? ' ' }}</td>
                         <td>{{ $serv->nombre ?? ' ' }}</td>
                         <td>{{ $serv->num_documento ?? ' ' }}</td>
                         <td>{{ $serv->deuda ?? ' ' }}</td>
                         <td>{{ $serv->observaciones ?? ' ' }}</td>
                         <td>{{ $serv->user->name ?? ' '}}</td>
-                        <td>{{ $serv->created_at->diffForHumans() ?? ' ' }}</td>
+                        <td>{{ $serv->created_at ?? ' ' }}</td>
                         <td>
                         <a href="{{URL::action('ServicioController@show', $serv->id)}}"><button class='btn btn-primary btn-sm'><span class='glyphicon glyphicon-edit'></span></button></a>
                         </td>

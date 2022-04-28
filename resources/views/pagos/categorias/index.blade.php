@@ -56,9 +56,9 @@
                         <a href="" data-target="#modal-delete-{{$cat->id}}" data-toggle="modal"><button class='btn btn-danger btn-sm'><i class='glyphicon glyphicon-trash'></i></button></a>
                         </td>
                     </tr>
-                    @include('pagos.categoria.modal')
+                    @include('pagos.categorias.modal')
                     @endforeach
-                    {{-- @include('almacen.categoria.nuevo_modal') --}}
+                    {{-- @include('almacen.categorias.nuevo_modal') --}}
                 </tbody>
                 <tfoot>
                     <tr>

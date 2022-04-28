@@ -18,6 +18,7 @@ class CreatePagoServiciosTable extends Migration
             $table->string('Divisa', 20)->nullable();
             $table->decimal('MontoDivisa', 25, 3)->nullable();
             $table->decimal('TasaTiket', 25, 2)->nullable();
+            $table->decimal('TasaRecived', 25, 2)->nullable();
             $table->decimal('MontoDolar', 25, 3)->nullable();
             $table->decimal('Vueltos', 25, 3)->nullable();
             $table->foreignId('servicio_id')->references('id')->on('servicios');

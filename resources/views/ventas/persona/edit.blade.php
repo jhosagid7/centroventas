@@ -46,7 +46,7 @@
     </div>
 
 
-            <form action="{{ route('cliente.update', $persona->id)}}" method="POST" autocomplete="off" role="buscar">
+            <form id="form1" action="{{ route('cliente.update', $persona->id)}}" method="POST" autocomplete="off" role="buscar">
                 @csrf
                 @method('PUT')
     <div class="row">
@@ -169,10 +169,32 @@
                 <td>
                   <div class="sparkbar" data-color="#00a65a" data-height="20"><label>
                     <input required type="limite_monto" name="limite_monto" class="form-control" value="{{$persona->limite_monto}}" placeholder="Monto limite crédito... (40)">
-
+                    <input type="hidden" name="facturas_vencidas" id="facturas_vencidas" value="{{$persona->credito_vencido}}">
+                    <input type="hidden" name="facturas_vencidas_comparar" id="facturas_vencidas_comparar" value="{{$persona->cliente_creditos}}">
                   </label></div>
                 </td>
               </tr>
+              <tr>
+                <td colspan="2">
+                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                        <div class="form-group">
+                            <label for="estado_credito">Estado credito</label>
+                            <select required class="form-control" name="estado_credito" id="estado_credito">
+                                @if ($persona->cliente_creditos=='Activo')
+                                    <option value="Activo" selected>Activo</option>
+                                    <option value="Moroso">Moroso</option>
+                                @elseif($persona->cliente_creditos=='Moroso')
+                                    <option value="Activo">Activo</option>
+                                    <option value="Moroso" selected>Moroso</option>
+                                @else
+                                    <option value="" selected>No Tiene credito</option>
+                                @endif
+                            </select>
+
+                        </div>
+                    </div>
+                </td>
+            </tr>
 
 
               </tbody>
@@ -186,7 +208,7 @@
       </div>
     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
         <div class="form-group">
-            <button class="btn btn-primary" type="submit">Guardar</button>
+            <button id="guardar" class="btn btn-primary" type="submit">Guardar</button>
             <a class="btn btn-danger" href="{{ url()->previous() }}">{{__('Regresar')}}</a>
         </div>
     </div>
@@ -205,6 +227,32 @@
 @push('sciptsMain')
         <script>
             $(document).ready(function() {
+
+                $("#estado_credito").on("change", function () {
+                    document.getElementById("estado_credito").focus();
+                    let facturas_vencidas = $('#facturas_vencidas').val();
+                    let v = $(this).val();
+                    if(facturas_vencidas == 1 && v == 'Activo'){
+                        alert('El cliente debe pagar las facturas vencidas antes de pasar a estado del credito a (Activo)...');
+                        document.getElementById("estado_credito").focus();
+                    }
+
+
+                });
+
+                $('#guardar').on('click', function(){
+                    event.preventDefault();
+                    let facturas_vencidas = $('#facturas_vencidas').val();
+                    let v = $('#estado_credito').val();
+
+                    if(facturas_vencidas == 1 && v == 'Activo'){
+                        alert('El cliente debe pagar las facturas vencidas antes de pasar a estado del credito a (Activo)...');
+                        document.getElementById("estado_credito").focus();
+                    }else{
+                        $("#form1").submit();
+                    }
+                });
+
                 $(function() {
     $('.enteros').on('input', function() {
         this.value = this.value.replace(/[^0-9]/g, '');

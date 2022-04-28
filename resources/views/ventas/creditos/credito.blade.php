@@ -183,7 +183,6 @@
                                             <h5 class="description-header" name="saldo_banco_trans_resta" id="saldo_banco_trans_resta">Bs. 0</h5>
                                             <span class="description-text">TRANS</span><input type="hidden" name="trans_sistema" id="trans_sistema" value="0">
                                         </div>
-                                        <!-- /.description-block -->
                                     </div>
                                     <!-- /.col -->
 

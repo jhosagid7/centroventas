@@ -39,7 +39,7 @@
         {{-- cabecera de box --}}
 <div class="row">
     <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
-        <h3>Listado de Facturas por cobrar de <b>{{ $creditos[0]->persona->nombre ?? '' }}</b> <a href="{{URL::action('IngresoController@create')}}"><button class='btn btn-success'><span class='glyphicon glyphicon-plus'></span> Nuevo</button></a></h3>
+        <h3>Listado de Facturas por cobrar de <b>{{ $creditos[0]->persona->nombre ?? '' }}</b></h3>
         {{-- @include('compras.ingreso.buscar') --}}
     </div>
 </div>
@@ -57,8 +57,8 @@
                     <th>Comprobante</th>
                     <th>Total</th>
                     <th>Estado</th>
-                    <th>Status</th>
                     <th>Estado pago</th>
+                    <th>Status</th>
                     <th>Opciones</th>
                 </thead>
                 <tbody>
@@ -74,8 +74,8 @@
                         <td>{{ $ing->tipo_comprobante . ': ' . $ing->serie_comprobante . '-' . $ing->num_comprobante ?? '' }}</td>
                         <td>{{ floatval($deuda_cliente['resta']) ?? '' }}</td>
                         <td>{{ $ing->estado ?? '' }}</td>
-                        <td>{{ $ing->tipo_pago ?? '' }}</td>
-                        <td>{{ $ing->status ?? '' }}</td>
+                        <td>{{ $ing->tipo_pago_condicion ?? '' }}</td>
+                        <td>{{ $ing->estado_credito ?? '' }}</td>
                         <td>
                         <a href="{{URL::action('DetalleCreditoVentaController@show', $ing->id)}}"><button class='btn btn-success btn-sm'><span class='fa fa-money'></span></button></a>
                         {{-- <a href="" data-target="#modal-delete-{{$ing->id}}" data-toggle="modal"><button class='btn btn-primary btn-sm'><span class='fa fa-eye'></span></button></a> --}}

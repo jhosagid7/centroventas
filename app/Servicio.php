@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Servicio extends Model
@@ -54,9 +55,29 @@ class Servicio extends Model
         return $query->where('user_id', 'LIKE', "%$operador%");
     }
 
-    public function scopeEstado($query, $estado){
-        if($estado)
-        return $query->where('estado', 'LIKE', "$estado");
+    public function scopeCategoria($query, $categoria_pago_id){
+        if($categoria_pago_id)
+        return $query->where('categoria_pago_id', 'LIKE', "%$categoria_pago_id%");
+    }
+
+    public function scopeTipo($query, $tipo_pago_id){
+        if($tipo_pago_id)
+        return $query->where('tipo_pago_id', 'LIKE', "%$tipo_pago_id%");
+    }
+
+    public function scopeCaja($query, $caja){
+        if($caja)
+        return $query->where('caja_id', 'LIKE', "%$caja%");
+    }
+
+    public function scopeNombre($query, $nombre){
+        if($nombre)
+        return $query->where('nombre', 'LIKE', "%$nombre%");
+    }
+
+    public function scopeRif($query, $num_documento){
+        if($num_documento)
+        return $query->where('num_documento', 'LIKE', "%$num_documento%");
     }
 
     //este metodo nos permite dar formato al numero de la factura

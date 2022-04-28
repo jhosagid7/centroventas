@@ -137,8 +137,8 @@
                                     <tr>
                                     <td>{{$Articulo_Venta->articulo->nombre ?? ''}}</td>
                                     <td>{{$Articulo_Venta->cantidad ?? ''}}</td>
-                                    <td>{{ floatval($Articulo_Venta->precio_costo_unidad) ?? ''}}</td>
-                                    <td>{{ floatval($Articulo_Venta->cantidad*$Articulo_Venta->precio_costo_unidad) ?? '' }}</td>
+                                    <td>{{ floatval($Articulo_Venta->precio_venta_unidad) ?? ''}}</td>
+                                    <td>{{ floatval($Articulo_Venta->cantidad*$Articulo_Venta->precio_venta_unidad) ?? '' }}</td>
 
                                     </tr>
                                 @endforeach

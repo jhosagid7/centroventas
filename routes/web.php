@@ -34,77 +34,6 @@ Auth::routes([
 
 Route::get('/home', 'VentaController@index')->name('home');
 
-
-
-Route::get('/test', function () {
-    // $user = User::find(2);
-
-    //$user->roles()->sync([2]);
-    // return $user->roles;
-    // return $user->havePermission('role.create');
-    // Gate::authorize('haveaccess', 'role.index');
-    // $caja =  App\Caja::where('estado', 'Abierta')->orderBy('id', 'desc')->first();
-
-    // $tasa = App\Tasa::find(1);
-    // $tasa->updated_at;
-    // $fechaActual = Carbon\Carbon::now();
-
-    // if ($tasa->updated_at->diffInHours($fechaActual) >= 3 ) {
-    //     return 'Debes actualizar el margen de ganancia';
-    // }else{
-    //     return 'Puedes continuar';
-    // }
-
-    // $detalleingresos = Articulo_Ingreso::get();
-    // $detalleingresos->ingreso;
-    // $ingreso = Ingreso::get();
-
-    // foreach ($ingreso as $ing) {
-    //     $ing->persona;
-    //     $ing->user;
-    //     // $ing->articulo_ingresos;
-    //     foreach ($ing->articulo_ingresos as $art) {
-    //         $art->articulo;
-    //     }
-
-
-    // }
-    // $venderAlDetal = Articulo::activo()->get();
-
-    // $haystack = ['Caja de arros Juana','Caja de arros primor'];
-    // foreach ($haystack as $key) {
-    //     $dato = Str::contains($key,'arros maria');
-    //     if (isset($dato) && $dato == 1) {
-    //         $valor = $key;
-    //     }else{
-    //         $valor = 'No hay datos relacionados';
-    //     }
-
-    // }
-    //     $url = "https://dolartoday.com/api/";
-    //     $cliente = new GuzzleHttp\Client;
-    //     // $valor = HTTP::get($url)->json();
-    //     $response = $cliente->get($url);
-
-    //  var_dump($response->getBody()->getContents());
-
-
-});
-
-// Route::get('/test', function () {
-//     $user = User::find(2);
-//     $empre = App\Empresa::orderBy('id','Desc')->get();
-//     $empresa = App\Empresa::find(1)->cajas()->orderBy('nombre')->get();
-//     $cajas = App\Sucursal::find(1)->cajas()->orderBy('nombre')->get();
-//     $tasa1 = App\Tasa::get();
-//     $tasa2 = App\Empresa::orderBy('id','Desc')->get();
-//     $tasa1 = App\Tasa::get();
-//     $tasa = App\Tasa::find(1);
-
-
-//     return $tasa;
-// });
-
 Route::resource('/role', 'RoleController')->names('role');
 
 Route::resource('/user', 'UserController', ['except'=>[
@@ -122,7 +51,7 @@ Route::resource('ventas/creditos', 'DetalleCreditoVentaController');
 // Route::resource('credito-ver', 'DetalleCreditoIngresoController@ver');
 Route::resource('ventas/venta', 'VentaController');
 
-Route::resource('pagos/categoria', 'CategoriaPagoController');
+Route::resource('pagos/categorias', 'CategoriaPagoController');
 Route::resource('pagos/tipo', 'TipoPagoController');
 
 
@@ -142,7 +71,7 @@ Route::get('/cajas/caja/{caja}/print ','CajaController@print')->name('print');
 
 Route::get('/origen', 'TransferenciaController@getProductoOrigenes')->name('origen');
 Route::get('/destino', 'TransferenciaController@getProductoDestinos')->name('destino');
-Route::get('/origen', 'ServicioController@getServiciosOrigenes')->name('origen');
+Route::get('/servicios', 'ServicioController@getServiciosOrigenes')->name('servicios');
 
 Route::resource('reportes/ventas', 'ReporteController');
 // Route::resource('reportes/ventas', 'ReporteController');
@@ -152,6 +81,11 @@ Route::get('/precios', 'ReporteController@listadoPrecio')->name('precios');
 Route::get('/reporte-general', 'ReporteController@reporteGeneral')->name('reporte-general');
 Route::get('/reporte-ingreso', 'ReporteController@reportIngresosIndex')->name('reporte-ingreso');
 Route::get('/reporte-compras', 'ReporteController@reportIngresosShow')->name('reporte-compras');
+Route::get('/reporte-ingreso-creditos', 'ReporteController@reportIngresosCreditosIndex')->name('reporte-ingreso-creditos');
+Route::get('/reporte-compra-creditos', 'ReporteController@reportIngresosCreditosShow')->name('reporte-compra-creditos');
+
+Route::get('/reporte-credito-clientes', 'ReporteController@reportClientesCreditosIndex')->name('reporte-credito-clientes');
+Route::get('/reporte-credito-clientes-ver', 'ReporteController@reportClientesCreditosShow')->name('reporte-credito-clientes-ver');
 
 
 Route::resource('/cargos', 'CargoController', ['except'=>[

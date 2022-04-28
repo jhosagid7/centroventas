@@ -3,7 +3,7 @@
     <div class="row margin-bottom">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="page-header">
-                <form action="{{ route('categoria.index')}}" method="GET" autocomplete="off" class="form-inline pull-right" role="buscar">
+                <form action="{{ route('categorias.index')}}" method="GET" autocomplete="off" class="form-inline pull-right" role="buscar">
                     @csrf
 
 

@@ -1,6 +1,6 @@
 <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-delete-{{$cat->id}}">
     {{-- {{ Form::open(array('action'=>array('CategoriaController@destroy',$cat->idcategoria),'method'=>'delete'))}} --}}
-    <form action="{{ route('categoria.destroy', $cat->id)}}" method="POST">
+    <form action="{{ route('categorias.destroy', $cat->id)}}" method="POST">
     @csrf
     @method('DELETE')
     <div class="modal-dialog">

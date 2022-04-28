@@ -33,13 +33,13 @@ class CategoriaPagoController extends Controller
             ->description($description)
             ->fecha($fecha2)
             ->get();
-            return view("pagos.categoria.index",["categorias"=>$categorias,"fechaInicio"=>$fechaInicio,"fechaFin"=>$fechaFin]);
+            return view("pagos.categorias.index",["categorias"=>$categorias,"fechaInicio"=>$fechaInicio,"fechaFin"=>$fechaFin]);
         }
 
     }
     public function create()
     {
-        return view('pagos.categoria.create');
+        return view('pagos.categorias.create');
     }
     public function store(Request $request)
     {
@@ -51,15 +51,15 @@ class CategoriaPagoController extends Controller
         $categoria->condicion = 'Activa';
         $categoria->save();
 
-        return Redirect::to('pagos/categoria')->with('status_success', 'Categoria registrada exitosamente');
+        return Redirect::to('pagos/categorias')->with('status_success', 'Categoria registrada exitosamente');
     }
     public function show($id)
     {
-        return view("pagos.categoria.show", ["categoria" => CategoriaPago::findOrFail($id)]);
+        return view("pagos.categorias.show", ["categoria" => CategoriaPago::findOrFail($id)]);
     }
     public function edit($id)
     {
-        return view("pagos.categoria.edit", ["categoria" => CategoriaPago::findOrFail($id)]);
+        return view("pagos.categorias.edit", ["categoria" => CategoriaPago::findOrFail($id)]);
     }
     public function update(Request $request,$id)
     {
@@ -69,7 +69,7 @@ class CategoriaPagoController extends Controller
         $categoria->update();
 
         return redirect()
-        ->route('categoria.index')
+        ->route('categorias.index')
         ->with('status_success', 'Categoria actualizada exitosamente');
 
 
@@ -81,7 +81,7 @@ class CategoriaPagoController extends Controller
         $categoria->condicion = 'Eliminada';
         $categoria->update();
         return redirect()
-        ->route('categoria.index')
+        ->route('categorias.index')
         ->with('status_success', 'Categoria eliminada exitosamente');
 
     }

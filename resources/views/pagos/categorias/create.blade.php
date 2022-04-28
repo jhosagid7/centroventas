@@ -28,31 +28,29 @@
 
     <div class="row">
         <div class="col-lg-6">
-            <h3>Editar Categoría para Pago de Servicios: {{$categoria->nombre}}</h3>
+            <h3>Nueva Categoría para Pagos de Servicios</h3>
             @include('custom.message')
 
 
+            <form action="{{ route('categorias.store')}}" method="POST" autocomplete="off">
 
-            <form action="{{ route('categoria.update', $categoria->id)}}" enctype="multipart/form-data" method="POST" autocomplete="off" role="buscar">
-                @csrf
-                @method('PUT')
-
+            @csrf
             <div class="form-group">
                 <label for="nombre">Nombre</label>
-                <input required type="text" name="nombre" class="form-control form-control-sm mayuscula" value="{{ $categoria->nombre }}" placeholder="Nombre...">
+                <input required type="text" name="nombre" class="form-control form-control-sm mayusculas" placeholder="Nombre...">
             </div>
 
             <div class="form-group">
                 <label for="descripcion">Descripcion</label>
-                <input required type="text" name="descripcion" class="form-control form-control-sm mayuscula" value="{{ $categoria->descripcion }}" placeholder="Descripcion...">
+                <input required type="text" name="descripcion" class="form-control form-control-sm mayusculas" placeholder="Descripcion...">
             </div>
 
             <div class="form-group">
                 <button class="btn btn-primary" type="submit">Guardar</button>
-                <a class="btn btn-danger" href="{{route('categoria.index')}}">{{__('Back')}}</a>
+                <a class="btn btn-danger" href="{{route('categorias.index')}}">{{__('Back')}}</a>
             </div>
-            </form>
 
+            </form>
         </div>
     </div>
 
@@ -65,5 +63,20 @@
 <!-- /.box-footer-->
 </div>
 <!-- /.box -->
+@push('sciptsMain')
+  <script>
+$(document).ready(function() {
+// Funcion JavaScript para la conversion a mayusculas
+$(function() {
+            $('.mayusculas').on('input', function() {
+                this.value = this.value.toUpperCase();
+            });
+        });
 
+});
+
+
+
+</script>
+@endpush
 @endsection

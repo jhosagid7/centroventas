@@ -15,6 +15,7 @@ use App\SaldosMovimiento;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use App\Caja;
 
 class ServicioController extends Controller
 {
@@ -29,22 +30,31 @@ class ServicioController extends Controller
      */
     public function index(Request $request)
     {
-        $nombre = $request->get('nombre');
-        $accion = $request->get('accion');
+        // return $request;
         $fecha = $request->get('fecha');
 
         $fechaInicio = $request->get('fechaInicio');
         $fechaFin = $request->get('fechaFin');
         $fecha2 = $request->get('fecha2');
 
+        $nombre = $request->get('nombre');
+        $categoria = $request->get('categoria');
+        $tipo = $request->get('tipo');
+        $rif = $request->get('num_documento');
+
         $title = 'Pagos Realizados';
         $servicios = Servicio::orderBy('id','DESC')
-        // ->nombre($nombre)
-        // ->accion($accion)
-        // ->fecha($fecha2)
+        ->nombre($nombre)
+        ->categoria($categoria)
+        ->tipo($tipo)
+        ->rif($rif)
+        ->fecha($fecha2)
         ->paginate(10000);
 
-        return view('pagos.servicio.index', compact('servicios', 'title', 'fechaInicio', 'fechaFin', 'fecha2'));
+        $categorias = CategoriaPago::all();
+        $tipos = TipoPago::all();
+
+        return view('pagos.servicio.index', compact('servicios', 'title', 'fechaInicio', 'fechaFin', 'fecha2', 'categorias', 'tipos'));
     }
 
     public function getServiciosOrigenes(Request $request){
@@ -141,6 +151,12 @@ class ServicioController extends Controller
         $TasaTrans = $request->get('TasaTrans');
         $TasaBolivar = $request->get('TasaBolivar');
 
+        $tasa_dolar_rep = $request->get('tasa_dolar_rep');
+        $tasa_peso_rep = $request->get('tasa_peso_rep');
+        $tasa_punto_rep = $request->get('tasa_punto_rep');
+        $tasa_trans_rep = $request->get('tasa_trans_rep');
+        $tasa_efectivo_rep = $request->get('tasa_efectivo_rep');
+
         $deuda = $request->get('deuda_acre');
 
 
@@ -148,7 +164,8 @@ class ServicioController extends Controller
         if($total_operador_reg_input == $deuda){
             $UserName = $request->user()->name;
             $UserId = $request->user()->id;
-            $caja =  Sessioncaja::where('estado', 'Abierta')->orderBy('id', 'desc')->first();
+            $caja =  Caja::where('hora_cierre', 'Sin cerrar')->orderBy('id', 'desc')->first();
+            // return $caja;
 
             $detalleCredito = New Servicio();
             $detalleCredito->nombre = $nombre_acre;
@@ -163,9 +180,7 @@ class ServicioController extends Controller
 
 
             if ($Observaciones){
-                $denominacion = "Servicio pagado por el operador $UserName con ID Factura: $detalleCredito->id. ". $request->get('Observaciones');
-            }else{
-                $denominacion = "Servicio pagado por el operador $UserName con ID Factura: $detalleCredito->id.";
+                $denominacion = $request->get('Observaciones');
             }
 
             $correlativo_transaccion = Transaccion::count();
@@ -173,9 +188,9 @@ class ServicioController extends Controller
 
             $transaccion = new Transaccion();
             $transaccion->correlativo    = $correlativo_transaccion;
-            $transaccion->descripcion_op = 'Por el Pago Operativo: ' . $tipo_acre . ' - ' . $servicio_acre . ' con factura ID ' . $detalleCredito->id;
+            $transaccion->descripcion_op = 'Pago Operativo: ' . $tipo_acre . ' - ' . $servicio_acre . ' con factura ID ' . $detalleCredito->id;
             $transaccion->codigo         = $caja->id;
-            $transaccion->denominacion   = $denominacion;
+            $transaccion->denominacion   = $Observaciones;
             $transaccion->operador       = $UserName;
             $transaccion->save();
 
@@ -201,21 +216,29 @@ class ServicioController extends Controller
                 $saldos_movimientos->transaccion_id = $transaccion->id;
                 $saldos_movimientos->save();
 
-                $saldo_dolar = $request->get('dif_moneda_dolar_to_tasa_input');
+                if($saldos_movimientos){
+                    $saldo_dolar = $request->get('dif_moneda_dolar_to_tasa_input');
                     if($saldo_dolar){
                         $MontoDivisa = $saldo_dolar;
-                        $MontoDolar = $saldo_dolar / $TasaDolar;
+                        if($tasa_dolar_rep > 0){
+                            $Tasa = $tasa_dolar_rep;
+                        }else{
+                            $Tasa = $TasaDolar;
+                        }
+                        $MontoDolar = $saldo_dolar / $Tasa;
                     }
 
                     $Pago_Credito = new PagoServicio();
                     $Pago_Credito->Divisa = 'Dolar';
                     $Pago_Credito->MontoDivisa = $MontoDivisa;
                     $Pago_Credito->TasaTiket = $TasaDolar;
+                    $Pago_Credito->TasaRecived = $tasa_dolar_rep;
                     $Pago_Credito->MontoDolar = $MontoDolar;
                     $Pago_Credito->Vueltos = 0;
                     $Pago_Credito->servicio_id = $detalleCredito->id;
                     $Pago_Credito->caja_id = $caja->id;
                     $Pago_Credito->save();
+                }
             }
 
             if (!empty($request->get('dif_moneda_peso_to_tasa_input')) && $request->get('dif_moneda_peso_to_tasa_input') > 0) {
@@ -239,21 +262,29 @@ class ServicioController extends Controller
                 $saldos_movimientos->transaccion_id = $transaccion->id;
                 $saldos_movimientos->save();
 
-                $saldo_peso = $request->get('dif_moneda_peso_to_tasa_input');
+                if($saldos_movimientos){
+                    $saldo_peso = $request->get('dif_moneda_peso_to_tasa_input');
                     if($saldo_peso){
                         $MontoDivisa = $saldo_peso;
-                        $MontoDolar = $saldo_peso / $TasaPeso;
+                        if($tasa_peso_rep > 0){
+                            $Tasa = $tasa_peso_rep;
+                        }else{
+                            $Tasa = $TasaPeso;
+                        }
+                        $MontoDolar = $saldo_peso / $Tasa;
                     }
 
                     $Pago_Credito = new PagoServicio();
                     $Pago_Credito->Divisa = 'Peso';
                     $Pago_Credito->MontoDivisa = $MontoDivisa;
                     $Pago_Credito->TasaTiket = $TasaPeso;
+                    $Pago_Credito->TasaRecived = $tasa_peso_rep;
                     $Pago_Credito->MontoDolar = $MontoDolar;
                     $Pago_Credito->Vueltos = 0;
                     $Pago_Credito->servicio_id = $detalleCredito->id;
                     $Pago_Credito->caja_id = $caja->id;
                     $Pago_Credito->save();
+                }
             }
 
             if (!empty($request->get('dif_moneda_efectivo_to_tasa_input')) && $request->get('dif_moneda_efectivo_to_tasa_input') > 0) {
@@ -275,22 +306,29 @@ class ServicioController extends Controller
                 $saldos_movimientos->transaccion_id = $transaccion->id;
                 $saldos_movimientos->save();
 
-                $saldo_efectivo = $request->get('dif_moneda_efectivo_to_tasa_input');
+                if($saldos_movimientos){
+                    $saldo_efectivo = $request->get('dif_moneda_efectivo_to_tasa_input');
                     if($saldo_efectivo){
                         $MontoDivisa = $saldo_efectivo;
-                        $MontoDolar = $saldo_efectivo / $TasaBolivar;
+                        if($tasa_efectivo_rep > 0){
+                            $Tasa = $tasa_efectivo_rep;
+                        }else{
+                            $Tasa = $TasaBolivar;
+                        }
+                        $MontoDolar = $saldo_efectivo / $Tasa;
                     }
 
                     $Pago_Credito = new PagoServicio();
                     $Pago_Credito->Divisa = 'Bolivar';
                     $Pago_Credito->MontoDivisa = $MontoDivisa;
                     $Pago_Credito->TasaTiket = $TasaBolivar;
+                    $Pago_Credito->TasaRecived = $tasa_efectivo_rep;
                     $Pago_Credito->MontoDolar = $MontoDolar;
                     $Pago_Credito->Vueltos = 0;
                     $Pago_Credito->servicio_id = $detalleCredito->id;
                     $Pago_Credito->caja_id = $caja->id;
                     $Pago_Credito->save();
-
+                }
 
             }
 
@@ -317,13 +355,19 @@ class ServicioController extends Controller
                     $saldo_punto = $request->get('dif_moneda_punto_to_tasa_input');
                     if($saldo_punto){
                         $MontoDivisa = $saldo_punto;
-                        $MontoDolar = $saldo_punto / $TasaPunto;
+                        if($tasa_punto_rep > 0){
+                            $Tasa = $tasa_punto_rep;
+                        }else{
+                            $Tasa = $TasaPunto;
+                        }
+                        $MontoDolar = $saldo_punto / $Tasa;
                     }
 
                     $Pago_Credito = new PagoServicio();
                     $Pago_Credito->Divisa = 'Punto';
                     $Pago_Credito->MontoDivisa = $MontoDivisa;
                     $Pago_Credito->TasaTiket = $TasaPunto;
+                    $Pago_Credito->TasaRecived = $tasa_punto_rep;
                     $Pago_Credito->MontoDolar = $MontoDolar;
                     $Pago_Credito->Vueltos = 0;
                     $Pago_Credito->servicio_id = $detalleCredito->id;
@@ -355,13 +399,19 @@ class ServicioController extends Controller
                     $saldo_trans = $request->get('dif_moneda_trans_to_tasa_input');
                     if($saldo_trans){
                         $MontoDivisa = $saldo_trans;
-                        $MontoDolar = $saldo_trans / $TasaTrans;
+                        if($tasa_trans_rep > 0){
+                            $Tasa = $tasa_trans_rep;
+                        }else{
+                            $Tasa = $TasaTrans;
+                        }
+                        $MontoDolar = $saldo_trans / $Tasa;
                     }
 
                     $Pago_Credito = new PagoServicio();
                     $Pago_Credito->Divisa = 'Transferencia';
                     $Pago_Credito->MontoDivisa = $MontoDivisa;
                     $Pago_Credito->TasaTiket = $TasaTrans;
+                    $Pago_Credito->TasaRecived = $tasa_trans_rep;
                     $Pago_Credito->MontoDolar = $MontoDolar;
                     $Pago_Credito->Vueltos = 0;
                     $Pago_Credito->servicio_id = $detalleCredito->id;
@@ -396,8 +446,10 @@ class ServicioController extends Controller
     {
         $title = 'Factura de pago servicios';
         $servicio = Servicio::find($id);
+        $pagos_servicios = PagoServicio::where('servicio_id', $id)->get();
+        $pagos_servicios_suma = PagoServicio::where('servicio_id', $id)->sum('MontoDolar');
 
-        return view('pagos.servicio.show', compact('title', 'servicio'));
+        return view('pagos.servicio.show', compact('title', 'servicio', 'pagos_servicios', 'pagos_servicios_suma'));
     }
 
     public function get_saldo_banco($banco){

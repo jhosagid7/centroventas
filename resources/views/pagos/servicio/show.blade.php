@@ -63,8 +63,8 @@
             </div>
             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                 <div class="form-group">
-                    <label for="proveedor">Acción Realizada</label>
-                    <p>Pasó de {{ $servicio->accion ?? ''}}</p>
+                    <label for="proveedor">Razon social</label>
+                    <p>{{ $servicio->nombre ?? ''}}</p>
                 </div>
             </div>
             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
@@ -77,25 +77,36 @@
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                 <div class="form-group">
-                    <label for="tipo_comprobante">Producto Origen Vender al {{$servicio->origenVender_al ?? ''}}</label>
-                    <p>{{ $servicio->origenNombreProducto ?? ''}}</p>
+                    <label for="tipo_comprobante">Tipo servicio </label>
+                    <p>{{$servicio->categoria_pago->nombre ?? ''}} - {{$servicio->tipo_pago->nombre ?? ''}}</p>
                 </div>
             </div>
 
             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                 <div class="form-group">
-                    <label for="serie_comprobante">Producto Destino Vender al {{$servicio->destinoVender_al ?? ''}}</label>
-                    <p>{{ $servicio->destinoNombreProducto ?? ''}}</p>
+                    <label for="serie_comprobante">Rif/CI</label>
+                    <p>{{ $servicio->num_documento ?? ''}}</p>
                 </div>
             </div>
 
             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                 <div class="form-group">
-                    <label for="num_comprobante">Cantidad</label>
-                    <p>{{ $servicio->cantidadSumarDestino ?? ''}}</p>
+                    <label for="num_comprobante">Total pagado</label>
+                    <p>{{ $servicio->deuda ?? ''}}</p>
                 </div>
             </div>
         </div>
+        @if ($servicio->observaciones)
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="form-group">
+                    <label for="tipo_comprobante">Observaciones </label>
+                    <p>{{$servicio->observaciones ?? ''}}</p>
+                </div>
+            </div>
+        </div>
+        @endif
+
 
     </div>
 
@@ -107,48 +118,36 @@
                         <table id="detalles" class="table table-striped table-borderd table-condensed table-hover">
                             <thead style="background-color: #A9D0F5">
                                 <th>ID</th>
-                                <th>Producto Origen</th>
-                                <th>Stock Ini.</th>
-                                <th>Cant. Restar</th>
-                                <th>Stock Fin.</th>
-                                <th>Unidades</th>
-                                <th>Producto Destino</th>
-                                <th>Stock Ini.</th>
-                                <th>Cant. Restar</th>
-                                <th>Stock Fin.</th>
-                                <th>Unidades</th>
+                                <th>Divisa</th>
+                                <th>Tasa sistema.</th>
+                                <th>Tasa pagada</th>
+                                <th>Monto divisa.</th>
+                                <th>Monto dolar</th>
                             </thead>
                             <tfoot>
                                 <th></th>
                                 <th></th>
                                 <th></th>
                                 <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
-                                <th></th>
+                                <th><h3>Total pagado:</h3></th>
+                                <th><h3 class="box-title text-bold text-block">${{ number_format(floatval($pagos_servicios_suma),2,',','.') ?? ' 0,00' }}</h3></th>
+
 
                             {{-- <th><h4 id="total"><b>$. {{$servicio->total ?? ''}}</b></h4></th> --}}
                             </tfoot>
                             <tbody>
 
-                                    <tr>
-                                    <td>{{$servicio->id ?? ''}}</td>
-                                    <td>{{$servicio->origenNombreProducto ?? ''}}</td>
-                                    <td>{{$servicio->origenStockInicial ?? ''}}</td>
-                                    <td>{{$servicio->cantidadRestarOrigen}}</td>
-                                    <td>{{$servicio->origenStockFinal}}</td>
-                                    <td>{{$servicio->origenUnidades}}</td>
-                                    <td>{{$servicio->destinoNombreProducto ?? ''}}</td>
-                                    <td>{{$servicio->destinoStockInicial ?? ''}}</td>
-                                    <td>{{$servicio->cantidadSumarDestino}}</td>
-                                    <td>{{$servicio->destinoStockFinal}}</td>
-                                    <td>{{$servicio->destinoUnidades}}</td>
+                                @foreach ($pagos_servicios as $pagos_servicio)
+                                <tr>
+                                    <td>{{$pagos_servicio->id ?? ''}}</td>
+                                    <td>{{$pagos_servicio->Divisa ?? ''}}</td>
+                                    <td>{{$pagos_servicio->TasaTiket ?? ''}}</td>
+                                    <td>{{$pagos_servicio->TasaRecived ?? ''}}</td>
+                                    <td>{{$pagos_servicio->MontoDivisa ?? ''}}</td>
+                                    <td>{{$pagos_servicio->MontoDolar ?? ''}}</td>
+                                </tr>
+                                @endforeach
 
-                                    </tr>
 
                             </tbody>
                         </table>

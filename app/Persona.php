@@ -19,6 +19,10 @@ class Persona extends Model
         return $this->hasMany(Ingreso::class);
     }
 
+    public function cliente_creditos(){
+        return $this->hasMany(ClienteCredito::class);
+    }
+
 
 
     public function user(){

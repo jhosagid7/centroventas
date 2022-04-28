@@ -34,7 +34,10 @@
 
 
 
-                <input name="url" type="hidden" value="{{URL::previous()}}">
+
+
+
+                {{-- <input name="url" type="hidden" value="{{URL::previous()}}"> --}}
                 {{-- <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                     <div class="form-group col-md-3">
                         <h3><button class="btn btn-danger" type="submit"><span class='glyphicon glyphicon-save'></span> Cerrar</button></h3>
@@ -44,6 +47,13 @@
                     </div>
                 </div> --}}
             @endisset
+            <!-- <input name="nombre_acre" id="nombre_acre" type="hidden" value="">
+            <input name="documento_acre" id="documento_acre" type="hidden" value="">
+            <input name="tipo_id_acre" id="tipo_id_acre" type="hidden" value="">
+            <input name="tipo_acre" id="tipo_acre" type="hidden" value="">
+            <input name="servicio_id_acre" id="servicio_id_acre" type="hidden" value="">
+            <input name="servicio_acre" id="servicio_acre" type="hidden" value="">
+            <input name="deuda_acre" id="deuda_acre" type="hidden" value=""> -->
             </div>
 
      <div class="modal-dialog modal-lg">
@@ -52,7 +62,7 @@
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidder="true">X</span>
                     </button>
-                    <h4 class="modal-title">Prosesar pago de Complas caja N° <b>{{$caja->codigo ?? ''}}</b></h4>
+                    <h4 class="modal-title">Prosesar pago de Compras caja N° <b>{{$caja->codigo ?? ''}}</b></h4>
                 </div>
                 <div class="modal-body">
                     <div class="col-md-12">
@@ -107,7 +117,7 @@
                                     </div>
                                     <!-- /.col -->
 
-                                    <div class="col-sm-2 col-xs-6">
+                                    {{-- <div class="col-sm-2 col-xs-6">
                                         <div class="description-block border-right">
 
                                             <h5 class="description-header">Bs.{{round($saldo_banco_transferencia->saldo, 2) ?? '0.00'}}</h5>
@@ -115,8 +125,7 @@
                                             <span class="description-text">TRANS</span>
                                             <input type="hidden" name="saldo_banco_transferencia" id="saldo_banco_transferencia" value="{{ floatval($saldo_banco_transferencia->saldo) ?? ' 0,00' }}">
                                         </div>
-                                        <!-- /.description-block -->
-                                    </div>
+                                    </div> --}}
                                     <!-- /.col -->
 
                                     <div class="col-sm-2 col-xs-6">
@@ -133,6 +142,7 @@
                             </div>
                         </div>
                         </div>
+
                         <div class="box box-info">
                         <div class="box-header with-border">
                             <div class="box-header with-border">
@@ -175,7 +185,7 @@
                                     </div>
                                     <!-- /.col -->
 
-                                    <div class="col-sm-3 col-xs-6">
+                                    {{-- <div class="col-sm-3 col-xs-6">
                                         <div class="description-block border-right">
                                             <span class="description-percentage text-green"><i
                                                     class="fa fa-caret-up"></i>
@@ -183,8 +193,7 @@
                                             <h5 class="description-header" name="saldo_banco_trans_resta" id="saldo_banco_trans_resta">Bs. 0</h5>
                                             <span class="description-text">TRANS</span><input type="hidden" name="trans_sistema" id="trans_sistema" value="0">
                                         </div>
-                                        <!-- /.description-block -->
-                                    </div>
+                                    </div> --}}
                                     <!-- /.col -->
 
                                     <div class="col-sm-2 col-xs-6">
@@ -199,6 +208,18 @@
                                     </div>
                                 </div>
                             </div>
+                            <table class="table no-margin">
+                                <thead>
+                                    <tr>
+                                        <th class="text-success">Descuento</th>
+                                        <th><input class="text-success" type="text" id="descuento" name="descuento" value=""></th>
+                                        <input type="hidden" id="deuda_real" name="deuda_real" value="">
+                                        <th class="text-danger">Aumento</th>
+                                        <th><input class="text-danger" type="text" id="aumento" name="aumento" value=""></th>
+                                    </tr>
+                                </thead>
+                            </table>
+
                         </div>
                         <!-- /.box-header -->
                         <div class="box-body">
@@ -208,6 +229,7 @@
                                     <tr>
                                         <th>Modo</th>
                                         <th>Cantidad</th>
+                                        <th>Tasa</th>
                                         <th>Moneda</th>
                                         <th>Dolar</th>
 
@@ -217,6 +239,7 @@
                                     <tr>
                                         <td>Dolar</td>
                                         <td><input type="text" id="cantidad_dolar_rep" name="cantidad_dolar_rep"><input type="hidden" id="TasaDolar" name="TasaDolar" value="{{$tasaDolar->tasa}}"></td>
+                                        <td><input type="text" id="tasa_dolar_rep" name="tasa_dolar_rep"></td>
                                         <td><b id="dif_moneda_dolar_to_tasa">0.00</b><input type="hidden" id="dif_moneda_dolar_to_tasa_input" name="dif_moneda_dolar_to_tasa_input"></td>
                                         <td><b id="dif_moneda_dolar_to_dolar">0.00</b><input onchange="sumar();" class="monto" type="hidden" id="dif_moneda_dolar_to_dolar_input" name="dif_moneda_dolar_to_dolar_input"></td>
 
@@ -224,6 +247,7 @@
                                     <tr>
                                         <td>Peso</td>
                                         <td><input type="text" id="cantidad_peso_rep" name="cantidad_peso_rep"><input type="hidden" id="TasaPeso" name="TasaPeso" value="{{$tasaPeso->tasa}}"></td>
+                                        <td><input type="text" id="tasa_peso_rep" name="tasa_peso_rep"></td>
                                         <td><b id="dif_moneda_peso_to_tasa">0.00</b><input type="hidden" id="dif_moneda_peso_to_tasa_input" name="dif_moneda_peso_to_tasa_input"></td>
                                         <td><b id="dif_moneda_peso_to_dolar">0.00</b><input onchange="sumar();" class="monto" type="hidden" id="dif_moneda_peso_to_dolar_input" name="dif_moneda_peso_to_dolar_input"></td>
 
@@ -231,26 +255,29 @@
                                     <tr>
                                         <td>Punto</td>
                                         <td><input type="text" id="cantidad_punto_rep" name="cantidad_punto_rep"><input type="hidden" id="TasaPunto" name="TasaPunto" value="{{$tasaTransferenciaPunto->tasa}}"></td>
+                                        <td><input type="text" id="tasa_punto_rep" name="tasa_punto_rep"></td>
                                         <td><b id="dif_moneda_punto_to_tasa">0.00</b><input type="hidden" id="dif_moneda_punto_to_tasa_input" name="dif_moneda_punto_to_tasa_input"></td>
                                         <td><b id="dif_moneda_punto_to_dolar">0.00</b><input onchange="sumar();" class="monto" type="hidden" id="dif_moneda_punto_to_dolar_input" name="dif_moneda_punto_to_dolar_input"></td>
 
                                     </tr>
-                                    <tr>
+                                    {{-- <tr>
                                         <td>Trans</td>
                                         <td><input type="text" id="cantidad_trans_rep" name="cantidad_trans_rep"><input type="hidden" id="TasaTrans" name="TasaTrans" value="{{$tasaTransferenciaPunto->tasa}}"></td>
+                                        <td><input type="text" id="tasa_trans_rep" name="tasa_trans_rep"></td>
                                         <td><b id="dif_moneda_trans_to_tasa">0.00</b><input type="hidden" id="dif_moneda_trans_to_tasa_input" name="dif_moneda_trans_to_tasa_input"></td>
                                         <td><b id="dif_moneda_trans_to_dolar">0.00</b><input onchange="sumar();" class="monto" type="hidden" id="dif_moneda_trans_to_dolar_input" name="dif_moneda_trans_to_dolar_input"></td>
 
-                                    </tr>
+                                    </tr> --}}
                                     <tr>
                                         <td>Efectivo</td>
                                         <td><input type="text" id="cantidad_efectivo_rep" name="cantidad_efectivo_rep"><input type="hidden" id="TasaBolivar" name="TasaBolivar" value="{{$tasaEfectivo->tasa}}"></td>
+                                        <td><input type="text" id="tasa_efectivo_rep" name="tasa_efectivo_rep"></td>
                                         <td><b id="dif_moneda_efectivo_to_tasa">0.00</b><input type="hidden" id="dif_moneda_efectivo_to_tasa_input" name="dif_moneda_efectivo_to_tasa_input"></td>
                                         <td><b id="dif_moneda_efectivo_to_dolar">0.00</b><input onchange="sumar();" class="monto" type="hidden" id="dif_moneda_efectivo_to_dolar_input" name="dif_moneda_efectivo_to_dolar_input"></td>
 
                                     </tr>
                                     <tr>
-                                        <td colspan="3"><h4><strong class="text-blue">Total pagado por Operador</strong></h4></td>
+                                        <td colspan="4"><h4><strong class="text-black">Total pagado por Operador</strong></h4></td>
                                         <td><h4><b id="total_operador_reg">0.00</b></h4><input type="hidden" name="total_operador_reg_input" id="total_operador_reg_input"></td>
 
                                     </tr>
@@ -258,21 +285,41 @@
                                         dd(($cajas->SumaTotalVentas + $cajas->SumaTotalServicios));
                                         @endphp --}}
                                     <tr>
-                                        <td colspan="3"><h4><strong class="text-blue">Total a pagar </strong></h4></td>
-                                        <td><h4><b id="total_sistema_reg">0.00</b></h4><input type="hidden" name="total_sistema_reg_input" id="total_sistema_reg_input" value=""></td>
+                                        <td colspan="4"><h4><strong class="text-blue">Deuda Actual </strong></h4></td>
+                                        <td><h4><b class="text-blue" id="total_sistema_reg">0.00</b></h4><input type="hidden" name="total_sistema_reg_input" id="total_sistema_reg_input" value=""></td>
 
 
                                     </tr>
                                     <tr>
-                                        <td colspan="3"><h4><strong class="text-blue">Diferencia</strong></h4></td>
-                                        <td><h4><b id="total_dif">0.00</b></h4><input type="hidden" name="total_dif_input" id="total_dif_input"></td>
+                                        <td colspan="4"><h4><strong class="text-success">Descuento </strong></h4></td>
+                                        <td><h4><b class="text-success" id="total_descuento_reg">0.00</b></h4><input type="hidden" name="total_descuento_reg_input" id="total_descuento_reg_input" value=""></td>
+                                        {{-- <td><b id="dif_moneda_efectivo_to_dolar">0.00</b><input onchange="sumar();" class="monto" type="hidden" id="dif_moneda_efectivo_to_dolar_input" name="dif_moneda_efectivo_to_dolar_input"></td> --}}
 
 
                                     </tr>
                                     <tr>
-                                        <td><h4><strong class="text-blue">Observaciones</strong></h4></td>
-                                        <input name="credito_id" id="credito_id" type="hidden" value="{{$credito_id}}">
-                                        <td colspan="4"><textarea name="Observaciones" id="Observaciones" cols="50" rows="4"></textarea></td>
+                                        <td colspan="4"><h4><strong class="text-danger">Aumento </strong></h4></td>
+                                        <td><h4><b class="text-danger" id="total_aumento_reg">0.00</b></h4><input type="hidden" name="total_aumento_reg_input" id="total_aumento_reg_input" value=""></td>
+                                        {{-- <td><b id="dif_moneda_efectivo_to_dolar">0.00</b><input onchange="sumar();" class="monto" type="hidden" id="dif_moneda_efectivo_to_dolar_input" name="dif_moneda_efectivo_to_dolar_input"></td> --}}
+
+
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4"><h4><strong class="text-info">Total a Pagar </strong></h4></td>
+                                        <td><h4><b class="text-info" id="total_pago_sistema_reg">0.00</b></h4><input type="hidden" name="total_pago_sistema_reg_inupt" id="total_pago_sistema_reg_inupt" value=""></td>
+
+
+                                    </tr>
+                                    <tr>
+                                        <td colspan="4"><h4><strong class="text-blue">Diferencia</strong></h4></td>
+                                        <td><h4><b class="text-blue" id="total_dif">0.00</b></h4><input type="hidden" name="total_dif_input" id="total_dif_input"></td>
+
+
+                                    </tr>
+                                    <tr>
+                                        <td><h4><strong class="text-black">Observaciones</strong></h4></td>
+                                        <input name="credito_id" id="credito_id" type="hidden" value="{{$credito_id ?? ''}}">
+                                        <td colspan="5"><textarea name="Observaciones" id="Observaciones" cols="50" rows="4"></textarea></td>
 
                                     </tr>
                                  </tbody>
