@@ -47,34 +47,10 @@ class VentaController extends Controller
             $restaMes = $restaMes->format('Y-m-d');
             $title='Ventas';
             $query = trim($request->get('buscarTexto'));
-            // $ventas = DB::table('ventas as v')
-            //     ->join('personas as p', 'v.persona_id', '=', 'p.id')
-            //     ->join('articulo_ventas as av', 'v.id', '=', 'av.venta_id')
-            //     ->join('cajas as c', 'c.sessioncaja_id', '=', 'v.caja_id')
-            //     ->join('users as u', 'u.id', '=', 'c.user_id')
-            //     ->select('u.name','c.user_id','v.id', 'v.fecha_hora', 'p.nombre', 'v.tipo_comprobante', 'v.serie_comprobante', 'v.num_comprobante', 'v.total_venta', 'v.estado')
-            //     ->where('v.num_comprobante', 'LIKE', '%'. $query  .'%')
-            //     ->orderBy('v.id', 'desc')
-            //     ->groupBy('u.name','c.user_id','v.id', 'v.fecha_hora', 'p.nombre', 'v.tipo_comprobante', 'v.serie_comprobante', 'v.num_comprobante', 'v.total_venta', 'v.estado')
-            //     ->get();
-                $ventas = Venta::paginate(1000);
 
-                // $ventas = DB::table('ventas as v')
-                // ->join('personas as p', 'v.persona_id', '=', 'p.id')
-                // ->join('articulo_ventas as av', 'v.id', '=', 'av.venta_id')
-                // ->join('cajas as c', 'c.sessioncaja_id', '=', 'v.caja_id')
-                // ->join('users as u', 'u.id', '=', 'c.user_id')
-                // ->select('u.name','c.user_id','v.id', 'v.fecha_hora', 'p.nombre', 'v.tipo_comprobante', 'v.serie_comprobante', 'v.num_trans', 'v.num_punto', 'v.num_comprobante', 'v.total_venta', 'v.estado')
-                // ->where('v.num_comprobante', 'LIKE', '%'. $query  .'%')
-                // ->where("v.created_at",">=",$restaMes)
-                // ->where("v.created_at","<=",$mesActual)
-                // ->orderBy('v.id', 'desc')
-                // ->groupBy('u.name','c.user_id','v.id', 'v.fecha_hora', 'p.nombre', 'v.tipo_comprobante', 'v.serie_comprobante', 'v.num_trans', 'v.num_punto', 'v.num_comprobante', 'v.total_venta', 'v.estado')
-                // ->paginate(100);
-             //dd($ventas);
+                $ventas = Venta::query()->orderBy('created_at', 'DESC')->paginate();
 
-             //$ventas = Venta::where('created_at', ">=", $restaMes)->where('created_at', "<=", $mesActual)->get();
-            //return $ventas;
+
             return view('ventas.venta.index', ["title" => $title,"ventas" => $ventas, "buscarTexto" => $query]);
         }
     }
@@ -601,6 +577,12 @@ class VentaController extends Controller
             DB::rollback();
             dd($e);
         }
+
+        $serie_comprobante = $request->get('serie_comprobante');
+
+        $printer = new PrinterController;
+
+        $printer->ticketConsumo('Consumo', $articulo_id, $serie_comprobante, $precio_venta_unidad, $cantidad, $tipo_pago_condicion, $tipo_pago, $total_venta, $UserName);
 
         return Redirect::to('ventas/venta/create')->with('success', 'La venta fué registrada exitosamente');
     }

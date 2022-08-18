@@ -40,6 +40,7 @@ class CargoController extends Controller
         ->fecha($fecha2)
         ->operador($operador)
         ->estado($estado)
+        ->orderBy('id','Desc')
         ->get();
         return view('transactions.cargos.index', compact('cargos','users'));
     }

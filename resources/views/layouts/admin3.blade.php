@@ -27,6 +27,7 @@
   <link rel="stylesheet" href="{{asset('bower_components/font-awesome/css/font-awesome.min.css')}}">
   <!-- Ionicons -->
   <link rel="stylesheet" href="{{asset('bower_components/Ionicons/css/ionicons.min.css')}}">
+  <link rel="stylesheet" href="{{asset('jquery-ui-1.12.1/jquery-ui.css')}}">
   <!-- DataTable -->
   <link rel="stylesheet" href="{{asset('Datatables/datatables.min.css')}}">
   {{-- <link rel="stylesheet" href="{{asset('Datatables/DataTables-1.10.21/css/dataTables.bootstrap4.min.css')}}"> --}}
@@ -55,6 +56,8 @@
      display: none;
 } */
 </style>
+
+@stack('css')
 </head>
 <body class="hold-transition skin-blue sidebar-mini fixed">
 <!-- Site wrapper -->
@@ -724,6 +727,8 @@
 <script src="{{asset('plugins/timepicker/bootstrap-timepicker.min.js')}}"></script>
 <!-- SlimScroll -->
 <script src="{{asset('bower_components/jquery-slimscroll/jquery.slimscroll.min.js')}}"></script>
+<!-- SlimScroll -->
+<script src="{{asset('jquery-ui-1.12.1/jquery-ui.js')}}"></script>
 <!-- iCheck 1.0.1 -->
 <script src="{{asset('plugins/iCheck/icheck.min.js')}}"></script>
 <!-- FastClick -->

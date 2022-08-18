@@ -27,7 +27,7 @@
 <div class="row">
     <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
         <h3>Listado de Artículos <a href="{{URL::action('ArticuloController@create')}}"><button class='btn btn-success'><span class='glyphicon glyphicon-plus'></span> Nuevo</button></a></h3>
-
+        <input id="buscarTexto" name="buscarTexto" type="text" class="form-control>
     </div>
 </div>
 @include('almacen.articulo.buscar')
@@ -147,7 +147,7 @@
 
                 </tfoot>
             </table>
-{{ $articulos->appends(request()->query())->links() }}
+{!! $articulos->appends(request()->query())->links() !!}
         </div>
         {{-- {{$articulos->render()}} --}}
     </div>
@@ -166,6 +166,8 @@
 <!-- /.box -->
 
     @push('sciptsMain')
+
+
 
     <script language="javascript">
 
@@ -201,6 +203,7 @@
 
 var table = jQuery(document).ready(function() {
     jQuery('#arti').DataTable({
+    order: [[0, 'desc']],
     rowReorder: {
     selector: 'td:nth-child(2)'
     },
@@ -229,7 +232,8 @@ var table = jQuery(document).ready(function() {
     processing: true,
     columnDefs: [{
     targets: 'no-sort',
-    orderable: false
+    orderable: false,
+
     }],
     dom: '<"row"<"col-sm-6"Bl><"col-sm-6"f>>' +
     '<"row"<"col-sm-12"<"table-responsive"tr>>>' +

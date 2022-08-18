@@ -204,23 +204,61 @@
             $('#credt').val(0);
             // alert('credito');
         });
-        // $("#pagar").click(function(){
-        //     alert("pagar")
-        //     let op_registrado = $('#total_operador_reg_input').val();
-        //     alert(op_registrado)
-        //     alert(numDecimal(total))
+        $("#pagar").click(function(){
 
+            let html = '';
+            let op_registrado = $('#total_operador_reg').html();
 
-        //     if(op_registrado == numDecimal(total)){
-        //         alert("sussess:")
-        //         event.preventDefault();
-        //         $( "#pagar" ).submit();
-        //     }else{
-        //         alert("ERRER: El pago debe ser exacto. Por favor verifique el monto registrado...¡")
-        //         event.preventDefault();
-        //     }
+            let saldo_banco_dolar_resta = $('#saldo_banco_dolar_resta').html();
+            let saldo_banco_dolar = $('#saldo_banco_dolar').val();
+            let cantidad_dolar_rep = $('#cantidad_dolar_rep').val();
 
-        // });
+            let saldo_banco_peso_resta = $('#saldo_banco_peso_resta').html();
+            let saldo_banco_peso = $('#saldo_banco_peso').val();
+            let cantidad_peso_rep = $('#cantidad_peso_rep').val();
+
+            let saldo_banco_punto_resta = $('#saldo_banco_punto_resta').html();
+            let saldo_banco_punto = $('#saldo_banco_punto').val();
+            let cantidad_punto_rep = $('#cantidad_punto_rep').val();
+
+            let saldo_banco_efectivo_resta = $('#saldo_banco_efectivo_resta').html();
+            let saldo_banco_bolivar = $('#saldo_banco_bolivar').val();
+            let cantidad_efectivo_rep = $('#cantidad_efectivo_rep').val();
+
+            if(op_registrado > 0){
+                if(saldo_banco_dolar_resta < 0 && cantidad_dolar_rep > 0){
+                    html += '\n----------------------------------------------------------------'
+                    html += '\nCuenta en Dolares -> Saldo insuficiente. \nSaldo diponible: ' + numDecimal(saldo_banco_dolar) + ' Monto a pagar: ' + numDecimal(cantidad_dolar_rep);
+                }
+
+                if(saldo_banco_peso_resta < 0 && cantidad_peso_rep > 0){
+                    html += '\n----------------------------------------------------------------'
+                    html += '\nCuenta en Pesos -> Saldo insuficiente. \nSaldo diponible: ' + numDecimal(saldo_banco_peso) + ' Monto a pagar: ' + numDecimal(cantidad_peso_rep);
+                }
+
+                if(saldo_banco_punto_resta < 0 && cantidad_punto_rep > 0){
+                    html += '\n----------------------------------------------------------------'
+                    html += '\nCuenta en Punto -> Saldo insuficiente. \nSaldo diponible: ' + numDecimal(saldo_banco_punto) + ' Monto a pagar: ' + numDecimal(cantidad_punto_rep);
+                }
+
+                if(saldo_banco_efectivo_resta < 0 && cantidad_efectivo_rep > 0){
+                    html += '\n----------------------------------------------------------------'
+                    html += '\nCuenta en Bolivares -> Saldo insuficiente. \nSaldo diponible: ' + numDecimal(saldo_banco_bolivar) + ' Monto a pagar: ' + numDecimal(cantidad_efectivo_rep);
+                }
+
+                if(!html == ''){
+                    alert('Error...!'+html)
+                    event.preventDefault();
+                }else{
+                    $( "#pagar" ).submit();
+                }
+
+            }else{
+                alert('Error...! Debe realizar el pago para procesar esta factura.')
+                event.preventDefault();
+            }
+
+        });
     });
 
     var cont=0;

@@ -52,7 +52,7 @@ class ArticuloController extends Controller
 
 
             if (empty($name) and empty($codigo) and empty($venderal) and empty($categorias_id)){
-                $articulos = Articulo::paginate(1000);
+                $articulos = Articulo::paginate();
             }else{
 
             // Traemos los datos
@@ -64,7 +64,7 @@ class ArticuloController extends Controller
             ->where('articulos.estado', 'Activo')
             // ->select('a.id', 'a.codigo', 'a.nombre', 'a.stock', 'a.precio_costo', 'a.unidades', 'a.descripcion', 'a.imagen', 'a.estado', 'c.nombre as categoria')
             ->orderBy('id', 'desc')
-            ->paginate(1000);
+            ->paginate();
             }
             // return $articulos;
 // return $articulos;

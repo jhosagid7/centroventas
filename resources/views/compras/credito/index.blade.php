@@ -151,6 +151,7 @@
 
         var table = jQuery(document).ready(function() {
     jQuery('#ven').DataTable({
+    order: [[0, 'desc']],
     rowReorder: {
     selector: 'td:nth-child(2)'
     },

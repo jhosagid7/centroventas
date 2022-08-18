@@ -50,12 +50,13 @@ class ReporteController extends Controller
         //     return view("almacen.categoria.index",["categorias"=>$categorias]);
         // }
 
-        $articulos = Articulo_venta::tipo($tipo)->fecha($fecha2)->paginate(1000);
+        $articulos = Articulo_venta::tipo($tipo)->fecha($fecha2)->paginate(10000);
 
         $title = 'Reporte de Productos Vendidos';
         $articulos = Articulo_venta::join('articulos', 'articulo_ventas.articulo_id', '=', 'articulos.id')
         ->join('ventas', 'articulo_ventas.venta_id', '=', 'ventas.id')
         ->where('ventas.estado', '=','Aceptada')
+        // ->where('ventas.status', '=','Pagado')
         // ->name($name)
         ->tipo($tipo)
         // ->description($description)

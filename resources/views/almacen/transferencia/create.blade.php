@@ -185,6 +185,7 @@
 @push('sciptsMain')
 <script>
     $(document).ready(function(){
+        $('.select2').select2();
         $("#guardar").hide();
         $("#info").hide();
         $("#bt_add").hide("linear");

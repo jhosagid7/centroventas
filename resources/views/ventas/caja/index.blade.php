@@ -671,6 +671,7 @@
 
             $(document).ready(function() {
                 var dataTable = $('#ven').dataTable({
+                    order: [[0, 'desc']],
                     "language": {
                         "info": "_TOTAL_ registros",
                         "search": "Buscar",

@@ -1,6 +1,21 @@
 @extends ('layouts.admin3') @section('contenido')
+@push('css')
 
-
+<style>
+    .ui-autocomplete {
+      max-height: 300px;
+      overflow-y: auto;
+      /* prevent horizontal scrollbar */
+      overflow-x: hidden;
+    }
+    /* IE 6 doesn't support max-height
+     * we use height instead, but this forces the menu to always be this tall
+     */
+    * html .ui-autocomplete {
+      height: 300px;
+    }
+    </style>
+@endpush
     <!-- Main content -->
     <section class="content">
 
@@ -128,6 +143,7 @@
     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
         <div class="form-group">
             <label for="imagen">Imagen</label>
+            <input id="prueba" type="text">
             <input type="file" name="imagen" class="form-control" accept="image/*">
         </div>
     </div>
@@ -147,10 +163,39 @@
 {{-- fin de la cabecera de box --}}
 
 </div>
+
+
     </section>
 <!-- /.box -->
 
 @push('sciptsMain')
+
+<script>
+    $('#nombre').autocomplete({
+        source: function (request, response) {
+            $.ajax({
+                url: "{{ route('search.articulos') }}",
+                dataType: 'json',
+                data: {
+                    term: request.term
+                },
+                success: function (data) {
+                    response(data)
+                    console.log('respuesta ', data.item);
+
+                }
+            });
+
+        },
+        minLength: 1,
+        select: function( event, ui ) {
+            // alert(ui.item.label);
+            $('#prueba').val(ui.item.codigo)
+            // return false;
+        }
+    });
+
+</script>
   <script>
 
 
@@ -158,6 +203,10 @@ $(document).ready(function () {
     $("#nombre").keyup(function () {
         var value = $(this).val();
         $("#descripcion").val(value);
+    });
+
+    $("#nombre").blur(function () {
+        $("#nombre").keyup();
     });
 });
 $(document).ready(function() {

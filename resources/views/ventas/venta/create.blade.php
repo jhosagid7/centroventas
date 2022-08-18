@@ -1,6 +1,22 @@
 @extends ('layouts.admin3')
 @section('contenido')
+@push('css')
 
+<style>
+    .ui-autocomplete {
+      max-height: 300px;
+      overflow-y: auto;
+      /* prevent horizontal scrollbar */
+      overflow-x: hidden;
+    }
+    /* IE 6 doesn't support max-height
+     * we use height instead, but this forces the menu to always be this tall
+     */
+    * html .ui-autocomplete {
+      height: 300px;
+    }
+    </style>
+@endpush
     <div class="row">
         <div class="col-lg-6">
 
@@ -474,14 +490,16 @@
                                                     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                                                         <div class="form-group">
                                                             <label for="articulo">Artículo</label>
-                                                            <select autofocus name="jidarticulo" id="jidarticulo" class="form-control selectpicker" data-live-search="true">
+                                                            <input type="text" name="nombrea" id="nombrea"
+                                                                class="form-control" placeholder="Buscar articulo...">
+                                                            {{-- <select autofocus name="jidarticulo" id="jidarticulo" class="form-control selectpicker" data-live-search="true">
                                                                 <option value="0">Seleccione Articulo</option>
                                                                 @foreach ($articulos as $articulo)
                                                                     <option
                                                                         value="{{ $articulo->id }}_{{ $articulo->stock }}_{{ $articulo->precio_costo }}_{{ $articulo->nombre }}_{{ $articulo->porEspecial ?? '' }}_{{ $articulo->isDolar ?? '' }}_{{ $articulo->isPeso ?? '' }}_{{ $articulo->isTransPunto ?? '' }}_{{ $articulo->isMixto ?? '' }}_{{ $articulo->isEfectivo ?? '' }}_{{ $articulo->isKilo ?? '' }}">
                                                                         {{ $articulo->articulo }}</option>
                                                                 @endforeach
-                                                            </select>
+                                                            </select> --}}
                                                         </div>
                                                     </div>
                                                     <div class="col-lg-3 col-sm-3 col-md-3 col-xs-12">
@@ -913,7 +931,7 @@
     @push('sciptsMain')
         <script>
             $(document).ready(function() {
-
+                $('.select2').select2();
                 $('#credito').hide();
                 $("#dataCliente").on("change", function () {
 
@@ -1084,7 +1102,9 @@
         <script>
             var cont            = 0;
             var total           = parseFloat(0.00);
-            var porEspecial     = null;
+            var id              = null;
+            var articulo        = null;
+            var porEspecial     = 0;
             var isDolar         = null;
             var isPeso          = null;
             var isTransPunto    = null;
@@ -1139,8 +1159,10 @@
 
             $("#guardar").hide();
             $("#gestionpago").hide();
-            $("#jidarticulo").change(showValues);
-            $("#jidarticulo").change(por);
+            // $("#jidarticulo").change(showValues);
+            // $("#jidarticulo").change(por);
+            // $("#jidarticulo").change(showValues);
+            $("#nombrea").blur(por);
             $('#bt_addD').hide();
             $('#bt_addP').hide();
             $('#bt_addTP').hide();
@@ -1791,54 +1813,129 @@
 
             var entrada = {}
             var stock_temp = []
-            function showValues() {
-                // alert('show');
-                datosArticulo = document.getElementById('jidarticulo').value.split('_');
-                // $("#jprecio_venta").val(datosArticulo[2]);
-                $("#jprecio_compra").val(datosArticulo[2]);
-                $("#jstock").val(datosArticulo[1]);
-                $("#jstock").data("limit", datosArticulo[1]);
-                $("#jstock").data("id", datosArticulo[0]);
+            // function showValues() {
+            //     // alert('show');
+            //     datosArticulo = document.getElementById('jidarticulo').value.split('_');
+            //     // $("#jprecio_venta").val(datosArticulo[2]);
+            //     $("#jprecio_compra").val(datosArticulo[2]);
+            //     $("#jstock").val(datosArticulo[1]);
+            //     $("#jstock").data("limit", datosArticulo[1]);
+            //     $("#jstock").data("id", datosArticulo[0]);
 
-                entrada = {'id':datosArticulo[0],'stock':datosArticulo[1],'cantidad_venta':0};
-
-
-                $('.Can_Produc').keyup();
+            //     entrada = {'id':datosArticulo[0],'stock':datosArticulo[1],'cantidad_venta':0};
 
 
-                console.log(entrada)
-                // console.log(stock_temp[0].cantidad_venta)
-                // console.log(stock_temp)
-                console.log('>>>>>>>>>>>>>>>>>>>>>>>>>')
-
-                stock           = datosArticulo[1];
-                porEspecial     = datosArticulo[4];
-                isDolar         = datosArticulo[5];
-                isPeso          = datosArticulo[6];
-                isTransPunto    = datosArticulo[7];
-                isMixto         = datosArticulo[8];
-                isEfectivo      = datosArticulo[9];
-                isKilo          = datosArticulo[10];
-                // $("#jmarjen_venta_dolar").val(12);
-                // alert(isKilo);
-
-               var exkilo = 0;
-               var exgramos = 0;
-
-               var res = divisorEnteroDecimala(stock);
-
-               exkilo = res[0];
-               exgramos = res[1];
-
-                $("#exkilo").html(exkilo);
-                $("#exgramos").html(fijaLargoDerecha(exgramos));
-                $("#stockRealKilos").val(stock);
-
-                $("#restaKilos").val(stock);
+            //     $('.Can_Produc').keyup();
 
 
+            //     console.log(entrada)
+            //     // console.log(stock_temp[0].cantidad_venta)
+            //     // console.log(stock_temp)
+            //     console.log('>>>>>>>>>>>>>>>>>>>>>>>>>')
 
-            }
+            //     stock           = datosArticulo[1];
+            //     porEspecial     = datosArticulo[4];
+            //     isDolar         = datosArticulo[5];
+            //     isPeso          = datosArticulo[6];
+            //     isTransPunto    = datosArticulo[7];
+            //     isMixto         = datosArticulo[8];
+            //     isEfectivo      = datosArticulo[9];
+            //     isKilo          = datosArticulo[10];
+            //     // $("#jmarjen_venta_dolar").val(12);
+            //     // alert(isKilo);
+
+            //    var exkilo = 0;
+            //    var exgramos = 0;
+
+            //    var res = divisorEnteroDecimala(stock);
+
+            //    exkilo = res[0];
+            //    exgramos = res[1];
+
+            //     $("#exkilo").html(exkilo);
+            //     $("#exgramos").html(fijaLargoDerecha(exgramos));
+            //     $("#stockRealKilos").val(stock);
+
+            //     $("#restaKilos").val(stock);
+
+
+
+            // }
+
+            $("#nombrea").on('click', function() {
+                $("#nombrea").val('');
+                clear();
+            });
+
+            $('#nombrea').autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: "{{ route('search.articulos.ventas') }}",
+                        dataType: 'json',
+                        data: {
+                            term: request.term
+                        },
+                        success: function (data) {
+                            response(data)
+                            console.log('respuesta ', data.item);
+
+                        }
+                    });
+
+                },
+                minLength: 1,
+                select: function( event, ui ) {
+                    // alert(ui.item.label);
+                    // $('#prueba').val(ui.item.codigo)
+                    // return false;
+
+                    $("#jprecio_compra").val(ui.item.precio_costo);
+                        $("#jstock").val(ui.item.stock);
+                        $("#jstock").data("limit", ui.item.stock);
+                        $("#jstock").data("id", ui.item.id);
+
+                        entrada = {'id':ui.item.id,'stock':ui.item.stock,'cantidad_venta':0};
+
+
+                        $('.Can_Produc').keyup();
+
+
+                        console.log(entrada)
+                        // console.log(stock_temp[0].cantidad_venta)
+                        // console.log(stock_temp)
+                        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>')
+
+                        id           = ui.item.id;
+                        articulo           = ui.item.nombre;
+                        stock           = ui.item.stock;
+                        porEspecial     = ui.item.porEspecial ?? 0.00;
+                        isDolar         = ui.item.isDolar;
+                        isPeso          = ui.item.isPeso;
+                        isTransPunto    = ui.item.isTransPunto;
+                        isMixto         = ui.item.isMixto;
+                        isEfectivo      = ui.item.isEfectivo;
+                        isKilo          = ui.item.isKilo;
+                        // $("#jmarjen_venta_dolar").val(12);
+                        // alert(isKilo);
+
+                    var exkilo = 0;
+                    var exgramos = 0;
+
+                    var res = divisorEnteroDecimala(stock);
+
+                    exkilo = res[0];
+                    exgramos = res[1];
+
+                        $("#exkilo").html(exkilo);
+                        $("#exgramos").html(fijaLargoDerecha(exgramos));
+                        $("#stockRealKilos").val(stock);
+
+                        $("#restaKilos").val(stock);
+
+                        document.getElementById("jcantidad").focus();
+                        $("#nombrea").val('');
+                }
+            });
 
 
             $(document).ready(function() {
@@ -2068,17 +2165,19 @@
             });
 
             focusMethod = function getFocus() {
-                document.getElementById("jidarticulo").focus();
-                $("#jidarticulo").val('default');
-                $("#jidarticulo").selectpicker("refresh");
+                document.getElementById("nombrea").focus();
+                $("#nombrea").val('');
+                // $("#jidarticulo").selectpicker("refresh");
             }
 
             function add_article() {
-                datosArticulo = document.getElementById('jidarticulo').value.split('_');
+                // datosArticulo = document.getElementById('jidarticulo').value.split('_');
 
 
-                idarticulo = datosArticulo[0];
-                articulo = datosArticulo[3];
+                idarticulo = id;
+                articulo = articulo;
+                // idarticulo = datosArticulo[0];
+                // articulo = datosArticulo[3];
 
 
 
@@ -2113,6 +2212,8 @@
 
 
                 stock = $("#jstock").val();
+
+                // alert(idarticulo + ' - ' + cantidad + ' - ' + precio_venta)
 
                 if (idarticulo != "" && cantidad != "" && cantidad > 0 && precio_venta != "") {
                     var stock = parseInt(stock)
@@ -2291,6 +2392,10 @@
                         $('#gestionpago').hide("linear");
 
                     } else {
+                        if(stock <= 0){
+                            document.getElementById("nombrea").focus();
+                            $("#nombrea").val('');
+                        }
                         alert('La cantidad a vender supera el stock...!');
                         $("#jcantidad").val('');
                         // $("#jstock").val('');
@@ -2301,6 +2406,8 @@
 
                 } else {
                     alert("Error al ingresar el detalle de la venta, revise los datos del articulo");
+                    document.getElementById("nombrea").focus();
+                    $("#nombrea").val('');
                 }
             };
 

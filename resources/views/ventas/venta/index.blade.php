@@ -125,47 +125,47 @@
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        var table = jQuery(document).ready(function() {
-    jQuery('#ven').DataTable({
-    order: [[ 0, 'desc' ]],
-    rowReorder: {
-    selector: 'td:nth-child(2)'
-    },
-    responsive: true,
-    language: {
-                        "info": "_TOTAL_ registros",
-                        "search": "Buscar",
-                        "paginate": {
-                            "next": "Siguiente",
-                            "previous": "Anterior",
+var table = jQuery(document).ready(function() {
+    $('#ven').DataTable({
+        order: [[ 0, 'desc' ]],
+        rowReorder: {
+        selector: 'td:nth-child(2)'
+        },
+        responsive: true,
+        language: {
+                            "info": "_TOTAL_ registros",
+                            "search": "Buscar",
+                            "paginate": {
+                                "next": "Siguiente",
+                                "previous": "Anterior",
+                            },
+                            "lengthMenu": 'Mostrar <select >'+
+                                        '<option value="5">5</option>'+
+                                        '<option value="10">10</option>'+
+                                        '<option value="-1">Todos</option>'+
+                                        '</select> registros',
+                            "loadingRecords": "Cargando...",
+                            "processing": "Procesando...",
+                            "emptyTable": "No hay datos",
+                            "zeroRecords": "No hay coincidencias",
+                            "infoEmpty": "",
+                            "infoFiltered": ""
                         },
-                        "lengthMenu": 'Mostrar <select >'+
-                                    '<option value="5">5</option>'+
-                                    '<option value="10">10</option>'+
-                                    '<option value="-1">Todos</option>'+
-                                    '</select> registros',
-                        "loadingRecords": "Cargando...",
-                        "processing": "Procesando...",
-                        "emptyTable": "No hay datos",
-                        "zeroRecords": "No hay coincidencias",
-                        "infoEmpty": "",
-                        "infoFiltered": ""
-                    },
-    iDisplayLength : 5,
-    paging: true,
-    processing: true,
+        iDisplayLength : 5,
+        paging: true,
+        processing: true,
 
-    columnDefs: [{
-    targets: 'no-sort',
-    // orderable: true
-    }],
-    dom: '<"row"<"col-sm-6"Bl><"col-sm-6"f>>' +
-    '<"row"<"col-sm-12"<"table-responsive"tr>>>' +
-    '<"row"<"col-sm-5"i><"col-sm-7"p>>',//'lBfrtip',
-    fixedHeader: {
-    header: true
-  },
-    buttons:[
+        columnDefs: [{
+        targets: 'no-sort',
+        // orderable: true
+        }],
+        dom: '<"row"<"col-sm-6"Bl><"col-sm-6"f>>' +
+        '<"row"<"col-sm-12"<"table-responsive"tr>>>' +
+        '<"row"<"col-sm-5"i><"col-sm-7"p>>',//'lBfrtip',
+        fixedHeader: {
+        header: true
+        },
+        buttons:[
                     {
                     extend:'excelHtml5',
                     text: '<i class="fa fa-file-excel-o fa-inverse"></i>',
@@ -223,7 +223,7 @@
                     },
                 ],
 
-    "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]]
+        "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]]
     } );
 
 

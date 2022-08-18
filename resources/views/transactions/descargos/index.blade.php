@@ -125,6 +125,7 @@
     <script>
        var table = jQuery(document).ready(function() {
     jQuery('#cate').DataTable({
+    order: [[0, 'desc']],
     rowReorder: {
     selector: 'td:nth-child(2)'
     },

@@ -1,6 +1,30 @@
 @extends ('layouts.admin3')
 @section('contenido')
 
+@push('css')
+
+<style>
+    .ui-autocomplete {
+      max-height: 300px;
+      overflow-y: auto;
+      /* prevent horizontal scrollbar */
+      overflow-x: hidden;
+    }
+    /* IE 6 doesn't support max-height
+     * we use height instead, but this forces the menu to always be this tall
+     */
+    * html .ui-autocomplete {
+      height: 300px;
+    }
+
+    .ui-autocomplete-category {
+    font-weight: bold;
+    padding: .2em .4em;
+    margin: .8em 0 .2em;
+    line-height: 1.5;
+  }
+    </style>
+@endpush
 <!-- Default box -->
 <!-- Content Header (Page header) -->
     {{-- <section class="content-header">
@@ -111,13 +135,15 @@
                 <div class="panel-body">
                     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                         <div class="form-group">
+                            {{-- <input id="nombrea" type="text"> --}}
                             <label for="articulo">Artículo</label>
-                            <select name="jidarticulo" id="jidarticulo" class="form-control selectpicker" data-live-search="true">
+                            <input type="text" name="nombrea" id="nombrea"  class="form-control" placeholder="Buscar Producto...">
+
+                            {{-- <select name="jidarticulo" id="jidarticulo" class="form-control selectpicker" data-live-search="true">
                                 @foreach ($articulos as $articulo)
-                                {{-- <option value="0">Seleccione Producto</option> --}}
                             <option value="{{$articulo->id}}_{{ $articulo->precio_costo }}_{{ $articulo->nombre }}">{{$articulo->nombre}}_{{$articulo->codigo}}</option>
                                 @endforeach
-                            </select>
+                            </select> --}}
                         </div>
                     </div>
                     <div class="col-lg-3 col-sm-3 col-md-3 col-xs-12">
@@ -200,6 +226,10 @@
 <script>
 
     $(document).ready(function(){
+
+        var id              = null;
+        var articulo        = null;
+
         focusMethod();
         $("#bt_add").click(function(){
             add_article();
@@ -212,7 +242,7 @@
     var precio_venta=parseFloat(0.00);
 
 
-    $("#jidarticulo").change(showValues);
+    // $("#jidarticulo").change(showValues);
     $("#autorizado_po").change('');
     $("#proposito").change('');
     $("#detalle").change('');
@@ -226,33 +256,73 @@
                 // document.getElementById('jidarticulo').val('0');
             });
 
+    // focusMethod = function getFocus() {
+    //             document.getElementById("jidarticulo").focus();
+    //             $("#jidarticulo").val('default');
+    //             $("#jidarticulo").selectpicker("refresh");
+    //         }
+
     focusMethod = function getFocus() {
-                document.getElementById("jidarticulo").focus();
-                $("#jidarticulo").val('default');
-                $("#jidarticulo").selectpicker("refresh");
+                document.getElementById("nombrea").focus();
+                $("#nombrea").val('');
+                // $("#jidarticulo").selectpicker("refresh");
             }
 
-            function showValues() {
-                // alert('show');
-                datosArticulo = document.getElementById('jidarticulo').value.split('_');
-                // $("#jprecio_venta").val(datosArticulo[2]);
-                $("#jprecio_compra").val(datosArticulo[1]);
-                // $("#jstock").val(datosArticulo[2]);
+            // function showValues() {
+            //     // alert('show');
+            //     // datosArticulo = document.getElementById('jidarticulo').value.split('_');
+            //     // $("#jprecio_venta").val(datosArticulo[2]);
+            //     $("#jprecio_compra").val(datosArticulo[1]);
+            //     // $("#jstock").val(datosArticulo[2]);
 
 
-                // $("#jmarjen_venta_dolar").val(12);
+            //     // $("#jmarjen_venta_dolar").val(12);
 
 
-            }
+            // }
+
+            $("#nombrea").on('click', function() {
+                $("#nombrea").val('');
+                clear();
+            });
+
+            $('#nombrea').autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: "{{ route('search.articulos.cargos') }}",
+                        dataType: 'json',
+                        data: {
+                            term: request.term
+                        },
+                        success: function (data) {
+                            response(data)
+                            console.log('respuesta ', data.item);
+
+                        }
+                    });
+
+                },
+                minLength: 1,
+                select: function( event, ui ) {
+
+                    $("#jprecio_compra").val(ui.item.precio_costo);
+                    id          = ui.item.id;
+                    articulo    = ui.item.nombre;
+
+                    document.getElementById("jcantidad").focus();
+                    $("#nombrea").val('');
+                }
+            });
 
     function add_article(){
-        datosArticulo = document.getElementById('jidarticulo').value.split('_');
+        // datosArticulo = document.getElementById('jidarticulo').value.split('_');
 
+        idarticulo = id;
+        articulo = articulo;
+        // articulo = datosArticulo[2];
+        // //         precio_costo = datosArticulo[1];
 
-        articulo = datosArticulo[2];
-        //         precio_costo = datosArticulo[1];
-
-        idarticulo=datosArticulo[0];
+        // idarticulo=datosArticulo[0];
         // articulo=$("#jidarticulo option:selected").text();
         cantidad=$("#jcantidad").val();
         precio_compra=$("#jprecio_compra").val();
@@ -335,6 +405,8 @@ return false;
     });
 
 </script>
+
+
 @endpush
 
 @endsection

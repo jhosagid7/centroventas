@@ -398,7 +398,7 @@ class DetalleCreditoIngresoController extends Controller
                 }
 
             }
-            if($total_operador_reg_input == (($creditos->resta + $total_aumento_reg_input) - $total_descuento_reg_input)){
+            if($total_operador_reg_input >= (($creditos->resta + $total_aumento_reg_input) - $total_descuento_reg_input)){
                 $UserName = $request->user()->name;
                 $UserId = $request->user()->id;
                 $caja =  Sessioncaja::where('estado', 'Abierta')->orderBy('id', 'desc')->first();

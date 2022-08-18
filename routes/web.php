@@ -73,6 +73,7 @@ Route::get('/origen', 'TransferenciaController@getProductoOrigenes')->name('orig
 Route::get('/destino', 'TransferenciaController@getProductoDestinos')->name('destino');
 Route::get('/servicios', 'ServicioController@getServiciosOrigenes')->name('servicios');
 
+
 Route::resource('reportes/ventas', 'ReporteController');
 // Route::resource('reportes/ventas', 'ReporteController');
 
@@ -98,3 +99,13 @@ Route::resource('/descargos', 'DescargoController', ['except'=>[
 
 Route::get('/ventas/consulta', 'ConsultaController@precioVenta')->name('consulta');
 Route::resource('/bancos/banco', 'BancoController');
+
+Route::get('datatable/ventas', 'DatatableController@ventas')->name('datatable.venta');
+
+Route::get('search/articulos', 'SearchController@articulos')->name('search.articulos');
+Route::get('search/articulos/ventas', 'SearchController@articulosVentas')->name('search.articulos.ventas');
+Route::get('search/articulos/cargos', 'SearchController@articulosCargos')->name('search.articulos.cargos');
+
+//Creamos rutas para la Impresion de tickets
+Route::get('print/venta/{$id}','PrinterController@ticketVenta');
+// Route::get('print/credito-pagado/{$id}','PrinterController@ticketCreditoPagado');

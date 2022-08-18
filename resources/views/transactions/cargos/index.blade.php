@@ -38,7 +38,7 @@
     </div>
     <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
         {{-- <h3>Listado de Categorias <a href="" data-target="#modal-nuevo" data-toggle="modal"><button class='btn btn-success'><span class='glyphicon glyphicon-plus'></span>Nuevo</button></a></h3> --}}
-        <h3>Listado de Cargos {{ config('app.name', 'VillaSoft') }}
+        <h3>Listado de Cargos
 
 
 
@@ -56,6 +56,7 @@
                 <thead>
                     <tr>
                         {{-- <th>Id</th> --}}
+                        <th>id</th>
                         <th>Código</th>
                         <th>Tipo Op</th>
                         <th>Autorizado por Dolar</th>
@@ -71,6 +72,7 @@
                     @foreach ($cargos as $cargo)
                     <tr>
                         {{-- <td>{{ $cargo->id }}</td> --}}
+                        <td>{{ $cargo->id }}</td>
                         <td>{{ $cargo->num_documento }}</td>
                         <td>{{ $cargo->tipo_operacion }}</td>
                         <td>{{ $cargo->autorizado_por }}</td>
@@ -123,6 +125,7 @@
     <script>
        var table = jQuery(document).ready(function() {
     jQuery('#cate').DataTable({
+    order: [[0, 'desc']],
     rowReorder: {
     selector: 'td:nth-child(2)'
     },
@@ -168,7 +171,7 @@
                     },
                     alignment: "center",
 
-                    exportOptions: { columns: [0,1,2,3,4,5,6] } ,
+                    exportOptions: { columns: [0,1,2,3,4,5,6,7,8] } ,
                     // pageSize : 'A0',
                     orientation : 'portrait',
                     pageSize : 'LEGAL',

@@ -71,7 +71,7 @@ class DetalleCreditoVentaController extends Controller
      */
     public function store(Request $request)
     {
-        // return $request;
+        return $request;
         $contd = $request->get('contd');
         $credito_id = $request->get('credito_id');
 
@@ -234,7 +234,7 @@ class DetalleCreditoVentaController extends Controller
                 }
 
             }
-            if($total_operador_reg_input == $creditos->resta){
+            if($total_operador_reg_input >= $creditos->resta){
                 $UserName = $request->user()->name;
                 $UserId = $request->user()->id;
                 $caja =  Caja::where('hora_cierre', 'Sin cerrar')->orderBy('id', 'desc')->first();
@@ -357,6 +357,11 @@ class DetalleCreditoVentaController extends Controller
                     $isDeuda = ClienteCredito::where('persona_id', $cliente->id)->first();
 
                     if(isset($isDeuda) and $isDeuda->total_factura > 0){
+                        if($total_operador_reg_input > $creditos->resta){
+                            $total_operador_reg_input = $creditos->resta;
+                        }elseif ($total_operador_reg_input == $creditos->resta) {
+                            $total_operador_reg_input = $total_operador_reg_input;
+                        }
                         // return $isDeuda->total_factura;
                         $clienteCredito = ClienteCredito::findOrFail($isDeuda->id);
                         $clienteCredito->total_factura -= 1;
