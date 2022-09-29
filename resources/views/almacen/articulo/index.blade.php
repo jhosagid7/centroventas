@@ -23,135 +23,39 @@
             </div>
           </div>
           <div class="box-body">
-        {{-- cabecera de box --}}
+          
 <div class="row">
-    <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
-        <h3>Listado de Artículos <a href="{{URL::action('ArticuloController@create')}}"><button class='btn btn-success'><span class='glyphicon glyphicon-plus'></span> Nuevo</button></a></h3>
-        <input id="buscarTexto" name="buscarTexto" type="text" class="form-control>
+@include('almacen.articulo.buscar')
+
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    
+        <h3>Listado de Artículos <a href="{{ URL::action('ArticuloController@create') }}"><button class='btn btn-success'><span class='glyphicon glyphicon-plus'></span> Nuevo</button></a></h3>
+        <input id="buscarTexto" name="buscarTexto" type="hidden" class="form-control">
     </div>
 </div>
-@include('almacen.articulo.buscar')
 <div class="row">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="table-responsive">
-            @include('custom.message')
-            <table id="arti" class="table table-striped table-bordered table-condensed table-hover">
+            <table id="arti" class="data-table table table-striped table-responsive table-bordered table-condensed table-hover">
                 <thead>
                     <th>Id</th>
-                    <th class="hidden">Categoría</th>
                     <th>Nombre</th>
-                    <th class="hidden">Código</th>
-                    <th>Código</th>
                     <th>Stock</th>
                     <th>Unidades</th>
+                    <th>Tipo venta</th>
                     <th>Precio costo</th>
-                    <th>Precio Dolar</th>
-                    <th>Precio Peso</th>
-                    <th>Precio Trans/Punto</th>
-                    <th>Precio Mixto</th>
-                    <th>Precio Efectivo</th>
-                    <th class="hidden">Descripción</th>
-                    {{-- <th>imagen</th> --}}
-                    <th>Estado</th>
-                    <th>Opciones</th>
+                    <th>Area</th>
+                    <!-- <th>Precio Dolar</th> -->
+                    <th>Acciones</th>
+                    
                 </thead>
-                <tbody>
-                    @php
-                        $total_costo = 0;
-                    @endphp
-                    @foreach ($articulos as $art)
-
-                    @php
-                    $total_costo += $art->precio_costo;
-                    @endphp
-
-                    @php
-                    if ($art->precio_costo){
-
-                        if ($art->isDolar){
-                            $precio_venta_dolar = $art->precio_costo + $art->precio_costo * ($art->porEspecial/100);
-                        }else{
-                            $precio_venta_dolar = $art->precio_costo + $art->precio_costo * ($tasaDolar->porcentaje_ganancia/100);
-                        }
-                        if ($art->isPeso){
-                            $precio_venta_peso = $art->precio_costo + $art->precio_costo * ($art->porEspecial/100);
-                        }else{
-                            $precio_venta_peso = $art->precio_costo + $art->precio_costo * ($tasaPeso->porcentaje_ganancia/100);
-                        }
-                        if ($art->isTransPunto){
-                            $precio_venta_tran_p = $art->precio_costo + $art->precio_costo * ($art->porEspecial/100);
-                        }else{
-                            $precio_venta_tran_p = $art->precio_costo + $art->precio_costo * ($tasaTransferenciaPunto->porcentaje_ganancia/100);
-                        }
-                        if ($art->isMixto){
-                            $precio_venta_mixto = $art->precio_costo + $art->precio_costo * ($art->porEspecial/100);
-                        }else{
-                            $precio_venta_mixto = $art->precio_costo + $art->precio_costo * ($tasaMixto->porcentaje_ganancia/100);
-                        }
-                        if ($art->isEfectivo){
-                            $precio_venta_efectvo = $art->precio_costo + $art->precio_costo * ($art->porEspecial/100);
-                        }else{
-                            $precio_venta_efectvo = $art->precio_costo + $art->precio_costo * ($tasaEfectivo->porcentaje_ganancia/100);
-                        }
-                    }else{
-
-                        $precio_venta_dolar = $art->precio_costo + $art->precio_costo * ($tasaDolar->porcentaje_ganancia/100);
-                        $precio_venta_peso = $art->precio_costo + $art->precio_costo * ($tasaPeso->porcentaje_ganancia/100);
-                        $precio_venta_tran_p = $art->precio_costo + $art->precio_costo * ($tasaTransferenciaPunto->porcentaje_ganancia/100);
-                        $precio_venta_mixto = $art->precio_costo + $art->precio_costo * ($tasaMixto->porcentaje_ganancia/100);
-                        $precio_venta_efectvo = $art->precio_costo + $art->precio_costo * ($tasaEfectivo->porcentaje_ganancia/100);
-                    }
-                    @endphp
-
-
-                    <tr>
-                        <td>{{ $art->id }}</td>
-                        <td class="hidden">{{ $art->categoria }}</td>
-                        <td>{{ $art->nombre }}</td>
-                        <td class="hidden">
-                            {{ $art->codigo }}
-                        </td>
-                        <td>
-                            {{ $art->codigo }}
-                            {{-- {!! DNS1D :: getBarcodeHTML ( $art->codigo , 'UPCE' ) !!} --}}
-                            {{-- {!! DNS1D::getBarcodeHTML($art->codigo, 'PHARMA2T')!!} --}}
-
-                        </td>
-                        <td>{{ $art->stock }}</td>
-                        <td>{{ $art->stock * $art->unidades ?? ' '  }}</td>
-                        <td>{{ floatval($art->precio_costo) ?? '' }}</td>
-                        <td>{{$precio_venta_dolar * $tasaDolar->tasa }}</td>
-                        <td>{{ number_format($precio_venta_peso * $tasaPeso->tasa, 2, ',', '.') }} </td>
-                        <td>{{ number_format($precio_venta_tran_p * $tasaTransferenciaPunto->tasa, 2, ',', '.') }} </td>
-                        <td>{{ number_format($precio_venta_mixto * $tasaMixto->tasa, 2, ',', '.') }} </td>
-                        <td>{{ number_format($precio_venta_efectvo * $tasaEfectivo->tasa, 2, ',', '.') }} </td>
-                        <td class="hidden">{{ $art->descripcion }}</td>
-                        {{-- <td>
-                            <img src="{{asset('imagenes/articulos/'.$art->imagen)}}" alt="{{ $art->nombre }}" height="50px" width="50px" class="img-circle">
-                        </td> --}}
-                        <td>{{ $art->estado }}</td>
-                        <td>
-                        <a href="{{URL::action('ArticuloController@edit', $art->id)}}"><button class='btn btn-info btn-sm'><span class='glyphicon glyphicon-edit'></span></button></a>
-                        <a href="" data-target="#modal-delete-{{$art->id}}" data-toggle="modal"><button class='btn btn-danger btn-sm'><i class='glyphicon glyphicon-trash'></i></button></a>
-                        {{-- <a onClick="imprimirContenido('imprimir')" class="btn btn-primary  hidden-print">
-                            <i class="fa fa-print"></i>
-                            Imprimir
-                        </a> --}}
-                    </td>
-                    </tr>
-                    @include('almacen.articulo.modal')
-                    @endforeach
-
-                </tbody>
+                
                 <tfoot>
 
                 </tfoot>
             </table>
-{!! $articulos->appends(request()->query())->links() !!}
-        </div>
-        {{-- {{$articulos->render()}} --}}
+        
     </div>
-    {{-- {!! '<img src="data:image/png;base64,' . DNS1D::getBarcodePNG('4', 'C39+',3,33,array(1,1,1), true) . '" alt="barcode"   />'!!} --}}
 
     </div>
 
@@ -201,32 +105,45 @@
     </script>
     <script>
 
-var table = jQuery(document).ready(function() {
-    jQuery('#arti').DataTable({
+$(document).ready(function() {
+    var table = $('#arti').DataTable({
+    serverSide: true,
+    ajax: "{{ url('api/producto')}}",
+    columns: [
+    {data: "id"},
+    {data: "nombre", "defaultContent": ""},
+    {data: "stock", "defaultContent": ""},
+    {data: "unidades", "defaultContent": ""},
+    {data: "vender_al", "defaultContent": ""},
+    {data: "precio_costo"},
+    {data: "area.area", "defaultContent": "<i>No establecido...</i>"},
+    {data: "btn"}
+    ],
     order: [[0, 'desc']],
+    responsive: true,
     rowReorder: {
     selector: 'td:nth-child(2)'
     },
     responsive: true,
     language: {
-                        "info": "_TOTAL_ registros",
-                        "search": "Buscar",
-                        "paginate": {
-                            "next": "Siguiente",
-                            "previous": "Anterior",
-                        },
-                        "lengthMenu": 'Mostrar <select >'+
-                                    '<option value="5">5</option>'+
-                                    '<option value="10">10</option>'+
-                                    '<option value="-1">Todos</option>'+
-                                    '</select> registros',
-                        "loadingRecords": "Cargando...",
-                        "processing": "Procesando...",
-                        "emptyTable": "No hay datos",
-                        "zeroRecords": "No hay coincidencias",
-                        "infoEmpty": "",
-                        "infoFiltered": ""
-                    },
+        "info": "_TOTAL_ registros",
+        "search": "Buscar",
+        "paginate": {
+            "next": "Siguiente",
+            "previous": "Anterior",
+        },
+        "lengthMenu": 'Mostrar <select >'+
+                    '<option value="5">5</option>'+
+                    '<option value="10">10</option>'+
+                    '<option value="-1">Todos</option>'+
+                    '</select> registros',
+        "loadingRecords": "Cargando...",
+        "processing": "Procesando...",
+        "emptyTable": "No hay datos",
+        "zeroRecords": "No hay coincidencias",
+        "infoEmpty": "",
+        "infoFiltered": ""
+    },
     iDisplayLength : 5,
     paging: true,
     processing: true,
@@ -240,132 +157,119 @@ var table = jQuery(document).ready(function() {
     '<"row"<"col-sm-5"i><"col-sm-7"p>>',//'lBfrtip',
     fixedHeader: {
     header: true
-  },
+    },
     buttons:[
-                    {
-                    extend:'excelHtml5',
-                    text: '<i class="fa fa-file-excel-o fa-inverse"></i>',
-                    title : function() {
-                    return "Listado de Artículos";
-                    },
-                    alignment: "center",
+        {
+        extend:'excelHtml5',
+        text: '<i class="fa fa-file-excel-o fa-inverse"></i>',
+        title : function() {
+        return "Listado de Artículos";
+        },
+        alignment: "center",
 
-                    exportOptions: { columns: [0,1,2,3,5,6,7,8,9,10,11,12] } ,
-                    // pageSize : 'A0',
-                    orientation : 'portrait',
-                    pageSize : 'LEGAL',
-                    titleAttr:'Exportar a Excel',
-                    className:'btn btn-success',
-                    filename: 'listadod_de_Artículos_excel'
-                    },
-                    {
-                    extend:'pdfHtml5',
-                    text: '<i class="fa fa-file-pdf-o fa-inverse"></i>',
-                    title : function() {
-                    return "Listado de Artículos";
-                    },
-                    alignment: "center",
-                    customize : function(doc){
-                    doc.styles.tableHeader.alignment = 'left'; //giustifica a sinistra titoli colonne
-                    doc.content[1].table.widths = [20,60,120,40,40,40,40,100,100,100,100,120]; //costringe le colonne ad occupare un dato spazio per gestire il baco del 100% width che non si concretizza mai
-                    },
-                    exportOptions: {
-                        columns: [0,1,2,3,5,6,7,8,9,10,11,12],
-                        stripHtml: true,
+        exportOptions: { columns: [0,1,2,3,5,6,7] } ,
+        // pageSize : 'A0',
+        orientation : 'portrait',
+        pageSize : 'LEGAL',
+        titleAttr:'Exportar a Excel',
+        className:'btn btn-success',
+        filename: 'listadod_de_Artículos_excel'
+        },
+        {
+        extend:'pdfHtml5',
+        text: '<i class="fa fa-file-pdf-o fa-inverse"></i>',
+        title : function() {
+        return "Listado de Artículos";
+        },
+        alignment: "center",
+        customize : function(doc){
+        doc.styles.tableHeader.alignment = 'left'; //giustifica a sinistra titoli colonne
+        doc.content[1].table.widths = [30,120,50,40,40,40,120,120]; //costringe le colonne ad occupare un dato spazio per gestire il baco del 100% width che non si concretizza mai
+        },
+        exportOptions: {
+            columns: [0,1,2,3,5,6],
+            stripHtml: true,
 
-                    } ,
-                    // pageSize : 'A3',
-                    orientation : 'landscape',//portrait landscape
-                    pageSize : 'LEGAL',
-                    titleAttr:'Exportar a PDF',
-                    className:'btn btn-danger',
-                    filename: 'listadod_de_Artículos_pdf'
-                    },
-                    {
-                    extend:'print',
-                    text: '<i class="fa fa-print fa-inverse"></i>',
-                    title : function() {
-                    return "Listado de Artículos";
-                    },
-                    alignment: "center",
+        } ,
+        // pageSize : 'A3',
+        orientation : 'landscape',//portrait landscape
+        pageSize : 'LEGAL',
+        titleAttr:'Exportar a PDF',
+        className:'btn btn-danger',
+        filename: 'listadod_de_Artículos_pdf'
+        },
+        {
+        extend:'print',
+        text: '<i class="fa fa-print fa-inverse"></i>',
+        title : function() {
+        return "Listado de Artículos";
+        },
+        alignment: "center",
 
-                    exportOptions: { columns: [0,1,2,3,5,6,7,8,9,10,11,12] } ,
-                    // pageSize : 'A0',
-                    orientation : 'portrait',
-                    pageSize : 'LEGAL',
-                    titleAttr:'Imprimir',
-                    className:'btn btn-info',
-                    filename: 'listadod_de_Artículos_print'
-                    },
-                ],
+        exportOptions: { columns: [0,1,2,3,5,6,7] } ,
+        // pageSize : 'A0',
+        orientation : 'portrait',
+        pageSize : 'LEGAL',
+        titleAttr:'Imprimir',
+        className:'btn btn-info',
+        filename: 'listadod_de_Artículos_print'
+        },
+        ],
 
     "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]]
     } );
 
+    // $('button').click(function () {
+    //     var data = table.$('input, select').serialize();
+    //     alert('The following data would have been submitted to the server: \n\n' + data.substr(0, 120) + '...');
+    //     return false;
+    // });
 
 
+    
 
-    } );
+    /* When click New customer button */
+    $('#new-user').click(function () {
+        $('#btn-save').val("create-user");
+        $('#user').trigger("reset");
+        $('#userCrudModal').html("Add New User");
+        $('#crud-modal').modal('show');
+    });
 
+    var APP_URL = {!! json_encode(url('/')) !!};
+    console.log(APP_URL);
+    
+    /* Delete customer */
+    $('body').on('click', '#delete-articulo', function () {
+        var articulo_id = $(this).data("id");
+        var token = $("meta[name='csrf-token']").attr("content");
+        confirm("Esta seguro de eliminar el articulo... !");
 
-    //     $(document).ready(function() {
-    //        var dataTable = $('#arti').dataTable({
-    //         "language": {
-    //                     "info": "_TOTAL_ registros",
-    //                     "search": "Buscar",
-    //                     "paginate": {
-    //                         "next": "Siguiente",
-    //                         "previous": "Anterior",
-    //                     },
-    //                     "lengthMenu": 'Mostrar <select >'+
-    //                                 '<option value="5">5</option>'+
-    //                                 '<option value="10">10</option>'+
-    //                                 '<option value="-1">Todos</option>'+
-    //                                 '</select> registros',
-    //                     "loadingRecords": "Cargando...",
-    //                     "processing": "Procesando...",
-    //                     "emptyTable": "No hay datos",
-    //                     "zeroRecords": "No hay coincidencias",
-    //                     "infoEmpty": "",
-    //                     "infoFiltered": ""
-    //                 },
-    //                 "iDisplayLength" : 5,
-    //        });
-    //        $("#buscarTexto").keyup(function() {
-    //            dataTable.fnFilter(this.value);
-    //        });
-    //    });
-    //    $(document).ready(function() {
-    //         $('#arti').DataTable({
-    //             language: { ... },
-    //             // para usar los botones
-    //             responsive: "true",
-    //             Dom: 'Bfrtilp',
-    //             Buttons:[
-    //                 {
-    //                 extend:'excelHtml5',
-    //                 text: '<li class="fas fas-file-excel"></li>',
-    //                 titleAttr:'Exportar a Excel',
-    //                 className:'btn btn-success'
-    //                 },
-    //                 {
-    //                 extend:'excelHtml5',
-    //                 text: '<li class="fas fas-file-pdf"></li>',
-    //                 titleAttr:'Exportar a PDF',
-    //                 className:'btn btn-danger'
-    //                 },
-    //                 {
-    //                 extend:'excelHtml5',
-    //                 text: '<li class="fas fas-file-print"></li>',
-    //                 titleAttr:'Imprimir',
-    //                 className:'btn btn-info'
-    //                 },
-    //             ]
-
-    //         });
-    //     });
-
-
+        $.ajax({
+        type: "DELETE",
+        // url: `/products/${articulo_id}`,"http://localhost/centroventas/public/products/"+user_id
+        // url: `http://localhost/centroventas/public/products/${articulo_id}`,
+        url: "{{ url('products/') }}/"+articulo_id,
+        data: {
+        "id": articulo_id,
+        "_token": token,
+        },
+        success: function (data) {
+            // table.ajax.url( '{{ url("api/producto")}}' ).load();
+            table.ajax.reload();
+            alert('successfully')
+        // $('#msg').html('Customer entry deleted successfully');
+        // $("#customer_id_" + articulo_id).remove();
+        
+        },
+        error: function (data) {
+            alert('Error', data)
+        console.log('Error:', data);
+        }
+        });
+    });
+    
+} );
     </script>
     @endpush
 

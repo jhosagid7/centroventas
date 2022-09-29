@@ -26,6 +26,7 @@ class DetalleCreditoVentaController extends Controller
      */
     public function index()
     {
+        
         $title='Creditos Ventas';
         // $query = trim($request->get('buscarTexto'));
         $creditos = ClienteCredito::where('total_factura', '>' , 0)->get();
@@ -55,7 +56,6 @@ class DetalleCreditoVentaController extends Controller
         $credito_id = $request->id;
 
         return view('ventas.creditos.create', compact('creditos','title',
-        'Articulo_Ingresos',
         'tasaDolar',
         'tasaPeso',
         'tasaTransferenciaPunto',
@@ -71,7 +71,7 @@ class DetalleCreditoVentaController extends Controller
      */
     public function store(Request $request)
     {
-        return $request;
+        // return $request;
         $contd = $request->get('contd');
         $credito_id = $request->get('credito_id');
 
@@ -412,7 +412,6 @@ class DetalleCreditoVentaController extends Controller
 
         return view('ventas.creditos.show', compact('creditos',
         'title',
-        'Articulo_Ingresos',
         'tasaDolar',
         'tasaPeso',
         'tasaTransferenciaPunto',

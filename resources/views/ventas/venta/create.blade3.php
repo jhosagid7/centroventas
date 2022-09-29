@@ -20,20 +20,20 @@
     <div class="row">
         <div class="col-lg-6">
 
-            
+            @include('custom.message')
         </div>
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="nav-tabs-custom margin">
             <ul class="nav nav-tabs">
-                <li ><a href="#caja" data-toggle="tab">Caja</a></li>
-                <li class="active"><a href="#ventas" data-toggle="tab">Ventas</a></li>
-                {{-- <li><a href="#tasa" data-toggle="tab"></a></li> --}}
+                <li class="active"><a href="#caja" data-toggle="tab">Caja</a></li>
+                <li><a href="#ventas" data-toggle="tab">Ventas</a></li>
+                <li><a href="#tasa" data-toggle="tab">Configurar tasa</a></li>
             </ul>
             <div class="tab-content">
                 <a href="{{URL::action('CajaController@show', $caja->id)}}"><button class='btn btn-danger btn-sm'><span class='glyphicon glyphicon-edit'> Cerrar caja</span></button></a>
-                @include('custom.message')
-                <div class="tab-pane" id="caja">
+
+                <div class="active tab-pane" id="caja">
                     <!-- Main content -->
                     <section class="content">
                         <!-- Info boxes -->
@@ -427,7 +427,7 @@
                     <!-- /.content -->
                 </div>
                 <!-- /.tab-pane -->
-                <div class="active tab-pane" id="ventas">
+                <div class="tab-pane" id="ventas">
                     <!-- Ventas -->
                     <div class="container-small text-sm">
                         <form id="form1" action="{{ route('venta.store') }}" method="POST" autocomplete="off" class="submit-prevent-form">
@@ -445,24 +445,13 @@
                             <input type="hidden" name="isCredito" id="isCredito">
                         <input id="caja_id" name="caja_id" type="hidden" value="{{$caja->id}}">
                             <div class="row">
-                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="form-group">
                                         <label for="cliente">Cliente</label>
                                         <select name="dataCliente" id="dataCliente" class="form-control selectpicker"
                                             data-live-search="true">
                                             @foreach ($clientes as $cliente)
                                             <option value="{{ $cliente->id ?? '' }}_{{ $cliente->nombre ?? '' }}_{{ $cliente->num_documento ?? '' }}_{{ $cliente->direccion ?? '' }}_{{ $cliente->isCortesia ?? '' }}_{{ $cliente->isCredito ?? '' }}_{{ $cliente->telefono ?? '' }}_{{ $cliente->limite_fecha ?? '' }}_{{ $cliente->limite_monto ?? '' }}_<?php $deuda_cliente = "App\ClienteCredito"::where('persona_id',$cliente->id)->select('total_deuda')->first(); ?>{{$deuda_cliente['total_deuda'] ?? '' }}_<?php $estado_credito = "App\ClienteCredito"::where('persona_id',$cliente->id)->select('estado_credito')->first(); ?>{{$estado_credito['estado_credito'] ?? '' }}">{{ $cliente->nombre ?? '' }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 col-md-6 col-6-12 col-xs-12">
-                                    <div class="form-group">
-                                        <label for="vendedor">Vendedor</label>
-                                        <select name="dataVendedor" id="dataVendedor" class="form-control selectpicker"
-                                            data-live-search="true">
-                                            @foreach ($vendedores as $vendedor)
-                                            <option value="{{ $vendedor->id ?? '' }}_{{ $vendedor->nombre ?? '' }}">{{ $vendedor->name ?? '' }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -501,7 +490,7 @@
                                                     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                                                         <div class="form-group">
                                                             <label for="articulo">Artículo</label>
-                                                            <input autofocus type="text" name="nombrea" id="nombrea"
+                                                            <input type="text" name="nombrea" id="nombrea"
                                                                 class="form-control" placeholder="Buscar articulo...">
                                                             {{-- <select autofocus name="jidarticulo" id="jidarticulo" class="form-control selectpicker" data-live-search="true">
                                                                 <option value="0">Seleccione Articulo</option>
@@ -1899,7 +1888,7 @@
                     });
 
                 },
-                minLength: 2,
+                minLength: 1,
                 select: function( event, ui ) {
                     // alert(ui.item.label);
                     // $('#prueba').val(ui.item.codigo)
@@ -2068,7 +2057,6 @@
                 if(precio_compra_modificado > 0){
                     precio_compra  = parseFloat($("#jprecio_compra_modificado").val());
                     precio_compra  = (precio_compra / (1 + (porDolar / 100)))
-                    
                     $("#jprecio_compra").val(precio_compra)
                 }
                 precio_compra   = parseFloat($("#jprecio_compra").val());
@@ -2147,7 +2135,7 @@
 
 
                 precio_compraD = precio_compra + margenD;
-                precio_compraD = precio_compraD.toFixed(3);
+                precio_compraD = precio_compraD;
                 $("#jprecio_venta_dolar").val(precio_compraD);
                 $("#jprecio_venta_d_dolar").val(precio_compraD);
                 $("#jprecio_venta").val(precio_compraD * tasaD);
@@ -2418,7 +2406,6 @@
                         $("#DMontoPunto").keyup();
                         $("#DMontoTrans").keyup();
                         $('#gestionpago').hide("linear");
-                        event.preventDefault();
 
                     } else {
                         if(stock <= 0){
@@ -2475,7 +2462,6 @@
             });
 
             function clear() {
-                event.preventDefault();
                 $("#jcantidad").val("");
                 $("#jstock").val("");
                 $("#jstock").data("limit", '');
@@ -2501,8 +2487,6 @@
                 $("#vprecio_venta_trans_punto").html("<h4>Bs. 0.00</h4>");
                 $("#vprecio_venta_mixto").html("<h4>Bs. 0.00</h4>");
                 $("#vprecio_venta_Efectivo").html("<h4>Bs. 0.00</h4>");
-                $("#cantidadj").show();
-                $("#procesarkilos").hide();
                 focusMethod();
             }
 

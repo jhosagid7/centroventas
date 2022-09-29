@@ -3,9 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Articulo;
-use App\Deposito;
-use App\Area;
-use App\Tasa;
 use App\Categoria;
 use App\Http\Requests;
 
@@ -75,29 +72,21 @@ class ArticuloController extends Controller
             return view('almacen.articulo.index', ["categorias" => $categorias,"tasaDolar" => $tasaDolar,"tasaPeso" => $tasaPeso,"tasaTransferenciaPunto" => $tasaTransferenciaPunto,"tasaMixto" => $tasaMixto,"tasaEfectivo" => $tasaEfectivo,"articulos" => $articulos,"oldCat" => $categorias_id,"name" => $name,"codigo" => $codigo,"venderal" => $venderal,"fechaInicio" => $fechaInicio,"fechaFin" => $fechaFin]);
 
     }
+    
     public function create()
     {
         $categorias = DB::table('categorias')->where('condicion', '=', 'Activa')->get();
-        $depositos = Deposito::all();
-        return view('almacen.articulo.create', ['categorias'=>$categorias, 'depositos'=>$depositos]);
+        return view('almacen.articulo.create', ['categorias'=>$categorias]);
     }
     public function store(Request $request)
     {
         // return $request->all();
         //creamos un objeto del modelo categoria
-        if($request->get('codigo')){
-            $codigo = $request->get('codigo'); 
-        }else{
-            $codigo = Articulo::latest('id')->first();
-            $codigo = $codigo->id + 1;
-        }
-        DB::statement("SET foreign_key_checks=0");
         $articulo = new Articulo;
         $articulo->categoria_id  = $request->get('categoria_id');
-        $articulo->codigo       = $codigo;
+        $articulo->codigo       = $request->get('codigo');
         $articulo->nombre       = $request->get('nombre');
         $articulo->stock         = 0;
-        $articulo->area_id         = $request->get('area_id');
         $articulo->unidades         = $request->get('unidades');
         $articulo->vender_al         = $request->get('vender_al');
         $articulo->precio_costo         = 0;
@@ -109,7 +98,6 @@ class ArticuloController extends Controller
         $articulo->isEfectivo         = $request->isEfectivo;
         $articulo->isKilo         = $request->isKilo;
         $articulo->descripcion  = $request->get('descripcion');
-        
 
         if ($request->hasFile('imagen')) {
             $file = $request->file('imagen');
@@ -123,8 +111,6 @@ class ArticuloController extends Controller
 
         $articulo->save();
 
-        DB::statement("SET foreign_key_checks=1");
-
         return Redirect::to('almacen/articulo')->with('status_success', 'Articulo registrado exitosamente');
     }
 
@@ -137,29 +123,17 @@ class ArticuloController extends Controller
 
     public function edit($id)
     {
-        $articulo = Articulo::with('area')->findOrFail($id);
+        $articulo = Articulo::findOrFail($id);
         $categorias = DB::table('categorias')->where('condicion', '=', 'Activa')->get();
-        $depositos = Deposito::all();
-        return view("almacen.articulo.edit", ["articulo" => $articulo, 'categorias'=> $categorias, 'depositos'=>$depositos]);
+        return view("almacen.articulo.edit", ["articulo" => $articulo, 'categorias'=> $categorias]);
     }
     public function update(Request $request, $id)
     {
-        // return $request;
-        $tasaDolar = Tasa::where('estado', '=', 'Activo')->where('nombre', '=', 'Dolar')->first();
-        
-        $precio_costo = $request->get('precio_costo');
-        // $precio_costo = $precio_costo/(1 + ($tasaDolar->porcentaje_ganancia/100));
-
-        $precio_costo = round($precio_costo, 2);
-        // return round($precio_costo, 2);
-        DB::statement("SET foreign_key_checks=0");
         $articulo = Articulo::findOrFail($id);
         $articulo->categoria_id  = $request->get('categoria_id');
         $articulo->codigo       = $request->get('codigo');
         $articulo->nombre       = $request->get('nombre');
-        $articulo->stock       = $request->get('stock');
-        $articulo->area_id         = $request->get('area_id');
-        $articulo->precio_costo         = $precio_costo;
+        $articulo->precio_costo         = $request->get('precio_costo');
         $articulo->porEspecial         = $request->porEspecial;
         $articulo->isDolar         = $request->isDolar;
         $articulo->isPeso         = $request->isPeso;
@@ -178,7 +152,7 @@ class ArticuloController extends Controller
         }
 
         $articulo->update();
-        DB::statement("SET foreign_key_checks=1");
+
         return Redirect::to('almacen/articulo')->with('status_success', 'El Artículo fue actualizado exitosamente');
     }
     public function destroy($id)

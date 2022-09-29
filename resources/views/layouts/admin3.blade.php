@@ -6,6 +6,7 @@
   <title>Administracion | {{ config('app.name', 'VillaSoft') }}</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <!-- Bootstrap 3.3.7 -->
   <link rel="stylesheet" href="{{asset('bower_components/bootstrap/dist/css/bootstrap.min.css')}}">
   <link rel="stylesheet" type="text/css" media="print" href="{{asset('bower_components/bootstrap/dist/css/bootstrap_imprimir.css')}}">
@@ -30,11 +31,15 @@
   <link rel="stylesheet" href="{{asset('jquery-ui-1.12.1/jquery-ui.css')}}">
   <!-- DataTable -->
   <link rel="stylesheet" href="{{asset('Datatables/datatables.min.css')}}">
-  {{-- <link rel="stylesheet" href="{{asset('Datatables/DataTables-1.10.21/css/dataTables.bootstrap4.min.css')}}"> --}}
+  <link rel="stylesheet" href="{{asset('Datatables/DataTables-1.10.21/css/dataTables.bootstrap4.min.css')}}">
   {{-- <link rel="stylesheet" href="//cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css"> --}}
-  {{-- <!-- Theme style -->
-  <link rel="stylesheet" type="text/css" href="{{asset('DataTables-1.10.21/css/jquery.dataTables.min.css')}}">
+   <!-- Theme style -->
+   {{--<link rel="stylesheet" type="text/css" href="{{asset('DataTables-1.10.21/css/jquery.dataTables.min.css')}}">
   <link rel="stylesheet" type="text/css" href="{{asset('Buttons-1.6.2/css/buttons.dataTables.min.css')}}"> --}}
+
+  
+<!-- <link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet"> -->
+<!-- <link href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css" rel="stylesheet"> -->
 
 
 
@@ -52,9 +57,13 @@
   <!-- Google Font -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 <style>
-  /* .dataTables_filter {
-     display: none;
-} */
+  td.details-control {
+    background: url('../resources/details_open.png') no-repeat center center;
+    cursor: pointer;
+}
+tr.details td.details-control {
+    background: url('../resources/details_close.png') no-repeat center center;
+}
 </style>
 
 @stack('css')
@@ -113,26 +122,26 @@
             </ul>
           </li> --}}
           <!-- Notifications: style can be found in dropdown.less -->
-          {{-- <li class="dropdown notifications-menu">
+           <li class="dropdown notifications-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <i class="fa fa-bell-o"></i>
-              <span class="label label-warning">10</span>
+              <span class="label label-danger">1</span>
             </a>
             <ul class="dropdown-menu">
-              <li class="header">You have 10 notifications</li>
+              <li id="banco" class="header">You have 10 notifications</li>
               <li>
                 <!-- inner menu: contains the actual data -->
                 <ul class="menu">
                   <li>
                     <a href="#">
-                      <i class="fa fa-users text-aqua"></i> 5 new members joined today
+                      <i class="fa fa-money text-success"></i> <b id="tasaNow"></b>
                     </a>
                   </li>
                 </ul>
               </li>
-              <li class="footer"><a href="#">View all</a></li>
+              <b id="fecha"></b></a>
             </ul>
-          </li> --}}
+          </li> 
           <!-- Tasks: style can be found in dropdown.less -->
           {{-- <li class="dropdown tasks-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -768,6 +777,12 @@
 <script src="{{asset('bower_components/chart.js/Chart.js')}}"></script>
 <script src="{{asset('dist/js/pages/dashboard2.js')}}"></script> --}}
 
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script> -->
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.0/jquery.validate.js"></script> -->
+<!-- <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script> -->
+<!-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script> -->
+<!-- <script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script> -->
+
 {{-- Funtion Main --}}
 @stack('sciptsMain')
 <script>
@@ -958,6 +973,26 @@
             //   })
             })
     });
+
+    const ul = document.getElementById('authors');
+const url = 'https://s3.amazonaws.com/dolartoday/data.json';
+// const url = 'https://randomuser.me/api/?results=10';
+
+fetch(url)
+.then((resp) => resp.json())
+.then(function(data) {
+  let tasaBcv = data.USD;
+  let tasaBcvBanco = data._labels;
+  let tasaBcvFecha = data._timestamp;
+  console.log(data);
+  $('#banco').html(tasaBcvBanco.c);
+  $('#fecha').html(tasaBcvFecha.dia + ', ' + tasaBcvFecha.fecha);
+  $('#tasaNow').html('$. ' + tasaBcv.sicad2);
+    
+})
+.catch(function(error) {
+  console.log(error);
+});
 </script>
 </body>
 </html>

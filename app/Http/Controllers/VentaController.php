@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Caja;
 
 use App\Tasa;
+use App\User;
+use App\Permission\Models\Role;
 use Response;
 use App\venta;
 use App\Persona;
@@ -57,6 +59,12 @@ class VentaController extends Controller
 
     public function create()
     {
+        
+        $user = User::with('roles')->where('id', Auth::id())->first();
+        // return $user->roles[0]->name;
+        
+
+        
 
         $creditos_vencidos = Venta::where('tipo_pago_condicion', 'Credito')->where('status', 'Pendiente')->get();
             // return $creditos_vencidos;
@@ -112,8 +120,9 @@ class VentaController extends Controller
             $Caja = Caja::where("estado","=",'Abierta')->where("sessioncaja_id","=", $cajaSessionid->id)->first();
 
             if ($Caja) {
-
-                if($Caja->user_id == Auth::id()){
+                // $Caja->user_id == Auth::id()
+                if($user->roles[0]->name == 'Operador' || $user->roles[0]->name == 'Admin'){
+                    
                     $title='Nueva venta';
                     $clientes = DB::table('personas')->where('tipo_persona', '=', 'Cliente')->get();
                     $tasaDolar = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Dolar')->first();
@@ -205,11 +214,13 @@ class VentaController extends Controller
                         $cajas->SumaArticulosVendidos = $cajas->SumaArticulosVendidos + $art_vent->cantidad;
                     }
 
+                    $vendedores = User::all();
+
 
                     //  return $ventas;
                     //dd($ventas);
 
-                    return view('ventas.venta.create', compact('cajas','num_comprobante','serie_comprobante','caja', 'ventas','title','clientes','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo','articulos'));
+                    return view('ventas.venta.create', compact('vendedores','cajas','num_comprobante','serie_comprobante','caja', 'ventas','title','clientes','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo','articulos'));
                 }else{
                     return redirect()
                     ->route('caja.index')
@@ -267,7 +278,7 @@ class VentaController extends Controller
             // return $precio_costo_final;
             $utilidad = $request->get('total_venta') - $precio_costo_final;
 
-
+            $UserId = Auth::id();
 
             $margen_gananacia = $utilidad / $request->get('total_venta');
             // dd($margen_gananacia);
@@ -300,6 +311,7 @@ class VentaController extends Controller
             $venta->estado_credito = $estado_credito;
             $venta->persona_id = $request->get('idcliente');
             $venta->caja_id = $request->get('caja_id');
+            $venta->user_id = $UserId;
             $venta->save();
 
             $UserName = $request->user()->name;
@@ -582,9 +594,15 @@ class VentaController extends Controller
 
         $printer = new PrinterController;
 
-        $printer->ticketConsumo('Consumo', $articulo_id, $serie_comprobante, $precio_venta_unidad, $cantidad, $tipo_pago_condicion, $tipo_pago, $total_venta, $UserName);
+        $isOk = $printer->ticketConsumo('Consumo', $articulo_id, $serie_comprobante, $precio_venta_unidad, $cantidad, $tipo_pago_condicion, $tipo_pago, $total_venta, $UserName);
 
-        return Redirect::to('ventas/venta/create')->with('success', 'La venta fué registrada exitosamente');
+        if( $printer->print_error === 1 ) {
+            return Redirect::to('ventas/venta/create')->with('status_success', 'La venta fué registrada exitosamente');
+        }else{
+            return Redirect::to('ventas/venta/create')->with('status_warning', 'La venta fué registrada exitosamente. Sin embargo, no se pudo emitir el ticket con la impresora: ' . $printer->print_name );
+        }
+
+        
     }
 
     public function show($id)

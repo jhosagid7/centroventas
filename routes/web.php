@@ -92,20 +92,26 @@ Route::get('/reporte-credito-clientes-ver', 'ReporteController@reportClientesCre
 Route::resource('/cargos', 'CargoController', ['except'=>[
     'edit', 'update'
     ]])->names('cargo');
-
+    
 Route::resource('/descargos', 'DescargoController', ['except'=>[
-        'edit', 'update'
-        ]])->names('descargo');
-
-Route::get('/ventas/consulta', 'ConsultaController@precioVenta')->name('consulta');
-Route::resource('/bancos/banco', 'BancoController');
-
-Route::get('datatable/ventas', 'DatatableController@ventas')->name('datatable.venta');
-
-Route::get('search/articulos', 'SearchController@articulos')->name('search.articulos');
-Route::get('search/articulos/ventas', 'SearchController@articulosVentas')->name('search.articulos.ventas');
-Route::get('search/articulos/cargos', 'SearchController@articulosCargos')->name('search.articulos.cargos');
-
-//Creamos rutas para la Impresion de tickets
-Route::get('print/venta/{$id}','PrinterController@ticketVenta');
-// Route::get('print/credito-pagado/{$id}','PrinterController@ticketCreditoPagado');
+    'edit', 'update'
+    ]])->names('descargo');
+    
+    Route::get('/ventas/consulta', 'ConsultaController@precioVenta')->name('consulta');
+    Route::resource('/bancos/banco', 'BancoController');
+    
+    Route::get('datatable/ventas', 'DatatableController@ventas')->name('datatable.venta');
+    
+    Route::get('search/articulos', 'SearchController@articulos')->name('search.articulos');
+    Route::get('search/articulos/ventas', 'SearchController@articulosVentas')->name('search.articulos.ventas');
+    Route::get('search/articulos/cargos', 'SearchController@articulosCargos')->name('search.articulos.cargos');
+    
+    //Creamos rutas para la Impresion de tickets
+    Route::get('print/venta/{$id}','PrinterController@ticketVenta');
+    // Route::get('print/credito-pagado/{$id}','PrinterController@ticketCreditoPagado');
+    
+    Route::resource('products','ProductController');
+    Route::get('products/{id}/edit/','ProductController@edit');
+    // Route::delete('product/{id}/','ProductController@destroy');
+    
+    Route::get('/area', 'AreaController@getArea')->name('area');

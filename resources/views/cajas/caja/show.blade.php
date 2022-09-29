@@ -549,6 +549,7 @@
                                     <thead>
                                         <th>ID</th>
                                         <th>Fecha</th>
+                                        <th>Vendedor</th>
                                         <th>Comprobante</th>
                                         <th>Tasa</th>
                                         <th>Tipo Pago</th>
@@ -564,7 +565,7 @@
                                     </thead>
                                     <tbody>
                                         @foreach ($cajas->ventas as $venta)
-
+                                        @if($venta->tipo_pago_condicion <> 'Pendiente')
                                         @if($venta->tipo_pago_condicion == 'Credito')
                                             <tr style="background-color: rgba(198, 250, 191, 0.692);" class="text-black detalleVerde">
                                         @else
@@ -581,6 +582,7 @@
                                             @endif --}}
                                                     <td>{{ $venta->id }}</td>
                                                     <td>{{ $venta->fecha_hora }}</td>
+                                                    <td>{{ $venta->user->name ?? '' }}</td>
                                                     <td>{{ $venta->serie_comprobante }}</td>
                                                     <td>{{ $venta->tasaTransPunto }}</td>
                                                     <td>{{ $venta->tipo_pago ?? $venta->tipo_pago_condicion}}</td>
@@ -594,6 +596,7 @@
                                                     @endcan
                                                         <td>{{ $venta->estado }}</td>
                                                 </tr>
+                                        @endif
                                         @endforeach
                                     </tbody>
                                 </table>
@@ -620,6 +623,7 @@
                                         @endphp
 
                                         @foreach ($cajas->articulo_ventas  as $art)
+                                        @if($art->venta->tipo_pago_condicion <> 'Pendiente')
                                             @if ($art->venta_id !== $actual)
                                                 @php
                                                     $actual = $art->venta_id;
@@ -747,6 +751,7 @@
                                             @php
                                                 $count++;
                                             @endphp
+                                            @endif
                                         @endforeach
                                     </tbody>
                                 </table>

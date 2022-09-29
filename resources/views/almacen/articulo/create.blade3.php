@@ -80,23 +80,6 @@
             <input id="codigo" type="text" name="codigo" value="{{old('codigo')}}" class="form-control " placeholder="Codigo de articulo...">
         </div>
     </div>
-    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-        <div class="form-group">
-            <label for="">Deposito</label>
-            <select required name="deposigo_id" id="deposigo_id" class="form-control select2">
-                    <option value="">Seleccione deposito</option>
-                    @foreach($depositos as $deposito)
-                        <option value="{{$deposito->id}}">{{$deposito->nombre}}</option>
-                    @endforeach
-                </select>
-        </div>
-    </div>
-    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-    <div class="form-group">
-        <label for="origen">Area</label>
-        <select name="area_id" id="area_id" class="form-control select2"></select>
-            </div>
-    </div>
 
     {{-- <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 hidden">
         <div class="form-group">
@@ -188,41 +171,6 @@
 @push('sciptsMain')
 
 <script>
-    
-
-</script>
-  <script>
-
-
-$(document).ready(function () {
-    $('.select2').select2();
-
-    $('#deposigo_id').on('change', function(){
-        $('#area_id').empty();
-        var deposito_id = $(this).val();
-        // alert(deposito_id);
-        // false
-        
-        if ($.trim(deposito_id != '')) {
-            $.ajax({
-                type: 'get',
-                url: '{{ url ("area") }}',
-                data: "deposito_id=" + deposito_id,
-                success: function (depositos) {
-
-                    if (depositos.length) {
-                        $('#area_id').append("<option value='0'>Selecciones Producto a Descargar</option>");
-                        // alert(origens[0].nombre);
-                        for(var i = 0; i < depositos.length; i++){
-                        $('#area_id').append('<option value="'+ depositos[i].id +'">'+ depositos[i].area +'</option>');
-                        }
-                    }
-                }
-            });
-
-        }
-    });
-
     $('#nombre').autocomplete({
         source: function (request, response) {
             $.ajax({
@@ -247,6 +195,11 @@ $(document).ready(function () {
         }
     });
 
+</script>
+  <script>
+
+
+$(document).ready(function () {
     $("#nombre").keyup(function () {
         var value = $(this).val();
         $("#descripcion").val(value);

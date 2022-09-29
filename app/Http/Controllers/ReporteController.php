@@ -202,6 +202,7 @@ class ReporteController extends Controller
     }
 
     public function reportIngresosCreditosIndex(){
+        
 
         $title = 'Reporte General de Compras a Credito por Fechas';
 
@@ -225,6 +226,7 @@ class ReporteController extends Controller
     }
 
     public function reportIngresosCreditosShow(Request $request){
+        
         // return $request;
         $fecha = $request->get('fecha');
         $estado = $request->get('estado');
@@ -297,7 +299,7 @@ class ReporteController extends Controller
 
 
     public function reportClientesCreditosIndex(){
-
+        
         $title = 'Reporte General de Ventas a Credito por Fechas';
 
         $users = User::where('id', '<>', '1')->Where('id', '<>', '2')->get();
@@ -320,6 +322,7 @@ class ReporteController extends Controller
     }
 
     public function reportClientesCreditosShow(Request $request){
+        // return 'si';
         // return $request;
         $fecha = $request->get('fecha');
         $estado = $request->get('estado');
@@ -344,7 +347,7 @@ class ReporteController extends Controller
         ->estado($estado)
         ->status($status)
         ->proveedor($proveedor)
-        ->operador($operador)
+        // ->operador($operador)
         ->where('tipo_pago_condicion','Credito')
         ->get();
 

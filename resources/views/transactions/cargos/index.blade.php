@@ -72,14 +72,14 @@
                     @foreach ($cargos as $cargo)
                     <tr>
                         {{-- <td>{{ $cargo->id }}</td> --}}
-                        <td>{{ $cargo->id }}</td>
-                        <td>{{ $cargo->num_documento }}</td>
-                        <td>{{ $cargo->tipo_operacion }}</td>
-                        <td>{{ $cargo->autorizado_por }}</td>
-                        <td>{{ $cargo->user->name }}</td>
-                        <td>{{ $cargo->total_operacion }}</td>
-                        <td>{{ $cargo->estado }}</td>
-                        <td>{{ $cargo->created_at }}</td>
+                        <td>{{ $cargo->id ?? '' }}</td>
+                        <td>{{ $cargo->num_documento ?? '' }}</td>
+                        <td>{{ $cargo->tipo_operacion ?? '' }}</td>
+                        <td>{{ $cargo->autorizado_por ?? '' }}</td>
+                        <td>{{ $cargo->user->name ?? '' }}</td>
+                        <td>{{ $cargo->total_operacion ?? '' }}</td>
+                        <td>{{ $cargo->estado ?? '' }}</td>
+                        <td>{{ $cargo->created_at ?? '' }}</td>
 
                         <td>
                         <a href="{{URL::action('CargoController@show', $cargo->id)}}"><button class='btn btn-info btn-sm'><span class='glyphicon glyphicon-edit'></span></button></a>

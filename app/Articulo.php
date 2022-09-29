@@ -35,6 +35,7 @@ class Articulo extends Model
         'unidades',
         'vender_al',
         'imagen',
+        'area_id',
         'estado'
     ];
 
@@ -51,6 +52,9 @@ class Articulo extends Model
 
     public function categoria(){
         return $this->belongsTo(Categoria::class);
+    }
+    public function area(){
+        return $this->belongsTo(Area::class);
     }
 
     public function scopeName($query, $name){

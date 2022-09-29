@@ -155,8 +155,7 @@
                     <div class="col-lg-3 col-sm-3 col-md-3 col-xs-12">
                         <div class="form group">
                             <label for="precio_compra">Precio Compra</label>
-                            <input type="text" name="jprecio_compra" id="jprecio_compra" class="form-control decimal" placeholder="Precio compra...">
-                            <div id="sale" class="span4"></div>
+                            <input type="number" name="jprecio_compra" id="jprecio_compra"  class="form-control decimal" placeholder="Precio compra...">
                         </div>
                     </div>
                     <div class="col-lg-2 col-sm-2 col-md-2 col-xs-12">
@@ -235,33 +234,6 @@
         $("#bt_add").click(function(){
             add_article();
         });
-
-        function calcular(valor,percentToGet){
-            
-            let percent = (percentToGet / 100) * valor;
-            let result = (parseFloat(valor)- percent).toFixed(2);
-            console.log(result);
-            return result;
-
-        }
-
-            
-
-
-        // $('#jprecio_compra').change('jprecio_compra', function(){
-        //     let valor = $('#jprecio_compra').val();
-        //     let percentToGet = 0;
-        //     result = calcular(valor,percentToGet);
-        //     if(isNaN(result)) {
-        //         var result = '';
-        //     }
-
-        //     $('#jprecio_compra').val(result);
-            
-            
-        // });
-
-        
     });
 
     var cont=0;
@@ -421,12 +393,12 @@ if (existePto === false) {
     regexp = /.[0-9]{9}$/;
 }
 
-return !(regexp.test(field.val().toFixed(3)));
+return !(regexp.test(field.val()));
 }
 if (key == 46) {
 if (field.val() === "") return false;
 regexp = /^[0-9]+$/;
-return regexp.test(field.val().toFixed(3));
+return regexp.test(field.val());
 }
 return false;
 });
