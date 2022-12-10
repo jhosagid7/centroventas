@@ -157,7 +157,6 @@ class PrinterController extends Controller
         $this->print_error = 1;
     } catch (\Exception $e) {
         $this->print_error = 0;
-        // return $errorPrint = "Couldn't print to this printer: " . $e -> getMessage() . "\n";
     }
 
 }

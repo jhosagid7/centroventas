@@ -8,6 +8,30 @@ use Illuminate\Http\Request;
 
 class SearchController extends Controller
 {
+    // public function get_add_to_message_search(){
+    // $term = Input::get( 'term' );
+    // $users = array();
+    // $search = DB::query("
+    //     select *
+    //     from users
+    //     where id!='" . Auth::user()->id . "'
+    //     and status=1
+    //     and type='user'
+    //     and match(name, email, username)
+    //     against('+{$term}*' IN BOOLEAN MODE)
+    //     ");
+
+    //     foreach( $search as $results => $user )
+    //     {
+    //         $users[] = array(
+    //             'id' => $user->id,
+    //             'value' => $user->name,
+    //         );
+    //     }
+    //     return json_encode( $users );
+    // }
+
+
     public function articulos(Request $request){
         $term = $request->get('term');
 

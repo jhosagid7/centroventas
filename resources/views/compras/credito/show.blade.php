@@ -250,7 +250,7 @@
                     alert('Error...!'+html)
                     event.preventDefault();
                 }else{
-                    $( "#pagar" ).submit();
+                    $( "#form1" ).submit();
                 }
 
             }else{

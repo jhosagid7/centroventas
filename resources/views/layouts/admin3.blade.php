@@ -396,6 +396,9 @@ tr.details td.details-control {
           </a>
             <ul class="treeview-menu">
                 @can('haveaccess', 'reporte.index')
+                <li><a href="{{asset('reporte-calculo')}}"><i class="fa fa-percent"></i>Calcular comicion de ventas </a></li>
+                @endcan
+                @can('haveaccess', 'reporte.index')
                 <li><a href="{{asset('reportes/ventas')}}"><i class="fa fa-user-plus"></i> Articulos Vendidos</a></li>
                 @endcan
 
@@ -771,6 +774,7 @@ tr.details td.details-control {
 <script src="{{asset('dist/js/demo.js')}}"></script>
 <script src="{{asset('js/submit.js')}}"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+<script src="{{asset('dist/js/keymaster-master/keymaster.js')}}"></script>
 {{-- <script src="{{asset('bower_components/jquery-sparkline/dist/jquery.sparkline.min.js')}}"></script>
 <script src="{{asset('plugins/jvectormap/jquery-jvectormap-1.2.2.min.js')}}"></script>
 <script src="{{asset('plugins/jvectormap/jquery-jvectormap-world-mill-en.js')}}"></script>

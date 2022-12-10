@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use App\DetalleCreditoIngreso;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Collection;
 
 class ReporteController extends Controller
 {
@@ -68,6 +69,160 @@ class ReporteController extends Controller
         // return $articulos;
 
         return view('reportes.ventas.index', ["title" => $title,"articulos" => $articulos,"fechaInicio" => $fechaInicio,"fechaFin" => $fechaFin]);
+    }
+
+    public function reportCalculoIndex(){
+        
+        $title = 'Calcular porcentaje de ventas';
+
+        $users = User::where('id', '<>', '1')->Where('id', '<>', '2')->get();
+        $proveedors = Persona::where('tipo_persona', '=', 'proveedor')->get();
+        // $ingresos = Ingreso::get()
+        // // ->name($name)
+        // //     ->codigo($codigo)
+        // //     ->venderal($venderal)
+        //     ->fecha($fecha);
+
+        // foreach ($ingresos as $ing) {
+        //     $ing->persona;
+        //     $ing->user;
+        //     foreach ($ing->articulo_ingresos as $art) {
+        //         $art->articulo;
+        //     }
+        // }
+// return $ingresos;
+        return view('reportes.porcentaje.index', compact('users','proveedors', 'title'));
+    }
+
+    public function reportCalculoShow(Request $request){
+        // return $request;
+        $fecha = $request->get('fecha');
+        $estado = $request->get('estado');
+        $proveedor = $request->get('proveedor');
+        $operador = $request->get('operador');
+        $operador = $request->get('operador');
+        $title = 'Reporte de Ventas por Operador';
+        $fechaInicio = $request->get('fechaInicio');
+        $fechaFin = $request->get('fechaFin');
+
+        $fecha2 = $request->get('fecha2');
+
+        if($fecha2 == null){
+            $fechaData = $fecha;
+
+        }else{
+            $fechaData = $fecha2;
+        }
+
+       
+        
+
+        if ($operador) {
+            $ventas_operador = Venta::select('id', 'user_id', 'serie_comprobante', 'total_venta', DB::raw('DATE(created_at) as date'))->where('estado', 'Aceptada')->where('status', 'Pagado')->fecha($fechaData)
+            ->operador($operador)
+            ->get()
+            ->groupBy('date');
+
+           
+            $total_dia = [];
+            $total_venta = [];
+            $meta_alcanzada = [];
+            $UnoPorCien = [];
+            $CeroSesentaPorCien = [];
+            $CeroCuarentaPorCien = [];
+            $total_total_venta = 0;
+            $total_UnoPorCien = 0;
+            $total_CeroSesentaPorCien = 0;
+            $total_CeroCuarentaPorCien = 0;
+            foreach ($ventas_operador as $key => $value) {
+                $usuario = [];
+                $suma = 0;
+                $sumados = 0;
+                $total_comision = 0;
+                
+                foreach ($value as $b) {
+                    if ($key == $b->date){
+                        $suma +=  $b->total_venta;
+                    }
+                }
+                
+                $total_dia[] = $b->date;
+                $total_venta[] = ROUND($suma,3);
+                $meta_alcanzada[] = (ROUND($suma,3)) >= 500 ? 'Si' : 'No';
+                $UnoPorCien[] = ($suma) >= 500 ? (ROUND($suma*0.01,3)) : 0.000;
+                $CeroSesentaPorCien[] = (ROUND($suma,3)) < 500 ? (ROUND($suma*0.006,3)) : 0.000;
+                $CeroCuarentaPorCien[] = (ROUND($suma,3)) < 500 ? (ROUND($suma*0.004,3)) : 0.000;
+                $usuario[] = $value[0]->user->name;
+                $total_total_venta += ROUND($suma ,3); 
+                $total_UnoPorCien += ROUND($suma,3) >= 500 ? (ROUND($suma*0.01,3)) : 0.000;
+                $total_CeroSesentaPorCien += (ROUND($suma,3)) < 500 ? (ROUND($suma*0.006,3)) : 0.000;
+                $total_CeroCuarentaPorCien += (ROUND($suma,3)) < 500 ? (ROUND($suma*0.004,3)) : 0.000;
+            }
+            
+        }else{
+            $users = User::where('id', '<>', '1')->Where('id', '<>', '2')->get();
+
+            foreach ($users as $user) {
+                $ventas_operador = Venta::select('id', 'user_id', 'serie_comprobante', 'total_venta', DB::raw('DATE(created_at) as date'))->where('estado', 'Aceptada')->where('status', 'Pagado')->fecha($fechaData)
+                ->where('user_id', $user->id)
+                ->get()
+                ->groupBy('date');
+
+
+                $total_dia = [];
+                $total_venta = [];
+                $meta_alcanzada = [];
+                $UnoPorCien = [];
+                $CeroSesentaPorCien = [];
+                $CeroCuarentaPorCien = [];
+                $total_total_venta = 0;
+                $total_UnoPorCien = 0;
+                $total_CeroSesentaPorCien = 0;
+                $total_CeroCuarentaPorCien = 0;
+
+                foreach ($ventas_operador as $key => $value) {
+                    $usuario = [];
+                    $suma = 0;
+                    $sumados = 0;
+                    $total_comision = 0;
+                    
+                    foreach ($value as $b) {
+                        if ($key == $b->date){
+                            $suma +=  $b->total_venta;
+                        }
+                    }
+                    
+                    $total_dia[] = $b->date;
+                    $total_venta[] = ROUND($suma,3);
+                    $meta_alcanzada[] = (ROUND($suma,3)) >= 500 ? 'Si' : 'No';
+                    $UnoPorCien[] = ($suma) >= 500 ? (ROUND($suma*0.01,3)) : 0.000;
+                    $CeroSesentaPorCien[] = (ROUND($suma,3)) < 500 ? (ROUND($suma*0.006,3)) : 0.000;
+                    $CeroCuarentaPorCien[] = (ROUND($suma,3)) < 500 ? (ROUND($suma*0.004,3)) : 0.000;
+                    $usuario[] = $value[0]->user->name;
+                    $total_total_venta += ROUND($suma ,3); 
+                    $total_UnoPorCien += ROUND($suma,3) >= 500 ? (ROUND($suma*0.01,3)) : 0.000;
+                    $total_CeroSesentaPorCien += (ROUND($suma,3)) < 500 ? (ROUND($suma*0.006,3)) : 0.000;
+                    $total_CeroCuarentaPorCien += (ROUND($suma,3)) < 500 ? (ROUND($suma*0.004,3)) : 0.000;
+                }                   
+            }
+
+            
+
+           
+            
+
+        }
+        
+        $detallado = ($request->get('detallado') == 'on' ? '' : 'hidden');
+
+        if($fechaData){
+            list($fecha_inicio, $fecha_fin) = explode(" - ", $fechaData);
+                $fecha_inicio = Carbon::parse($fecha_inicio)->format('d-m-Y');
+                $fecha_fin = Carbon::parse($fecha_fin)->format('d-m-Y');
+
+        }
+        
+        return view('reportes.porcentaje.show', compact('total_total_venta','total_UnoPorCien','total_CeroSesentaPorCien','total_CeroCuarentaPorCien','meta_alcanzada','UnoPorCien','CeroSesentaPorCien','CeroCuarentaPorCien','total_venta', 'usuario', 'total_dia', 'total_x_dia', 'ventas_operador', 'detallado','fecha_inicio','fecha_fin','fecha','estado','proveedor','operador', 'title'));
     }
 
     public function listadoInventario(){

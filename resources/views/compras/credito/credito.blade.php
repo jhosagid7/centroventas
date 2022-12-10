@@ -1,6 +1,6 @@
 <div class="modal fade bd-example-modal-lg" aria-hidden="true" role="dialog" tabindex="-1" id="modal-pago">
 
-    <form action="{{ route('credito.store') }}" method="POST", class="submit-prevent-form">
+    <form id="form1" action="{{ route('credito.store') }}" method="POST", class="submit-prevent-form">
         @csrf
         @method('POST')
         <div class="row">

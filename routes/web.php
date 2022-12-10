@@ -75,7 +75,12 @@ Route::get('/servicios', 'ServicioController@getServiciosOrigenes')->name('servi
 
 
 Route::resource('reportes/ventas', 'ReporteController');
+
 // Route::resource('reportes/ventas', 'ReporteController');
+
+
+Route::get('/reporte-calculo', 'ReporteController@reportCalculoIndex')->name('reporte-calculo');
+Route::get('/reporte-calculo-porcentaje', 'ReporteController@reportCalculoShow')->name('reporte-calculo-porcentaje');
 
 Route::get('/inventario', 'ReporteController@listadoInventario')->name('inventario');
 Route::get('/precios', 'ReporteController@listadoPrecio')->name('precios');

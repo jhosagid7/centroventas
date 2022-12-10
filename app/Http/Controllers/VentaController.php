@@ -594,7 +594,7 @@ class VentaController extends Controller
 
         $printer = new PrinterController;
 
-        $isOk = $printer->ticketConsumo('Consumo', $articulo_id, $serie_comprobante, $precio_venta_unidad, $cantidad, $tipo_pago_condicion, $tipo_pago, $total_venta, $UserName);
+        $printer->ticketConsumo('Consumo', $articulo_id, $serie_comprobante, $precio_venta_unidad, $cantidad, $tipo_pago_condicion, $tipo_pago, $total_venta, $UserName);
 
         if( $printer->print_error === 1 ) {
             return Redirect::to('ventas/venta/create')->with('status_success', 'La venta fué registrada exitosamente');
