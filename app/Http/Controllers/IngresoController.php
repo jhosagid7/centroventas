@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use DB;
-
 use App\Caja;
+
 use App\Tasa;
 use Response;
 use App\Cuenta;
@@ -14,12 +13,12 @@ use App\Articulo;
 use Carbon\Carbon;
 use App\PagoIngreso;
 use App\Sessioncaja;
-
 use App\Transaccion;
 
 use App\DetalleVenta;
-//use Illuminate\Http\Response;
+
 use App\Http\Requests;
+//use Illuminate\Http\Response;
 use App\CreditoIngreso;
 use App\DetalleIngreso;
 use App\Articulo_Ingreso;
@@ -29,6 +28,7 @@ use Illuminate\Http\Request;
 use App\DetalleCreditoIngreso;
 use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Database\MySqlConnection;

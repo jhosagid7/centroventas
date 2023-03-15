@@ -59,12 +59,12 @@ class VentaController extends Controller
 
     public function create()
     {
-        
+
         $user = User::with('roles')->where('id', Auth::id())->first();
         // return $user->roles[0]->name;
-        
 
-        
+
+
 
         $creditos_vencidos = Venta::where('tipo_pago_condicion', 'Credito')->where('status', 'Pendiente')->get();
             // return $creditos_vencidos;
@@ -122,7 +122,7 @@ class VentaController extends Controller
             if ($Caja) {
                 // $Caja->user_id == Auth::id()
                 if($user->roles[0]->name == 'Operador' || $user->roles[0]->name == 'Admin'){
-                    
+
                     $title='Nueva venta';
                     $clientes = DB::table('personas')->where('tipo_persona', '=', 'Cliente')->get();
                     $tasaDolar = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Dolar')->first();
@@ -240,7 +240,7 @@ class VentaController extends Controller
     public function store(Request $request)
     {
         // return $request;
-    //     dd('hola');
+        //     dd('hola');
         try{
             DB::beginTransaction();
 
@@ -278,7 +278,15 @@ class VentaController extends Controller
             // return $precio_costo_final;
             $utilidad = $request->get('total_venta') - $precio_costo_final;
 
-            $UserId = Auth::id();
+
+            $UserName = $request->user()->name;
+            $UserId = $request->user()->id;
+
+            if ($request->dataVendedor) {
+                $UserIdData = User::find($request->dataVendedor);
+                $UserId = $UserIdData->id;
+                $UserName = $UserIdData->name;
+            }
 
             $margen_gananacia = $utilidad / $request->get('total_venta');
             // dd($margen_gananacia);
@@ -314,8 +322,7 @@ class VentaController extends Controller
             $venta->user_id = $UserId;
             $venta->save();
 
-            $UserName = $request->user()->name;
-            $UserId = $request->user()->id;
+
             // $caja =  Sessioncaja::where('estado', 'Abierta')->orderBy('id', 'desc')->first();
 
             if ($tipo_pago_condicion == 'Credito'){
@@ -602,7 +609,7 @@ class VentaController extends Controller
             return Redirect::to('ventas/venta/create')->with('status_warning', 'La venta fué registrada exitosamente. Sin embargo, no se pudo emitir el ticket con la impresora: ' . $printer->print_name );
         }
 
-        
+
     }
 
     public function show($id)

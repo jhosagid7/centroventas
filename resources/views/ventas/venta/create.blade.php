@@ -20,7 +20,7 @@
     <div class="row">
         <div class="col-lg-6">
 
-            
+
         </div>
     </div>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -456,17 +456,20 @@
                                         </select>
                                     </div>
                                 </div>
+                                @can('haveaccess', 'role.index')
                                 <div class="col-lg-6 col-md-6 col-6-12 col-xs-12">
                                     <div class="form-group">
                                         <label for="vendedor">Vendedor</label>
                                         <select name="dataVendedor" id="dataVendedor" class="form-control selectpicker"
                                             data-live-search="true">
+                                            <option value="0">Asignar venta</option>
                                             @foreach ($vendedores as $vendedor)
-                                            <option value="{{ $vendedor->id ?? '' }}_{{ $vendedor->nombre ?? '' }}">{{ $vendedor->name ?? '' }}</option>
+                                            <option value="{{ $vendedor->id ?? '' }}">{{ $vendedor->name ?? '' }}</option>
                                             @endforeach
                                         </select>
                                     </div>
                                 </div>
+                                @endcan
                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                                     <div class="form-group">
                                         <label for="tipo_comprobante">Tipo Comprobante</label>
@@ -2068,7 +2071,7 @@
                 if(precio_compra_modificado > 0){
                     precio_compra  = parseFloat($("#jprecio_compra_modificado").val());
                     precio_compra  = (precio_compra / (1 + (porDolar / 100)))
-                    
+
                     $("#jprecio_compra").val(precio_compra)
                 }
                 precio_compra   = parseFloat($("#jprecio_compra").val());
@@ -2890,7 +2893,7 @@
             // key('ctrl+enter', function(){ alert('stopped reload!'); return false });
             // var keypress;
             // window.addEventListener('keydown', (e)=> {
-                
+
             //     if (e.key == 'F2') {
             //         console.log('key:', e.key)
             //         console.log('Code:', e.code)
@@ -2900,37 +2903,37 @@
             // })
 
             // var listener = new window.keypress.Listener();
-        
+
             // listener.simple_combo("f6", function() {
             //     console.log('f6')
             //     // livewire.emit('saveSale')
             // })
-        
+
             // listener.simple_combo("f8", function() {
             //     // document.getElementById('cash').value =''
             //     // document.getElementById('cash').focus()
             //     // document.getElementById('hiddenTotal').value =''
             //     console.log('f8')
             // })
-            
+
             // listener.simple_combo("f7", function() {
             //     console.log('print last : f10')
             //     // livewire.emit('print-last')
             // })
-        
+
             // listener.simple_combo("f4", function() {
-            //     // var total = parseFloat(document.getElementById('hiddenTotal').value)		
+            //     // var total = parseFloat(document.getElementById('hiddenTotal').value)
             //     // if(total > 0) {
             //     //     Confirm(0, 'clearCart', '¿SEGUR@ DE ELIMINAR EL CARRITO?')
-            //     // } else 
+            //     // } else
             //     // {
             //     //     noty('AGREGA PRODUCTOS A LA VENTA')
             //     // }
             //     console.log('print last : f4')
             // })
-        
-        
-        
+
+
+
         </script>
     @endpush
 

@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Caja;
 use App\Tasa;
 use App\Cuenta;
+use App\Articulo;
 use App\Servicio;
 use App\TipoPago;
 use App\Sessioncaja;
@@ -15,7 +17,6 @@ use App\SaldosMovimiento;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use App\Caja;
 
 class ServicioController extends Controller
 {

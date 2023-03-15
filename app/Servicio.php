@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Exception;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 

@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use DB;
-
 use App\Venta;
+
 use App\Persona;
 use Carbon\Carbon;
 use App\Http\Requests;
 use App\ClienteCredito;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use App\Http\Requests\PersonaFormRequest;
 

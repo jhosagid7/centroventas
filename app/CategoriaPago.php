@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class CategoriaPago extends Model
@@ -18,11 +19,11 @@ class CategoriaPago extends Model
     ];
 
     public function tipo_pagos(){
-        return hasMany(TipoPago::class);
+        return $this->hasMany(TipoPago::class);
     }
 
     public function categoria_pago(){
-        return hasMany(CategoriaPago::class);
+        return $this->hasMany(CategoriaPago::class);
     }
 
     public function servicio(){

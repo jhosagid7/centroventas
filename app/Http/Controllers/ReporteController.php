@@ -72,7 +72,7 @@ class ReporteController extends Controller
     }
 
     public function reportCalculoIndex(){
-        
+
         $title = 'Calcular porcentaje de ventas';
 
         $users = User::where('id', '<>', '1')->Where('id', '<>', '2')->get();
@@ -114,8 +114,8 @@ class ReporteController extends Controller
             $fechaData = $fecha2;
         }
 
-       
-        
+
+
 
         if ($operador) {
             $ventas_operador = Venta::select('id', 'user_id', 'serie_comprobante', 'total_venta', DB::raw('DATE(created_at) as date'))->where('estado', 'Aceptada')->where('status', 'Pagado')->fecha($fechaData)
@@ -123,7 +123,7 @@ class ReporteController extends Controller
             ->get()
             ->groupBy('date');
 
-           
+
             $total_dia = [];
             $total_venta = [];
             $meta_alcanzada = [];
@@ -139,13 +139,13 @@ class ReporteController extends Controller
                 $suma = 0;
                 $sumados = 0;
                 $total_comision = 0;
-                
+
                 foreach ($value as $b) {
                     if ($key == $b->date){
                         $suma +=  $b->total_venta;
                     }
                 }
-                
+
                 $total_dia[] = $b->date;
                 $total_venta[] = ROUND($suma,3);
                 $meta_alcanzada[] = (ROUND($suma,3)) >= 500 ? 'Si' : 'No';
@@ -153,12 +153,12 @@ class ReporteController extends Controller
                 $CeroSesentaPorCien[] = (ROUND($suma,3)) < 500 ? (ROUND($suma*0.006,3)) : 0.000;
                 $CeroCuarentaPorCien[] = (ROUND($suma,3)) < 500 ? (ROUND($suma*0.004,3)) : 0.000;
                 $usuario[] = $value[0]->user->name;
-                $total_total_venta += ROUND($suma ,3); 
+                $total_total_venta += ROUND($suma ,3);
                 $total_UnoPorCien += ROUND($suma,3) >= 500 ? (ROUND($suma*0.01,3)) : 0.000;
                 $total_CeroSesentaPorCien += (ROUND($suma,3)) < 500 ? (ROUND($suma*0.006,3)) : 0.000;
                 $total_CeroCuarentaPorCien += (ROUND($suma,3)) < 500 ? (ROUND($suma*0.004,3)) : 0.000;
             }
-            
+
         }else{
             $users = User::where('id', '<>', '1')->Where('id', '<>', '2')->get();
 
@@ -185,13 +185,13 @@ class ReporteController extends Controller
                     $suma = 0;
                     $sumados = 0;
                     $total_comision = 0;
-                    
+
                     foreach ($value as $b) {
                         if ($key == $b->date){
                             $suma +=  $b->total_venta;
                         }
                     }
-                    
+
                     $total_dia[] = $b->date;
                     $total_venta[] = ROUND($suma,3);
                     $meta_alcanzada[] = (ROUND($suma,3)) >= 500 ? 'Si' : 'No';
@@ -199,20 +199,20 @@ class ReporteController extends Controller
                     $CeroSesentaPorCien[] = (ROUND($suma,3)) < 500 ? (ROUND($suma*0.006,3)) : 0.000;
                     $CeroCuarentaPorCien[] = (ROUND($suma,3)) < 500 ? (ROUND($suma*0.004,3)) : 0.000;
                     $usuario[] = $value[0]->user->name;
-                    $total_total_venta += ROUND($suma ,3); 
+                    $total_total_venta += ROUND($suma ,3);
                     $total_UnoPorCien += ROUND($suma,3) >= 500 ? (ROUND($suma*0.01,3)) : 0.000;
                     $total_CeroSesentaPorCien += (ROUND($suma,3)) < 500 ? (ROUND($suma*0.006,3)) : 0.000;
                     $total_CeroCuarentaPorCien += (ROUND($suma,3)) < 500 ? (ROUND($suma*0.004,3)) : 0.000;
-                }                   
+                }
             }
 
-            
 
-           
-            
+
+
+
 
         }
-        
+
         $detallado = ($request->get('detallado') == 'on' ? '' : 'hidden');
 
         if($fechaData){
@@ -221,8 +221,8 @@ class ReporteController extends Controller
                 $fecha_fin = Carbon::parse($fecha_fin)->format('d-m-Y');
 
         }
-        
-        return view('reportes.porcentaje.show', compact('total_total_venta','total_UnoPorCien','total_CeroSesentaPorCien','total_CeroCuarentaPorCien','meta_alcanzada','UnoPorCien','CeroSesentaPorCien','CeroCuarentaPorCien','total_venta', 'usuario', 'total_dia', 'total_x_dia', 'ventas_operador', 'detallado','fecha_inicio','fecha_fin','fecha','estado','proveedor','operador', 'title'));
+
+        return view('reportes.porcentaje.show', compact('total_total_venta','total_UnoPorCien','total_CeroSesentaPorCien','total_CeroCuarentaPorCien','meta_alcanzada','UnoPorCien','CeroSesentaPorCien','CeroCuarentaPorCien','total_venta', 'usuario', 'total_dia', 'ventas_operador', 'detallado','fecha_inicio','fecha_fin','fecha','estado','proveedor','operador', 'title'));
     }
 
     public function listadoInventario(){
@@ -357,7 +357,7 @@ class ReporteController extends Controller
     }
 
     public function reportIngresosCreditosIndex(){
-        
+
 
         $title = 'Reporte General de Compras a Credito por Fechas';
 
@@ -381,7 +381,7 @@ class ReporteController extends Controller
     }
 
     public function reportIngresosCreditosShow(Request $request){
-        
+
         // return $request;
         $fecha = $request->get('fecha');
         $estado = $request->get('estado');
@@ -454,7 +454,7 @@ class ReporteController extends Controller
 
 
     public function reportClientesCreditosIndex(){
-        
+
         $title = 'Reporte General de Ventas a Credito por Fechas';
 
         $users = User::where('id', '<>', '1')->Where('id', '<>', '2')->get();

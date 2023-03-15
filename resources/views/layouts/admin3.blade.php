@@ -37,7 +37,7 @@
    {{--<link rel="stylesheet" type="text/css" href="{{asset('DataTables-1.10.21/css/jquery.dataTables.min.css')}}">
   <link rel="stylesheet" type="text/css" href="{{asset('Buttons-1.6.2/css/buttons.dataTables.min.css')}}"> --}}
 
-  
+
 <!-- <link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet"> -->
 <!-- <link href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css" rel="stylesheet"> -->
 
@@ -141,7 +141,7 @@ tr.details td.details-control {
               </li>
               <b id="fecha"></b></a>
             </ul>
-          </li> 
+          </li>
           <!-- Tasks: style can be found in dropdown.less -->
           {{-- <li class="dropdown tasks-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -992,7 +992,7 @@ fetch(url)
   $('#banco').html(tasaBcvBanco.c);
   $('#fecha').html(tasaBcvFecha.dia + ', ' + tasaBcvFecha.fecha);
   $('#tasaNow').html('$. ' + tasaBcv.sicad2);
-    
+
 })
 .catch(function(error) {
   console.log(error);

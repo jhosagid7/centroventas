@@ -230,7 +230,7 @@ class BancoController extends Controller
 
         // return $saldosMovimientos;
 
-        return view('bancos.banco.show', compact('cuenta_id','banco_origen','cuenta_tasa','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaEfectivo','User','categorias','saldo_banco_peso','saldo_banco_bolivar','saldo_banco_punto','saldo_banco_transferencia','saldo_banco_dolar','saldosMovimientos','title','nombre_banco','moneda_banco'));
+        return view('bancos.banco.show', compact('banco_origen','cuenta_tasa','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaEfectivo','User','categorias','saldo_banco_peso','saldo_banco_bolivar','saldo_banco_punto','saldo_banco_transferencia','saldo_banco_dolar','saldosMovimientos','title','nombre_banco','moneda_banco'));
     }
 
     public function get_saldo_banco($banco){
@@ -251,7 +251,7 @@ class BancoController extends Controller
      */
     public function edit($id)
     {
-        return $request;
+        // return $request;
     }
 
     /**

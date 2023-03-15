@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use App\Articulo;
 use App\Sucursal;
-use App\Sessioncaja;
 
+use App\Sessioncaja;
 use Mike42\Escpos\Printer;
 use Illuminate\Http\Request;
 use Mike42\Escpos\EscposImage;
@@ -46,13 +47,13 @@ class PrinterController extends Controller
         //$connector = new WindowsPrintConnector("smb://user:pass@nombre_pc/print_name");
         // $connector = new WindowsPrintConnector( "smb://jhosagid:1avacamar1posa@DESKTOP-MI1CBPC/" . $this->print_name );
         if($this->network){
-            $this->print_route = "smb://$this->machine_user:$this->machine_pass@$this->machine_name/$this->print_name"; 
+            $this->print_route = "smb://$this->machine_user:$this->machine_pass@$this->machine_name/$this->print_name";
         }else{
             $this->print_route = $this->print_name;
         }
 
         $connector = new WindowsPrintConnector( $this->print_route );
-        
+
 
         // $connector = new WindowsPrintConnector($print_name);
         $printer = new Printer($connector);

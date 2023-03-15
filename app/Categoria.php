@@ -31,7 +31,7 @@ class Categoria extends Model
     ];
 
     public function articulos(){
-        return hasMany(Articulo::class);
+        return $this->hasMany(Articulo::class);
     }
 
     public function scopeNombre($query, $nombre){
